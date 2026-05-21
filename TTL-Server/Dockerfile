@@ -27,7 +27,8 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/package.json ./
 
-RUN chown -R nodeuser:nodejs /app/node_modules/@prisma /app/node_modules/.prisma 2>/dev/null || true
+RUN mkdir -p /app/public/uploads/avatars && \
+    chown -R nodeuser:nodejs /app/public
 
 USER nodeuser
 

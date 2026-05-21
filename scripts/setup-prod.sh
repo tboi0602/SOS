@@ -39,13 +39,12 @@ info "Domain: $DOMAIN"
 info "API Domain: $API_DOMAIN"
 info "Docker User: $DOCKER_USER"
 
-# ─── Generate Nginx config ────────────────────────────────
-info "Generating nginx config..."
+# ─── Generate Nginx config from template ──────────────────
+info "Generating nginx config from template..."
 sed \
   -e "s/__DOMAIN__/$DOMAIN/g" \
   -e "s/__API_DOMAIN__/$API_DOMAIN/g" \
-  nginx/nginx.conf > nginx/nginx.conf.tmp
-mv nginx/nginx.conf.tmp nginx/nginx.conf
+  nginx/nginx.conf.template > nginx/nginx.conf
 info "nginx config generated ✅"
 
 # ─── Get SSL Certificate ──────────────────────────────────
