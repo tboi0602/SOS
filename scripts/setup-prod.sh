@@ -39,18 +39,46 @@ info "Domain: $DOMAIN"
 info "API Domain: $API_DOMAIN"
 info "Docker User: $DOCKER_USER"
 
-# ─── Generate Nginx config from template ──────────────────
-info "Generating nginx config from template..."
-sed \
-  -e "s/__DOMAIN__/$DOMAIN/g" \
-  -e "s/__API_DOMAIN__/$API_DOMAIN/g" \
-  nginx/nginx.conf.template > nginx/nginx.conf
-info "nginx config generated ✅"
+# ─── Docker login ─────────────────────────────────────────
+info "Logging in to Docker Hub..."
+echo "$DOCKER_PAT" | docker login --username "$DOCKER_USER" --password-stdin
 
-# ─── Get SSL Certificate ──────────────────────────────────
+# ─── Pull images ──────────────────────────────────────────
+info "Pulling images..."
+docker compose pull
+
+# ─── Step 1: Temporary HTTP-only nginx config ────────────
+info "Creating temporary HTTP nginx config for SSL challenge..."
+cat > nginx/nginx.conf << NGINX_HTTP
+events { worker_connections 1024; }
+http {
+  include       /etc/nginx/mime.types;
+  default_type  application/octet-stream;
+  client_max_body_size 50M;
+  server {
+    listen 80;
+    server_name $DOMAIN $API_DOMAIN;
+    location /.well-known/acme-challenge/ { root /var/www/certbot; }
+    location / { return 301 https://\$host\$request_uri; }
+  }
+}
+NGINX_HTTP
+
+# ─── Start nginx + core services ──────────────────────────
+info "Starting core services..."
+docker compose up -d postgres server website
 info "Starting nginx for SSL challenge..."
 docker compose --profile prod up -d nginx
 
+# ─── Wait for nginx ──────────────────────────────────────
+sleep 3
+if ! docker compose ps nginx | grep -q "Up"; then
+  error "nginx failed to start. Check port 80 is open on VPS firewall."
+  docker compose logs nginx
+  exit 1
+fi
+
+# ─── Get SSL Certificate ──────────────────────────────────
 info "Requesting SSL certificate from Let's Encrypt..."
 docker compose run --rm certbot certonly --webroot \
   -w /var/www/certbot \
@@ -60,16 +88,19 @@ docker compose run --rm certbot certonly --webroot \
   --agree-tos \
   --no-eff-email
 
-if [ $? -ne 0 ]; then
-  warn "Certbot chưa thành công. Kiểm tra DNS đã trỏ đúng chưa?"
-  warn "Thử lại sau: docker compose run --rm certbot certonly --webroot -w /var/www/certbot -d $DOMAIN -d $API_DOMAIN"
-  warn "Hoặc chạy: docker compose down"
-  exit 1
-fi
-
 info "SSL certificate obtained ✅"
+
+# ─── Step 2: Full SSL nginx config ────────────────────────
+info "Generating full SSL nginx config..."
+sed \
+  -e "s/__DOMAIN__/$DOMAIN/g" \
+  -e "s/__API_DOMAIN__/$API_DOMAIN/g" \
+  nginx/nginx.conf.template > nginx/nginx.conf
+
+# ─── Restart nginx ────────────────────────────────────────
 info "Restarting nginx with SSL..."
 docker compose restart nginx
+sleep 2
 
 # ─── Start full system ────────────────────────────────────
 info "Starting all services..."
