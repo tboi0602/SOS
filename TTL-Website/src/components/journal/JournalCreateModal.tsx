@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { Clock, X, ImageUp } from "lucide-react";
@@ -33,8 +34,11 @@ export default function JournalCreateModal({
 }: JournalCreateModalProps) {
   return (
     <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
       onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Viết nhật ký mới"
     >
       <div
         className="bg-[#0c1e3a] rounded-2xl p-6 w-full max-w-lg border border-white/10 shadow-2xl max-h-[90vh] overflow-y-auto"
@@ -46,28 +50,37 @@ export default function JournalCreateModal({
           </h2>
           <button
             onClick={onClose}
-            className="text-zinc-500 hover:text-white transition-colors cursor-pointer p-1"
+            aria-label="Đóng"
+            className="text-zinc-500 hover:text-white transition-colors duration-200 cursor-pointer p-2 rounded-lg hover:bg-white/5 focus-visible:ring-2 focus-visible:ring-primary/50 outline-none"
           >
             <X size={18} />
           </button>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => onTitleChange(e.target.value)}
-            placeholder="Tiêu đề việc tốt..."
-            required
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-primary/30 transition-colors"
-          />
-          <textarea
-            value={content}
-            onChange={(e) => onContentChange(e.target.value)}
-            placeholder="Mô tả chi tiết việc tốt bạn đã làm..."
-            rows={4}
-            required
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-primary/30 transition-colors resize-none"
-          />
+          <div>
+            <label htmlFor="journal-title" className="sr-only">Tiêu đề</label>
+            <input
+              id="journal-title"
+              type="text"
+              value={title}
+              onChange={(e) => onTitleChange(e.target.value)}
+              placeholder="Tiêu đề việc tốt..."
+              required
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-primary/30 focus:ring-1 focus:ring-primary/20 transition-all duration-200"
+            />
+          </div>
+          <div>
+            <label htmlFor="journal-content" className="sr-only">Nội dung</label>
+            <textarea
+              id="journal-content"
+              value={content}
+              onChange={(e) => onContentChange(e.target.value)}
+              placeholder="Mô tả chi tiết việc tốt bạn đã làm..."
+              rows={4}
+              required
+              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-primary/30 focus:ring-1 focus:ring-primary/20 transition-all duration-200 resize-none"
+            />
+          </div>
 
           {/* Image Upload */}
           <div>
@@ -75,7 +88,7 @@ export default function JournalCreateModal({
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              className="w-full flex items-center justify-center gap-2 py-8 rounded-xl border-2 border-dashed border-white/10 hover:border-primary/30 text-zinc-500 hover:text-primary transition-all cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 py-8 rounded-xl border-2 border-dashed border-white/10 hover:border-primary/30 text-zinc-500 hover:text-primary transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary/50 outline-none"
             >
               <ImageUp size={20} /> Thêm ảnh
             </button>
@@ -86,6 +99,7 @@ export default function JournalCreateModal({
               multiple
               onChange={onSelectFiles}
               className="hidden"
+              aria-hidden="true"
             />
           </div>
 
@@ -97,13 +111,14 @@ export default function JournalCreateModal({
                   className="relative size-20 rounded-xl overflow-hidden border border-white/10 group"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={p} alt="" className="size-full object-cover" />
+                  <img src={p} alt={`Ảnh xem trước ${i + 1}`} className="size-full object-cover" />
                   <button
                     type="button"
                     onClick={() => onRemoveImage(i)}
-                    className="absolute top-0.5 right-0.5 size-5 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                    aria-label={`Xoá ảnh ${i + 1}`}
+                    className="absolute top-0.5 right-0.5 size-6 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer hover:bg-black/80"
                   >
-                    <X size={10} className="text-white" />
+                    <X size={11} className="text-white" />
                   </button>
                 </div>
               ))}
@@ -122,7 +137,7 @@ export default function JournalCreateModal({
           <button
             type="submit"
             disabled={!title.trim() || !content.trim() || creating}
-            className="w-full py-3 rounded-xl bg-primary hover:bg-primary-light text-white text-sm font-semibold transition-all shadow-lg shadow-primary/25 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            className="w-full py-3 min-h-[48px] rounded-xl bg-primary hover:bg-primary-light text-white text-sm font-semibold transition-all duration-200 shadow-lg shadow-primary/25 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer focus-visible:ring-2 focus-visible:ring-primary/50 outline-none"
           >
             {creating
               ? uploading
