@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String       @id @default(uuid())
+  email                 String       @unique
+  password              String
+  name                  String
+  role                  String       @default("user")
+  job                   String?
+  address               String?
+  avatar                String?
+  bio                   String?
+  facebook              String?
+  twitter               String?
+  tiktok                String?
+  youtube               String?
+  zalo                  String?
+  referralCode          String       @map("referral_code")
+  referredBy            String?      @map("referred_by")
+  kyLuat                Int          @default(0) @map("ky_luat")
+  daoDuc                Int          @default(0) @map("dao_duc")
+  truyenCamHung         Int          @default(0) @map("truyen_cam_hung")
+  isActive              Boolean      @default(false) @map("is_active")
+  activationToken       String?      @map("activation_token")
+  activationTokenExpires DateTime?   @map("activation_token_expires")
+  resetToken            String?      @map("reset_token")
+  resetTokenExpires     DateTime?    @map("reset_token_expires")
+  tokenVersion          Int          @default(0) @map("token_version")
+  loginAttempts         Int          @default(0) @map("login_attempts")
+  lockedUntil           DateTime?    @map("locked_until")
+  createdAt             DateTime     @default(now()) @map("created_at")
+  updatedAt             DateTime     @updatedAt @map("updated_at")
+  auditLogs             AuditLog[]
+  journals              Journal[]
+  posts                 Post[]
+  likes                 Like[]
+  comments              Comment[]
+
+  @@map("users")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?  @map("user_id")
+  action    String
+  resource  String
+  resourceId String? @map("resource_id")
+  metadata  Json?
+  ip        String?
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("audit_logs")
+}
+
+model Journal {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  title     String
+  content   String
+  images    Json?    @default("[]")
+  points    Int      @default(2)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("journals")
+}
+
+model Post {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  content     String
+  images      Json?     @default("[]")
+  videos      Json?     @default("[]")
+  productLink String?   @map("product_link")
+  hashtags    Json?     @default("[]")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likes    Like[]
+  comments Comment[]
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("posts")
+}
+
+model Like {
+  userId String @map("user_id")
+  postId String @map("post_id")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@id([userId, postId])
+  @@map("likes")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  postId    String   @map("post_id")
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@map("comments")
+}

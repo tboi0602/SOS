@@ -1,0 +1,1 @@
+export { useTopSales } from "./useTopSales";

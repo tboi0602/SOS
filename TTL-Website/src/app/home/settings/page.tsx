@@ -1,0 +1,131 @@
+"use client";
+
+import { useAuthSettings as useSettings } from "@/hook/auth";
+import AnimatedBorder from "@/components/profile/AnimatedBorder";
+import ProfileBanner from "@/components/profile/ProfileBanner";
+import ProfileForm from "@/components/profile/ProfileForm";
+import PasswordForm from "@/components/profile/PasswordForm";
+import Loading from "@/components/ui/Loading";
+
+const BG = "linear-gradient(145deg, #09132e, #070d22)";
+
+export default function SettingsPage() {
+  const {
+    user,
+    authLoading,
+    name,
+    job,
+    address,
+    avatar,
+    bio,
+    saving,
+    uploading,
+    profileMsg,
+    profileError,
+    facebook,
+    twitter,
+    tiktok,
+    youtube,
+    zalo,
+    currentPassword,
+    newPassword,
+    confirmNewPassword,
+    changingPassword,
+    pwMsg,
+    pwError,
+    setName,
+    setJob,
+    setAddress,
+    setBio,
+    setFacebook,
+    setTwitter,
+    setTiktok,
+    setYoutube,
+    setZalo,
+    setCurrentPassword,
+    setNewPassword,
+    setConfirmNewPassword,
+    handleProfileSubmit,
+    handleAvatarUpload,
+    handlePasswordSubmit,
+  } = useSettings();
+
+  const handleSocialChange = (key: string, v: string) => {
+    const setters: Record<string, (v: string) => void> = {
+      facebook: setFacebook,
+      twitter: setTwitter,
+      tiktok: setTiktok,
+      youtube: setYoutube,
+      zalo: setZalo,
+    };
+    setters[key]?.(v);
+  };
+
+  if (authLoading) {
+    return <Loading />;
+  }
+
+  return (
+    <div className="min-h-[calc(100vh-5rem)] px-4 sm:px-6 py-6 text-white select-none">
+      <div className="max-w-5xl mx-auto space-y-5">
+        {/* Banner */}
+        <AnimatedBorder style={{ background: BG }}>
+          <ProfileBanner
+            name={name}
+            email={user?.email || ""}
+            referralCode={user?.referralCode ?? null}
+            avatar={avatar}
+            bio={bio}
+            uploading={uploading}
+            onFileChange={handleAvatarUpload}
+          />
+        </AnimatedBorder>
+
+        {/* Main */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
+          <div className="lg:col-span-3">
+            <AnimatedBorder style={{ background: BG }}>
+              <ProfileForm
+                name={name}
+                job={job}
+                address={address}
+                bio={bio}
+                saving={saving}
+                msg={profileMsg}
+                error={profileError}
+                facebook={facebook}
+                twitter={twitter}
+                tiktok={tiktok}
+                youtube={youtube}
+                zalo={zalo}
+                onNameChange={setName}
+                onJobChange={setJob}
+                onAddressChange={setAddress}
+                onBioChange={setBio}
+                onSocialChange={handleSocialChange}
+                onSubmit={handleProfileSubmit}
+              />
+            </AnimatedBorder>
+          </div>
+
+          <div className="lg:col-span-2">
+            <AnimatedBorder style={{ background: BG }}>
+              <PasswordForm
+                currentPassword={currentPassword}
+                newPassword={newPassword}
+                confirmNewPassword={confirmNewPassword}
+                changingPassword={changingPassword}
+                msg={pwMsg}
+                error={pwError}
+                onCurrentPasswordChange={setCurrentPassword}
+                onNewPasswordChange={setNewPassword}
+                onConfirmNewPasswordChange={setConfirmNewPassword}
+                onSubmit={handlePasswordSubmit}
+              />
+            </AnimatedBorder>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
