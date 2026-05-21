@@ -39,10 +39,6 @@ info "Domain: $DOMAIN"
 info "API Domain: $API_DOMAIN"
 info "Docker User: $DOCKER_USER"
 
-# ─── Docker login ─────────────────────────────────────────
-info "Logging in to Docker Hub..."
-echo "$DOCKER_PAT" | docker login --username "$DOCKER_USER" --password-stdin
-
 # ─── Pull images ──────────────────────────────────────────
 info "Pulling images..."
 docker compose pull
