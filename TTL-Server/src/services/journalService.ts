@@ -10,7 +10,7 @@ export const journalService = {
         title: data.title,
         content: data.content,
         images: data.images ?? [],
-        points: 1,
+        points: 0,
         status: "pending",
       },
     })
@@ -70,9 +70,9 @@ export const journalService = {
 
     const updated = await getDb().journal.update({
       where: { id: journalId },
-      data: { status: "approved", adminNote: adminNote ?? null },
+      data: { status: "approved", points: 1, adminNote: adminNote ?? null },
     })
-    await User.addPoints(entry.userId, { truyenCamHung: entry.points })
+    await User.addPoints(entry.userId, { truyenCamHung: 1 })
     return updated
   },
 

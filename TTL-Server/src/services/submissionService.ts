@@ -11,7 +11,7 @@ export const submissionService = {
         videoUrl: data.videoUrl ?? null,
         note: data.note ?? null,
         status: "pending",
-        points: 1,
+        points: 0,
       },
     })
     await getDb().user.update({
@@ -74,9 +74,9 @@ export const submissionService = {
 
     const updated = await getDb().submission.update({
       where: { id: submissionId },
-      data: { status: "approved", adminNote: adminNote ?? null },
+      data: { status: "approved", points: 1, adminNote: adminNote ?? null },
     })
-    await User.addPoints(sub.userId, { truyenCamHung: sub.points })
+    await User.addPoints(sub.userId, { truyenCamHung: 1 })
     return updated
   },
 
