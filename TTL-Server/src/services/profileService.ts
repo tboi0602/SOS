@@ -24,7 +24,7 @@ export const profileService = {
         },
       }),
       getDb().journal.findMany({
-        where: { userId: targetUserId },
+        where: { userId: targetUserId, status: "approved" },
         orderBy: { createdAt: "desc" },
         take: 20,
       }),

@@ -11,6 +11,8 @@ import {
   Shield,
   LogOut,
   ChevronLeft,
+  Video,
+  BookOpen,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -18,6 +20,8 @@ import { usePathname } from "next/navigation";
 const ADMIN_NAV = [
   { href: "/admin", label: "Tổng quan", icon: LayoutDashboard },
   { href: "/admin/users", label: "Quản lý người dùng", icon: Users },
+  { href: "/admin/submissions", label: "Duyệt tác phẩm", icon: Video },
+  { href: "/admin/journals", label: "Duyệt nhật ký", icon: BookOpen },
 ];
 
 export default function AdminLayout({

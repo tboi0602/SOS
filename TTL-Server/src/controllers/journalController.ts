@@ -22,4 +22,28 @@ export const journalController = {
     const result = await journalService.delete(req.params.id as string, req.user!.userId)
     res.json(result)
   }),
+
+  listPending: asyncHandler(async (req: Request, res: Response) => {
+    const page = Math.max(1, parseInt(req.query.page as string) || 1)
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit as string) || 20))
+    const result = await journalService.listPending(page, limit)
+    res.json(result)
+  }),
+
+  listApproved: asyncHandler(async (req: Request, res: Response) => {
+    const page = Math.max(1, parseInt(req.query.page as string) || 1)
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit as string) || 20))
+    const result = await journalService.listApproved(page, limit)
+    res.json(result)
+  }),
+
+  approve: asyncHandler(async (req: Request, res: Response) => {
+    const entry = await journalService.approve(req.params.id as string, req.body.adminNote)
+    res.json({ entry })
+  }),
+
+  reject: asyncHandler(async (req: Request, res: Response) => {
+    const entry = await journalService.reject(req.params.id as string, req.body.adminNote)
+    res.json({ entry })
+  }),
 }

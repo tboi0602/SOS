@@ -1,11 +1,12 @@
-"use client"
+"use client";
 
-import { BookOpen, Plus } from "lucide-react"
-import { useJournal } from "@/hook/journal"
-import JournalHeader from "@/components/journal/JournalHeader"
-import JournalStats from "@/components/journal/JournalStats"
-import JournalCreateModal from "@/components/journal/JournalCreateModal"
-import JournalEntryCard from "@/components/journal/JournalEntryCard"
+import { BookOpen, Plus } from "lucide-react";
+import { useJournal } from "@/hook/journal";
+import JournalHeader from "@/components/journal/JournalHeader";
+import JournalStats from "@/components/journal/JournalStats";
+import JournalCreateModal from "@/components/journal/JournalCreateModal";
+import JournalEntryCard from "@/components/journal/JournalEntryCard";
+import Loading from "@/components/ui/Loading";
 
 export default function JournalPage() {
   const {
@@ -27,7 +28,7 @@ export default function JournalPage() {
     handleDelete,
     totalPoints,
     getImgUrl,
-  } = useJournal()
+  } = useJournal();
 
   return (
     <div className="min-h-[calc(100vh-5rem)] px-4 sm:px-6 py-6 text-white select-none">
@@ -54,18 +55,19 @@ export default function JournalPage() {
         )}
 
         {loading ? (
-          <div className="flex justify-center py-16">
-            <div className="size-7 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-          </div>
+          <Loading />
         ) : entries.length === 0 ? (
           <div className="glass-strong rounded-2xl p-12 text-center border border-white/6">
             <div className="size-14 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-3">
               <BookOpen size={24} className="text-zinc-600" />
             </div>
             <p className="text-zinc-500 text-sm mb-3">Chưa có nhật ký nào</p>
-            <button onClick={() => setShowCreate(true)}
+            <button
+              onClick={() => setShowCreate(true)}
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold transition-all hover:bg-primary-light shadow-lg shadow-primary/25 cursor-pointer"
-            ><Plus size={15} /> Viết nhật ký đầu tiên</button>
+            >
+              <Plus size={15} /> Viết nhật ký đầu tiên
+            </button>
           </div>
         ) : (
           <div className="space-y-4">
@@ -81,5 +83,5 @@ export default function JournalPage() {
         )}
       </div>
     </div>
-  )
+  );
 }

@@ -147,6 +147,44 @@ export const api = {
       }),
 
     getStats: () => request<AdminStats>("/api/v1/admin/stats"),
+
+    listPendingJournals: (page = 1, limit = 20) =>
+      request<{ entries: JournalEntry[]; total: number; page: number; limit: number }>(
+        `/api/v1/admin/journals/pending?page=${page}&limit=${limit}`,
+      ),
+    listApprovedJournals: (page = 1, limit = 20) =>
+      request<{ entries: JournalEntry[]; total: number; page: number; limit: number }>(
+        `/api/v1/admin/journals/approved?page=${page}&limit=${limit}`,
+      ),
+    approveJournal: (id: string, adminNote?: string) =>
+      request<{ entry: JournalEntry }>(`/api/v1/admin/journals/${id}/approve`, {
+        method: "PUT",
+        body: { adminNote },
+      }),
+    rejectJournal: (id: string, adminNote?: string) =>
+      request<{ entry: JournalEntry }>(`/api/v1/admin/journals/${id}/reject`, {
+        method: "PUT",
+        body: { adminNote },
+      }),
+
+    listPendingSubmissions: (page = 1, limit = 20) =>
+      request<{ submissions: Submission[]; total: number; page: number; limit: number }>(
+        `/api/v1/admin/submissions/pending?page=${page}&limit=${limit}`,
+      ),
+    listApprovedSubmissions: (page = 1, limit = 20) =>
+      request<{ submissions: Submission[]; total: number; page: number; limit: number }>(
+        `/api/v1/admin/submissions/approved?page=${page}&limit=${limit}`,
+      ),
+    approveSubmission: (id: string, adminNote?: string) =>
+      request<{ submission: Submission }>(`/api/v1/admin/submissions/${id}/approve`, {
+        method: "PUT",
+        body: { adminNote },
+      }),
+    rejectSubmission: (id: string, adminNote?: string) =>
+      request<{ submission: Submission }>(`/api/v1/admin/submissions/${id}/reject`, {
+        method: "PUT",
+        body: { adminNote },
+      }),
   },
 
   chat: {
@@ -186,6 +224,24 @@ export const api = {
       request<{ message: string }>(`/api/v1/journal/${id}`, {
         method: "DELETE",
       }),
+  },
+
+  submission: {
+    create: (data: { title: string; videoUrl?: string; note?: string }) =>
+      request<{ submission: Submission }>("/api/v1/submissions", {
+        method: "POST",
+        body: data,
+      }),
+    getMySubmissions: () =>
+      request<{ submissions: Submission[] }>("/api/v1/submissions/me"),
+    delete: (id: string) =>
+      request<{ message: string }>(`/api/v1/submissions/${id}`, {
+        method: "DELETE",
+      }),
+    checkPenalty: () =>
+      request<{ penalized: boolean; daysOverdue: number; deducted?: number }>(
+        "/api/v1/submissions/penalty",
+      ),
   },
 
   profile: {
@@ -350,7 +406,24 @@ export interface JournalEntry {
   content: string;
   images: string[];
   points: number;
+  status: string;
+  adminNote: string | null;
   createdAt: string;
+  user?: { id: string; name: string; email: string; avatar: string | null };
+}
+
+export interface Submission {
+  id: string;
+  userId: string;
+  title: string;
+  videoUrl: string | null;
+  note: string | null;
+  status: string;
+  points: number;
+  adminNote: string | null;
+  createdAt: string;
+  updatedAt: string;
+  user?: { id: string; name: string; email: string; avatar: string | null };
 }
 
 export interface PublicProfileResponse {

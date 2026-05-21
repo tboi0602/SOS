@@ -1,5 +1,5 @@
 import { getDb } from "../db"
-import { NotFoundError } from "../lib/errors"
+import { NotFoundError, ForbiddenError } from "../lib/errors"
 import { User } from "../models/User"
 
 export const journalService = {
@@ -10,10 +10,10 @@ export const journalService = {
         title: data.title,
         content: data.content,
         images: data.images ?? [],
-        points: 2,
+        points: 1,
+        status: "pending",
       },
     })
-    await User.addPoints(userId, { truyenCamHung: 2 })
     return entry
   },
 
@@ -31,5 +31,59 @@ export const journalService = {
     if (entry.userId !== userId) throw new NotFoundError("Không có quyền xoá")
     await getDb().journal.delete({ where: { id: journalId } })
     return { message: "Đã xoá" }
+  },
+
+  async listPending(page = 1, limit = 20) {
+    const skip = (page - 1) * limit
+    const [entries, total] = await Promise.all([
+      getDb().journal.findMany({
+        where: { status: "pending" },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+        include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
+      }),
+      getDb().journal.count({ where: { status: "pending" } }),
+    ])
+    return { entries, total, page, limit }
+  },
+
+  async listApproved(page = 1, limit = 20) {
+    const skip = (page - 1) * limit
+    const [entries, total] = await Promise.all([
+      getDb().journal.findMany({
+        where: { status: "approved" },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+        include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
+      }),
+      getDb().journal.count({ where: { status: "approved" } }),
+    ])
+    return { entries, total, page, limit }
+  },
+
+  async approve(journalId: string, adminNote?: string) {
+    const entry = await getDb().journal.findUnique({ where: { id: journalId } })
+    if (!entry) throw new NotFoundError("Nhật ký không tồn tại")
+    if (entry.status !== "pending") throw new ForbiddenError("Chỉ duyệt được nhật ký đang chờ")
+
+    const updated = await getDb().journal.update({
+      where: { id: journalId },
+      data: { status: "approved", adminNote: adminNote ?? null },
+    })
+    await User.addPoints(entry.userId, { truyenCamHung: entry.points })
+    return updated
+  },
+
+  async reject(journalId: string, adminNote?: string) {
+    const entry = await getDb().journal.findUnique({ where: { id: journalId } })
+    if (!entry) throw new NotFoundError("Nhật ký không tồn tại")
+    if (entry.status !== "pending") throw new ForbiddenError("Chỉ từ chối được nhật ký đang chờ")
+
+    return getDb().journal.update({
+      where: { id: journalId },
+      data: { status: "rejected", adminNote: adminNote ?? null, points: 0 },
+    })
   },
 }

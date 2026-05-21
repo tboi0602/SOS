@@ -35,6 +35,7 @@ model User {
   tokenVersion          Int          @default(0) @map("token_version")
   loginAttempts         Int          @default(0) @map("login_attempts")
   lockedUntil           DateTime?    @map("locked_until")
+  lastSubmissionDate    DateTime?   @map("last_submission_date")
   createdAt             DateTime     @default(now()) @map("created_at")
   updatedAt             DateTime     @updatedAt @map("updated_at")
   auditLogs             AuditLog[]
@@ -42,6 +43,7 @@ model User {
   posts                 Post[]
   likes                 Like[]
   comments              Comment[]
+  submissions           Submission[]
 
   @@map("users")
 }
@@ -68,13 +70,36 @@ model Journal {
   title     String
   content   String
   images    Json?    @default("[]")
-  points    Int      @default(2)
+  points    Int      @default(1)
+  status    String   @default("pending")
+  adminNote String?  @map("admin_note")
   createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([status])
   @@map("journals")
+}
+
+model Submission {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  title     String
+  videoUrl  String?  @map("video_url")
+  note      String?  @map("note")
+  status    String   @default("pending")
+  points    Int      @default(0)
+  adminNote String?  @map("admin_note")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@map("submissions")
 }
 
 model Post {

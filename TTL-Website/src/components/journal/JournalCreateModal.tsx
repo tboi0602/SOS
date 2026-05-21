@@ -1,6 +1,6 @@
 "use client";
 
-import { Sparkles, X, ImageUp } from "lucide-react";
+import { Clock, X, ImageUp } from "lucide-react";
 
 interface JournalCreateModalProps {
   title: string;
@@ -42,7 +42,7 @@ export default function JournalCreateModal({
       >
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-base font-semibold flex items-center gap-2">
-            <Sparkles size={16} className="text-amber-400" /> Việc tốt hôm nay
+            <Clock size={16} className="text-amber-400" /> Việc tốt hôm nay
           </h2>
           <button
             onClick={onClose}
@@ -111,13 +111,11 @@ export default function JournalCreateModal({
           )}
 
           <div className="flex items-center gap-2 p-3 rounded-xl bg-amber-400/5 border border-amber-400/10">
-            <Sparkles size={14} className="text-amber-400 shrink-0" />
+            <Clock size={14} className="text-amber-400 shrink-0" />
             <p className="text-xs text-zinc-400">
-              Hệ thống sẽ tự động cộng{" "}
-              <span className="text-amber-400 font-semibold">
-                +2 điểm Truyền cảm hứng
-              </span>{" "}
-              cho bài viết này
+              Bài viết sẽ được <span className="text-amber-400 font-semibold">quản trị viên duyệt</span>{" "}
+              trước khi cộng{" "}
+              <span className="text-amber-400 font-semibold">+1 điểm Truyền cảm hứng</span>
             </p>
           </div>
 

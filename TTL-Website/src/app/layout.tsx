@@ -17,7 +17,7 @@ const jetbrains = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
-const siteUrl = "https://httalent.vn";
+const siteUrl = "https://vnsales.org";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
