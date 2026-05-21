@@ -24,7 +24,7 @@ export const postController = {
   }),
 
   getById: asyncHandler(async (req: Request, res: Response) => {
-    const post = await postService.getById(req.params.id, req.user!.userId)
+    const post = await postService.getById(req.params.id as string, req.user!.userId)
     res.json({ post })
   }),
 
@@ -59,27 +59,27 @@ export const postController = {
   }),
 
   update: asyncHandler(async (req: Request, res: Response) => {
-    const post = await postService.update(req.params.id, req.user!.userId, req.body)
+    const post = await postService.update(req.params.id as string, req.user!.userId, req.body)
     res.json({ post })
   }),
 
   delete: asyncHandler(async (req: Request, res: Response) => {
-    const result = await postService.delete(req.params.id, req.user!.userId)
+    const result = await postService.delete(req.params.id as string, req.user!.userId)
     res.json(result)
   }),
 
   toggleLike: asyncHandler(async (req: Request, res: Response) => {
-    const result = await postService.toggleLike(req.params.id, req.user!.userId)
+    const result = await postService.toggleLike(req.params.id as string, req.user!.userId)
     res.json(result)
   }),
 
   addComment: asyncHandler(async (req: Request, res: Response) => {
-    const comment = await postService.addComment(req.params.id, req.user!.userId, req.body.content)
+    const comment = await postService.addComment(req.params.id as string, req.user!.userId, req.body.content)
     res.status(201).json({ comment })
   }),
 
   deleteComment: asyncHandler(async (req: Request, res: Response) => {
-    const result = await postService.deleteComment(req.params.commentId, req.user!.userId)
+    const result = await postService.deleteComment(req.params.commentId as string, req.user!.userId)
     res.json(result)
   }),
 
