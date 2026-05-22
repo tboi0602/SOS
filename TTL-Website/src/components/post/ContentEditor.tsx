@@ -1,6 +1,6 @@
 "use client";
 
-import type { RefObject } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 
 interface ContentEditorProps {
   value: string;
@@ -13,16 +13,48 @@ export function ContentEditor({
   onChange,
   textareaRef,
 }: ContentEditorProps) {
+  const mirroredRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (mirroredRef.current && textareaRef.current) {
+      mirroredRef.current.textContent = value + "\n";
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height =
+        mirroredRef.current.offsetHeight + "px";
+    }
+  }, [value, textareaRef]);
+
   return (
     <div className="glass-strong rounded-2xl p-5">
-      <textarea
-        ref={textareaRef}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="Bạn đang nghĩ gì?"
-        rows={6}
-        className="w-full rounded-md p-1 resize-none bg-transparent text-white placeholder:text-zinc-500 outline-none text-sm leading-relaxed"
-      />
+      <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+        Nội dung bài viết
+      </label>
+      <div className="relative">
+        <div
+          ref={mirroredRef}
+          className="invisible whitespace-pre-wrap text-sm leading-relaxed px-1 min-h-[120px]"
+          aria-hidden
+        />
+        <textarea
+          ref={textareaRef}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Bạn đang nghĩ gì, chia sẻ với cộng đồng..."
+          rows={5}
+          className="absolute inset-0 w-full rounded-md p-1 resize-none bg-transparent text-white placeholder:text-zinc-500 outline-none text-sm leading-relaxed"
+        />
+      </div>
+      <div className="flex items-center justify-between mt-2">
+        <p className="text-[10px] text-zinc-600">
+          {value.length > 4500 ? (
+            <span className="text-danger font-medium">
+              {5000 - value.length} ký tự còn lại
+            </span>
+          ) : (
+            <span>{5000 - value.length} ký tự còn lại</span>
+          )}
+        </p>
+      </div>
     </div>
   );
 }

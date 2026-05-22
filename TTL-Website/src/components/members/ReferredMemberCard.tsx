@@ -3,10 +3,10 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { QrCode } from "lucide-react";
-import type { MemberInfo } from "@/service/api";
+import type { ReferredMember } from "@/service/api";
 
 interface ReferredMemberCardProps {
-  member: MemberInfo;
+  member: ReferredMember;
   index: number;
 }
 

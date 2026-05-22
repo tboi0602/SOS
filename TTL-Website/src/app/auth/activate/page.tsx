@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import { useAuthActivate as useActivate } from "@/hook/auth";
-import { Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { CheckCircle2, XCircle } from "lucide-react";
 
 function ActivateContent() {
   const { status, message, router } = useActivate();
@@ -13,7 +13,7 @@ function ActivateContent() {
       <div className="relative z-10 glass-strong rounded-2xl p-10 max-w-md w-full mx-4 text-center">
         {status === "loading" && (
           <div className="flex flex-col items-center gap-4">
-            <Loader2 size={40} className="animate-spin text-primary" />
+            <div className="size-10 rounded-full border-2 border-primary border-t-transparent animate-spin" />
             <p className="text-white">Đang kích hoạt tài khoản...</p>
           </div>
         )}

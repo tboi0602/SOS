@@ -14,7 +14,9 @@ export default function HomeLayout({
 
       <FeedSidebar />
 
-      <main className="lg:pl-60 pb-22 lg:pb-10 px-4 py-8">{children}</main>
+      <main className="lg:pl-(--sidebar-width,15rem) pt-14 lg:pt-0 pb-22 lg:pb-0 py-8 transition-all duration-300">
+        {children}
+      </main>
     </div>
   );
 }

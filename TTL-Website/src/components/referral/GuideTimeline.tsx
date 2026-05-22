@@ -10,7 +10,7 @@ export default function GuideTimeline() {
   ];
 
   return (
-    <div className="rounded-2xl bg-gradient-to-b from-white/[0.03] to-transparent border border-white/5 p-5">
+    <div className="rounded-2xl bg-linear-to-b from-white/3 to-transparent border border-white/5 p-5">
       <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-200 flex items-center gap-2 mb-4">
         <Users size={15} className="text-primary" /> Cách thức vận hành mạng lưới
       </h2>

@@ -92,7 +92,6 @@ button {
   *,
   *::before,
   *::after {
-    animation-iteration-count: 1 !important;
     transition-duration: 0.15s !important;
   }
 

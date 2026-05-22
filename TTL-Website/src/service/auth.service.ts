@@ -1,55 +1,96 @@
-import { api } from "@/service/api"
+import { request, uploadSingleFile } from "./client"
+import type { User, RegisterData } from "@/types/auth"
 
 export const authService = {
   login(email: string, password: string) {
-    return api.auth.login(email, password)
+    return request<{ user: User }>("/api/v1/auth/login", {
+      method: "POST",
+      body: { email, password },
+    })
   },
 
-  register(data: { name: string; email: string; password: string; job?: string; address?: string; referralCode?: string }) {
-    return api.auth.register(data)
+  register(data: RegisterData) {
+    return request<{ user: User }>("/api/v1/auth/register", {
+      method: "POST",
+      body: data,
+    })
   },
 
   googleLogin(credential: string) {
-    return api.auth.google(credential)
+    return request<{ user: User }>("/api/v1/auth/google", {
+      method: "POST",
+      body: { credential },
+    })
   },
 
   logout() {
-    return api.auth.logout()
+    return request<{ message: string }>("/api/v1/auth/logout", { method: "POST" })
   },
 
   me() {
-    return api.auth.me()
+    return request<{ user: User }>("/api/v1/auth/me")
   },
 
   checkReferral(code: string) {
-    return api.auth.checkReferral(code)
+    return request<{ valid: boolean; name: string | null }>(
+      `/api/v1/auth/referral/${code}`,
+    )
   },
 
   activate(token: string) {
-    return api.auth.activate(token)
+    return request<{ message: string }>("/api/v1/auth/activate", {
+      method: "POST",
+      body: { token },
+    })
   },
 
   resendActivation(email: string) {
-    return api.auth.resendActivation(email)
+    return request<{ message: string }>("/api/v1/auth/resend-activation", {
+      method: "POST",
+      body: { email },
+    })
   },
 
   forgotPassword(email: string) {
-    return api.auth.forgotPassword(email)
+    return request<{ message: string }>("/api/v1/auth/forgot-password", {
+      method: "POST",
+      body: { email },
+    })
   },
 
   resetPassword(token: string, password: string) {
-    return api.auth.resetPassword(token, password)
+    return request<{ message: string }>("/api/v1/auth/reset-password", {
+      method: "POST",
+      body: { token, password },
+    })
   },
 
-  updateProfile(data: { name?: string; job?: string; address?: string; avatar?: string | null; bio?: string | null; facebook?: string | null; twitter?: string | null; tiktok?: string | null; youtube?: string | null; zalo?: string | null }) {
-    return api.auth.updateProfile(data)
+  updateProfile(data: {
+    name?: string
+    job?: string
+    address?: string
+    avatar?: string | null
+    bio?: string | null
+    facebook?: string | null
+    twitter?: string | null
+    tiktok?: string | null
+    youtube?: string | null
+    zalo?: string | null
+  }) {
+    return request<{ user: User }>("/api/v1/auth/profile", {
+      method: "PUT",
+      body: data,
+    })
   },
 
   changePassword(currentPassword: string, newPassword: string) {
-    return api.auth.changePassword(currentPassword, newPassword)
+    return request<{ message: string }>("/api/v1/auth/change-password", {
+      method: "PUT",
+      body: { currentPassword, newPassword },
+    })
   },
 
   uploadAvatar(file: File) {
-    return api.auth.uploadAvatar(file)
+    return uploadSingleFile<{ user: User }>("/api/v1/auth/avatar", file, "avatar")
   },
 }

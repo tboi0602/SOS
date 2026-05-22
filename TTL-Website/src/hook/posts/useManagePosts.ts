@@ -4,9 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { postService } from "@/service/post.service";
-import type { Post, PostListResponse } from "@/service/api";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+import type { Post } from "@/service/api";
 
 export function useManagePosts() {
   const { user } = useAuth();
@@ -20,39 +18,58 @@ export function useManagePosts() {
   const [deletePost, setDeletePost] = useState<Post | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  const fetchMyPosts = useCallback(async (p = 1) => {
-    setLoading(true);
-    try {
-      const res: PostListResponse = await postService.myPosts(p, 10);
-      setPosts(res.posts);
-      setTotalPages(res.totalPages);
-      setPage(res.page);
-      setTotal(res.total);
-    } catch {
-      console.error("Failed to fetch posts");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const [filter, setFilter] = useState("all");
+  const [counts, setCounts] = useState<Record<string, number>>({
+    all: 0,
+    pending: 0,
+    approved: 0,
+    rejected: 0,
+  });
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+
+  const fetchMyPosts = useCallback(
+    async (p = 1) => {
+      setLoading(true);
+      try {
+        const res = await postService.myPosts({
+          page: p,
+          limit: 10,
+          status: filter,
+          dateFrom: dateFrom || undefined,
+          dateTo: dateTo || undefined,
+        });
+        setPosts(res.posts);
+        setTotalPages(res.totalPages);
+        setPage(res.page);
+        setTotal(res.total);
+        if (res.counts) setCounts(res.counts);
+      } catch {
+        console.error("Failed to fetch posts");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [filter, dateFrom, dateTo],
+  );
 
   useEffect(() => {
     if (!user && !loading) {
       router.push("/auth/login");
       return;
     }
+    const id = window.setTimeout(() => {
+      void fetchMyPosts(1);
+    }, 0);
+    return () => window.clearTimeout(id);
+  }, [user, fetchMyPosts]);
 
-    let active = true;
-    const loadPosts = async () => {
-      if (!active) return;
-      await fetchMyPosts(1);
-    };
-
-    void loadPosts();
-
-    return () => {
-      active = false;
-    };
-  }, [user, router, fetchMyPosts]);
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      if (user) void fetchMyPosts();
+    }, 0);
+    return () => window.clearTimeout(id);
+  }, [filter, dateFrom, dateTo]);
 
   const handleDelete = async () => {
     if (!deletePost) return;
@@ -63,7 +80,6 @@ export function useManagePosts() {
       setTotal((prev) => prev - 1);
       setDeletePost(null);
     } catch {
-      // handled by api interceptor
     } finally {
       setDeleting(false);
     }
@@ -79,10 +95,20 @@ export function useManagePosts() {
     if (p >= 1 && p <= totalPages) fetchMyPosts(p);
   };
 
-  const resolveUrl = (url: string) =>
-    url.startsWith("http") || url.startsWith("blob:")
-      ? url
-      : `${API_URL}${url}`;
+  const handleFilterChange = (f: string) => {
+    setFilter(f);
+    setPage(1);
+  };
+
+  const handleDateFromChange = (v: string) => {
+    setDateFrom(v);
+    setPage(1);
+  };
+
+  const handleDateToChange = (v: string) => {
+    setDateTo(v);
+    setPage(1);
+  };
 
   return {
     posts,
@@ -98,6 +124,12 @@ export function useManagePosts() {
     handleDelete,
     handleUpdated,
     goToPage,
-    resolveUrl,
+    filter,
+    handleFilterChange,
+    dateFrom,
+    handleDateFromChange,
+    dateTo,
+    handleDateToChange,
+    counts,
   };
 }

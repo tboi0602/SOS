@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { Loader2, Send } from "lucide-react";
 
 interface SubmitBarProps {
   contentLength: number;
@@ -17,17 +17,33 @@ export function SubmitBar({
   disabled,
   onSubmit,
 }: SubmitBarProps) {
+  const progress = Math.min(contentLength / 5000, 1);
+
   return (
-    <div className="flex items-center justify-between gap-3 pt-4">
-      <p className="text-xs text-zinc-500">
-        {contentLength} ký tự
-        {mediaCount > 0 && ` • ${mediaCount} file`}
-      </p>
+    <div className="glass-strong rounded-2xl p-4 flex items-center justify-between gap-3">
+      <div className="flex items-center gap-3">
+        <div className="w-24 h-1.5 rounded-full bg-white/5 overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all duration-300"
+            style={{
+              width: `${progress * 100}%`,
+              background:
+                progress > 0.9
+                  ? "linear-gradient(90deg, #ef4444, #dc2626)"
+                  : "linear-gradient(90deg, #00b7ff, #0066ff)",
+            }}
+          />
+        </div>
+        <p className="text-[11px] text-zinc-500 font-mono">
+          {contentLength}/5k
+          {mediaCount > 0 && ` • ${mediaCount} file`}
+        </p>
+      </div>
       <button
         type="submit"
         disabled={disabled || submitting}
         onClick={onSubmit}
-        className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-light disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all flex items-center gap-2"
+        className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-light disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all flex items-center gap-2 shadow-lg shadow-primary/20 cursor-pointer active:scale-98"
       >
         {submitting ? (
           <>
@@ -35,7 +51,10 @@ export function SubmitBar({
             Đang đăng...
           </>
         ) : (
-          "Đăng bài"
+          <>
+            <Send size={15} />
+            Đăng bài
+          </>
         )}
       </button>
     </div>

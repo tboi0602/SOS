@@ -9,7 +9,7 @@ interface StatsBlockProps {
 
 export default function StatsBlock({ postCount, memberDays }: StatsBlockProps) {
   return (
-    <div className="rounded-3xl bg-gradient-to-b from-[#08102b] to-[#04081c] p-6 border border-white/5 shadow-xl">
+    <div className="rounded-3xl bg-linear-to-b from-[#08102b] to-[#04081c] p-6 border border-white/5 shadow-xl">
       <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-2 mb-4">
         <Zap size={14} className="text-emerald-400" /> Tiến Trình Hệ
         Thống
@@ -39,7 +39,7 @@ export default function StatsBlock({ postCount, memberDays }: StatsBlockProps) {
               className="bg-black/30 rounded-2xl p-5 border border-white/5 flex items-center gap-4 hover:border-white/10 transition-colors"
             >
               <div
-                className={`size-12 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-center ${s.color}`}
+                className={`size-12 rounded-xl bg-white/2 border border-white/5 flex items-center justify-center ${s.color}`}
               >
                 <Icon size={20} />
               </div>

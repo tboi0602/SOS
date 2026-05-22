@@ -8,15 +8,13 @@ export function useAuthActivate() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading")
-  const [message, setMessage] = useState("")
+  const [status, setStatus] = useState<"loading" | "success" | "error">(
+    token ? "loading" : "error"
+  )
+  const [message, setMessage] = useState(token ? "" : "Thiếu mã kích hoạt")
 
   useEffect(() => {
-    if (!token) {
-      setStatus("error")
-      setMessage("Thiếu mã kích hoạt")
-      return
-    }
+    if (!token) return
     authService.activate(token)
       .then((res) => { setStatus("success"); setMessage(res.message) })
       .catch((err) => { setStatus("error"); setMessage(err instanceof Error ? err.message : "Kích hoạt thất bại") })

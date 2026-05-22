@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { api, type Post } from "@/service/api";
+import { postService } from "@/service/post.service";
+import type { Post, Comment } from "@/service/api";
 import { useAuth } from "@/lib/auth-context";
 
 export function usePostDetail() {
@@ -12,7 +13,7 @@ export function usePostDetail() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.posts
+postService
       .getById(id)
       .then((data) => setPost(data.post))
       .catch(() => {})
@@ -21,7 +22,7 @@ export function usePostDetail() {
 
   const handleLike = async (postId: string) => {
     try {
-      const res = await api.posts.toggleLike(postId);
+      const res = await postService.toggleLike(postId);
       setPost((prev) =>
         prev
           ? {
@@ -35,24 +36,22 @@ export function usePostDetail() {
   };
 
   const handleComment = async (postId: string, content: string) => {
-    const res = await api.posts.addComment(postId, content);
+    const res = await postService.addComment(postId, content);
+    const newComment: Comment = {
+      ...res.comment,
+      isOwner: true,
+      user: {
+        id: user?.id ?? "",
+        name: user?.name ?? "",
+        email: user?.email ?? "",
+        avatar: user?.avatar ?? "",
+      },
+    }
     setPost((prev) =>
       prev
         ? {
             ...prev,
-            comments: [
-              ...prev.comments,
-              {
-                ...res.comment,
-                isOwner: true,
-                user: {
-                  id: user?.id ?? "",
-                  name: user?.name ?? "",
-                  email: user?.email ?? "",
-                  avatar: user?.avatar ?? "",
-                },
-              },
-            ],
+            comments: [...prev.comments, newComment],
             commentCount: prev.commentCount + 1,
           }
         : null,
@@ -60,7 +59,7 @@ export function usePostDetail() {
   };
 
   const handleDeleteComment = async (postId: string, commentId: string) => {
-    await api.posts.deleteComment(postId, commentId);
+    await postService.deleteComment(postId, commentId);
     setPost((prev) =>
       prev
         ? {
@@ -72,5 +71,10 @@ export function usePostDetail() {
     );
   };
 
-  return { post, loading, handleLike, handleComment, handleDeleteComment };
+  const handleDeletePost = async (postId: string) => {
+    await postService.delete(postId);
+    setPost(null);
+  };
+
+  return { post, loading, handleLike, handleComment, handleDeleteComment, handleDeletePost, setPost };
 }

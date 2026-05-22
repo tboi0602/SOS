@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Usage:
 #   ./docker-build.sh                        # uses .env (local)
-#   ./docker-build.sh production             # uses .env.production
+#   ./docker-build.sh ../.env.docker         # uses Docker build env
 #   ./docker-build.sh .env.myenv             # uses custom env file
 #   ./docker-build.sh -e KEY=VAL             # inline env override
 #

@@ -10,12 +10,12 @@ interface ReferralLinkCardProps {
 
 export default function ReferralLinkCard({ link, copied, onCopy }: ReferralLinkCardProps) {
   return (
-    <div className="rounded-2xl bg-gradient-to-b from-white/[0.03] to-transparent border border-white/5 p-5">
+    <div className="rounded-2xl bg-linear-to-b from-white/3 to-transparent border border-white/5 p-5">
       <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-200 flex items-center gap-2 mb-3">
         <Share2 size={15} className="text-primary" /> Đường Dẫn Đăng Ký
       </h2>
       <div className="flex items-center gap-3">
-        <div className="flex-1 bg-black/40 rounded-xl px-4 py-3 border border-white/5 min-w-0">
+        <div className="flex-1 bg-black/25 rounded-xl px-4 py-3 border border-white/5 min-w-0">
           <p className="text-xs font-mono text-zinc-400 truncate">
             {link}
           </p>

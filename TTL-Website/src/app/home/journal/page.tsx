@@ -1,19 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { BookOpen, Plus, Clock, CheckCircle, XCircle, Sparkles } from "lucide-react";
+import { Plus, Sparkles, BookOpen } from "lucide-react";
 import { useJournal } from "@/hook/journal";
-import JournalHeader from "@/components/journal/JournalHeader";
-import JournalStats from "@/components/journal/JournalStats";
 import JournalCreateModal from "@/components/journal/JournalCreateModal";
 import JournalEntryCard from "@/components/journal/JournalEntryCard";
-
-const FILTERS = [
-  { key: "all", label: "Tất cả", icon: BookOpen },
-  { key: "pending", label: "Chờ duyệt", icon: Clock },
-  { key: "approved", label: "Đã duyệt", icon: CheckCircle },
-  { key: "rejected", label: "Từ chối", icon: XCircle },
-] as const;
+import ContentListLayout from "@/components/ui/ContentListLayout";
+import { statusFilters } from "@/components/ui/StatusFilterBar";
 
 export default function JournalPage() {
   const {
@@ -35,56 +27,57 @@ export default function JournalPage() {
     handleDelete,
     totalPoints,
     getImgUrl,
+    filter,
+    handleFilterChange,
+    dateFrom,
+    handleDateFromChange,
+    dateTo,
+    handleDateToChange,
+    counts,
   } = useJournal();
 
-  const [filter, setFilter] = useState<string>("all");
-
-  const filteredEntries = filter === "all"
-    ? entries
-    : entries.filter((e) => e.status === filter);
-
-  const counts = {
-    all: entries.length,
-    pending: entries.filter((e) => e.status === "pending").length,
-    approved: entries.filter((e) => e.status === "approved").length,
-    rejected: entries.filter((e) => e.status === "rejected").length,
-  };
-
   return (
-    <div className="min-h-[calc(100vh-5rem)] px-4 sm:px-6 py-6 text-white select-none">
-      <div className="max-w-3xl mx-auto space-y-6">
-        <JournalHeader onOpenCreate={() => setShowCreate(true)} />
-
-        <JournalStats count={entries.length} totalPoints={totalPoints} />
-
-        {/* Filter tabs */}
-        <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-          {FILTERS.map((f) => {
-            const Icon = f.icon;
-            const active = filter === f.key;
-            return (
-              <button
-                key={f.key}
-                onClick={() => setFilter(f.key)}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-medium transition-all duration-200 whitespace-nowrap cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50 ${
-                  active
-                    ? "bg-primary/15 text-primary border border-primary/25"
-                    : "bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 border border-transparent"
-                }`}
-              >
-                <Icon size={14} />
-                {f.label}
-                <span className={`ml-0.5 text-[10px] px-1.5 py-0.5 rounded-full ${
-                  active ? "bg-primary/20" : "bg-white/10"
-                }`}>
-                  {counts[f.key as keyof typeof counts]}
-                </span>
-              </button>
-            )
-          })}
-        </div>
-
-        {showCreate && (
+    <ContentListLayout
+      header={{
+        title: "Nhật ký",
+        subtitle: "Ghi lại hành trình của bạn",
+        icon: BookOpen,
+        iconClass: "bg-emerald-400/15",
+        createLabel: "Viết nhật ký",
+        onCreate: () => setShowCreate(true),
+        createBtnClass:
+          "bg-emerald-400 hover:bg-emerald-500 text-[#071224] shadow-emerald-400/25",
+      }}
+      stats={[
+        {
+          label: "Tổng nhật ký",
+          value: entries.length,
+          icon: BookOpen,
+          iconBg: "bg-emerald-400/10",
+          iconColor: "text-emerald-400",
+        },
+        {
+          label: "Điểm",
+          value: totalPoints,
+          icon: Sparkles,
+          iconBg: "bg-emerald-400/10",
+          iconColor: "text-emerald-400",
+          valueColor: "text-emerald-400",
+        },
+      ]}
+      filters={statusFilters(BookOpen)}
+      activeFilter={filter}
+      onFilterChange={handleFilterChange}
+      counts={counts}
+      dateFrom={dateFrom}
+      dateTo={dateTo}
+      onFromChange={handleDateFromChange}
+      onToChange={handleDateToChange}
+      skeletonName="journal-page"
+      items={entries}
+      loading={loading}
+      createForm={
+        showCreate && (
           <JournalCreateModal
             title={title}
             content={content}
@@ -99,72 +92,38 @@ export default function JournalPage() {
             onSubmit={handleCreate}
             onClose={() => setShowCreate(false)}
           />
-        )}
-
-        {loading ? (
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="glass-strong rounded-2xl overflow-hidden border border-white/6 animate-pulse">
-                <div className="aspect-video bg-white/5" />
-                <div className="p-5 space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="size-10 rounded-xl bg-white/5" />
-                    <div className="flex-1 space-y-2">
-                      <div className="h-4 bg-white/5 rounded w-1/2" />
-                      <div className="h-3 bg-white/5 rounded w-3/4" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
+        )
+      }
+      renderEmptyState={() => (
+        <div className="bg-white/1 rounded-2xl py-14 px-6 text-center border border-white/6 transition-none">
+          <div className="size-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
+            <Sparkles size={26} className="text-zinc-600" />
           </div>
-        ) : filteredEntries.length === 0 ? (
-          <div className="glass-strong rounded-2xl p-12 text-center border border-white/6">
-            <div className="size-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
-              {filter === "pending" ? (
-                <Clock size={28} className="text-zinc-600" />
-              ) : filter === "approved" ? (
-                <CheckCircle size={28} className="text-zinc-600" />
-              ) : filter === "rejected" ? (
-                <XCircle size={28} className="text-zinc-600" />
-              ) : (
-                <Sparkles size={28} className="text-zinc-600" />
-              )}
-            </div>
-            <p className="text-zinc-500 text-sm mb-1">
-              {filter === "all"
-                ? "Chưa có nhật ký nào"
-                : filter === "pending"
-                  ? "Không có nhật ký đang chờ"
-                  : filter === "approved"
-                    ? "Chưa có nhật ký được duyệt"
-                    : "Không có nhật ký bị từ chối"}
-            </p>
-            <p className="text-xs text-zinc-600 mb-4">
-              {filter === "all"
-                ? "Hãy viết nhật ký đầu tiên để bắt đầu"
-                : "Chuyển tab để xem tất cả nhật ký"}
-            </p>
-            <button
-              onClick={() => { setShowCreate(true); setFilter("all") }}
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-primary hover:bg-primary-light text-white text-sm font-semibold transition-all duration-200 shadow-lg shadow-primary/25 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary/50 outline-none"
-            >
-              <Plus size={16} /> Viết nhật ký
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredEntries.map((entry) => (
-              <JournalEntryCard
-                key={entry.id}
-                entry={entry}
-                getImgUrl={getImgUrl}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
-        )}
+          <p className="text-sm text-zinc-400 font-medium mb-1">
+            Chưa có nhật ký nào
+          </p>
+          <p className="text-xs text-zinc-600 mb-5">
+            Hãy viết nhật ký đầu tiên để nhận điểm
+          </p>
+          <button
+            onClick={() => setShowCreate(true)}
+            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-emerald-400 hover:bg-emerald-500 text-[#071224] text-sm font-semibold transition-all shadow-lg shadow-emerald-400/25 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50"
+          >
+            <Plus size={16} /> Viết nhật ký
+          </button>
+        </div>
+      )}
+    >
+      <div className="space-y-4">
+        {entries.map((entry) => (
+          <JournalEntryCard
+            key={entry.id}
+            entry={entry}
+            getImgUrl={getImgUrl}
+            onDelete={handleDelete}
+          />
+        ))}
       </div>
-    </div>
+    </ContentListLayout>
   );
 }

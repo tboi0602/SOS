@@ -3,11 +3,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useAuthForgotPassword as useForgotPassword } from "@/hook/auth";
+import { useEffect } from "react";
+import { useToast } from "@/components/ui/Toast";
 import { Loader2, Mail, ArrowLeft } from "lucide-react";
 
 export default function ForgotPasswordPage() {
   const { email, loading, sent, error, setEmail, handleSubmit } =
     useForgotPassword();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (error) toast(error, "error");
+  }, [error]);
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-[#0c1e3a] overflow-hidden">
@@ -60,11 +67,6 @@ export default function ForgotPasswordPage() {
                 </p>
               </div>
               <form onSubmit={handleSubmit} className="space-y-5">
-                {error && (
-                  <div className="rounded-xl bg-danger/15 border border-danger/30 px-4 py-3 text-sm text-danger">
-                    {error}
-                  </div>
-                )}
                 <div className="space-y-2">
                   <label
                     htmlFor="email"

@@ -13,7 +13,7 @@ interface ReferralQrCodeProps {
 
 export default function ReferralQrCode({ qrUrl, qrDownloaded, qrRef, onDownloadQR }: ReferralQrCodeProps) {
   return (
-    <div className="rounded-2xl bg-gradient-to-b from-white/[0.03] to-transparent border border-white/5 p-5 group">
+    <div className="rounded-2xl bg-linear-to-b from-white/3 to-transparent border border-white/5 p-5 group">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <QrCode size={15} className="text-cyan" />

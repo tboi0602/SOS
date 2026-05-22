@@ -26,8 +26,8 @@ export default function ProfileTabs({ tab, onTabChange }: ProfileTabsProps) {
               key={t.key}
               onClick={() => onTabChange(t.key)}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold tracking-wider uppercase transition-all duration-300 cursor-pointer ${active
-                ? "bg-gradient-to-r from-primary to-blue-600 text-white shadow-[0_10px_20px_-5px_rgba(24,86,255,0.4)] scale-100"
-                : "text-zinc-400 hover:text-white hover:bg-white/[0.02]"
+                ? "bg-linear-to-r from-primary to-blue-600 text-white shadow-[0_10px_20px_-5px_rgba(24,86,255,0.4)] scale-100"
+                : "text-zinc-400 hover:text-white hover:bg-white/2"
                 }`}
             >
               <Icon size={14} /> {t.label}

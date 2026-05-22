@@ -114,9 +114,8 @@ export function useCreatePost() {
         hashtags: hashtags.length > 0 ? hashtags : undefined,
       });
       router.push("/home");
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (err: any) {
-      // handled by api interceptor
+    } catch (err) {
+      console.log(err);
     } finally {
       setSubmitting(false);
     }

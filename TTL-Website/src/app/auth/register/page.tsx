@@ -6,6 +6,8 @@ import { useAuthRegister as useRegister } from "@/hook/auth";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 import Field from "@/components/auth/Field";
 import ReferralField from "@/components/auth/ReferralField";
+import { useEffect } from "react";
+import { useToast } from "@/components/ui/Toast";
 import { Eye, EyeOff, Loader2, UserPlus } from "lucide-react";
 
 export default function RegisterPage() {
@@ -22,6 +24,11 @@ export default function RegisterPage() {
     handleSubmit,
     handleGoogle,
   } = useRegister();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (error) toast(error, "error");
+  }, [error]);
 
   return (
     <div className="relative min-h-screen flex bg-[#0c1e3a] overflow-hidden">
@@ -97,12 +104,6 @@ export default function RegisterPage() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                {error && (
-                  <div className="rounded-xl bg-danger/15 border border-danger/30 px-4 py-3 text-sm text-danger">
-                    {error}
-                  </div>
-                )}
-
                 <Field
                   label="Họ và tên"
                   id="name"

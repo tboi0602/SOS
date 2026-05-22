@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import { api, type PublicProfileResponse } from "@/service/api";
+import { profileService } from "@/service/profile.service";
+import { postService } from "@/service/post.service";
+import type { PublicProfileResponse, Comment } from "@/service/api";
 import { useAuth } from "@/lib/auth-context";
 
 export function usePublicProfile() {
@@ -14,7 +16,7 @@ export function usePublicProfile() {
   const [tab, setTab] = useState<"profile" | "posts">("profile");
 
   useEffect(() => {
-    api.profile
+    profileService
       .getPublicProfile(id)
       .then(setData)
       .catch(() => { })
@@ -23,7 +25,7 @@ export function usePublicProfile() {
 
   const handleLike = async (postId: string) => {
     try {
-      const res = await api.posts.toggleLike(postId);
+      const res = await postService.toggleLike(postId);
       setData((prev) =>
         prev
           ? {
@@ -45,30 +47,24 @@ export function usePublicProfile() {
 
   const handleComment = async (postId: string, content: string) => {
     try {
-      const res = await api.posts.addComment(postId, content);
+      const res = await postService.addComment(postId, content);
+      const newComment: Comment = {
+        ...res.comment,
+        isOwner: true,
+        user: {
+          id: user?.id ?? "",
+          name: user?.name ?? "",
+          email: user?.email ?? "",
+          avatar: user?.avatar ?? null,
+        },
+      }
       setData((prev) =>
         prev
           ? {
             ...prev,
             posts: prev.posts.map((p) =>
               p.id === postId
-                ? {
-                  ...p,
-                  comments: [
-                    ...p.comments,
-                    {
-                      ...res.comment,
-                      isOwner: true,
-                      user: {
-                        id: user?.id ?? "",
-                        name: user?.name ?? "",
-                        email: user?.email ?? "",
-                        avatar: user?.avatar ?? null,
-                      },
-                    },
-                  ],
-                  commentCount: p.commentCount + 1,
-                }
+                ? { ...p, comments: [...p.comments, newComment], commentCount: p.commentCount + 1 }
                 : p,
             ),
           }
@@ -79,7 +75,7 @@ export function usePublicProfile() {
 
   const handleDeleteComment = async (postId: string, commentId: string) => {
     try {
-      await api.posts.deleteComment(postId, commentId);
+      await postService.deleteComment(postId, commentId);
       setData((prev) =>
         prev
           ? {
@@ -89,6 +85,7 @@ export function usePublicProfile() {
                 ? {
                   ...p,
                   comments: p.comments.filter(
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     (c: any) => c.id !== commentId,
                   ),
                   commentCount: p.commentCount - 1,
@@ -99,6 +96,17 @@ export function usePublicProfile() {
           : null,
       );
     } catch { }
+  };
+
+  const handleDeletePost = async (postId: string) => {
+    try {
+      await postService.delete(postId);
+      setData((prev) =>
+        prev
+          ? { ...prev, posts: prev.posts.filter((p) => p.id !== postId) }
+          : null,
+      );
+    } catch {}
   };
 
   const profileUrl =
@@ -124,6 +132,7 @@ export function usePublicProfile() {
     handleLike,
     handleComment,
     handleDeleteComment,
+    handleDeletePost,
     totalCompetency,
     memberDays,
     profileUrl,

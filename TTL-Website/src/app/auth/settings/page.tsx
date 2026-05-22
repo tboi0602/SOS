@@ -12,14 +12,10 @@ export default function SettingsPage() {
     job,
     address,
     saving,
-    profileMsg,
-    profileError,
     currentPassword,
     newPassword,
     confirmNewPassword,
     changingPassword,
-    pwMsg,
-    pwError,
     setName,
     setJob,
     setAddress,
@@ -62,17 +58,6 @@ export default function SettingsPage() {
           </p>
 
           <form onSubmit={handleProfileSubmit} className="space-y-4">
-            {profileMsg && (
-              <div className="rounded-xl bg-emerald-500/15 border border-emerald-500/30 px-4 py-3 text-sm text-emerald-400">
-                {profileMsg}
-              </div>
-            )}
-            {profileError && (
-              <div className="rounded-xl bg-danger/15 border border-danger/30 px-4 py-3 text-sm text-danger">
-                {profileError}
-              </div>
-            )}
-
             <div className="space-y-2">
               <label
                 htmlFor="name"
@@ -163,17 +148,6 @@ export default function SettingsPage() {
           </p>
 
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
-            {pwMsg && (
-              <div className="rounded-xl bg-emerald-500/15 border border-emerald-500/30 px-4 py-3 text-sm text-emerald-400">
-                {pwMsg}
-              </div>
-            )}
-            {pwError && (
-              <div className="rounded-xl bg-danger/15 border border-danger/30 px-4 py-3 text-sm text-danger">
-                {pwError}
-              </div>
-            )}
-
             <div className="space-y-2">
               <label
                 htmlFor="currentPassword"

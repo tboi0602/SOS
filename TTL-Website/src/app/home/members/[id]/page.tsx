@@ -13,18 +13,27 @@ import { FileText } from "lucide-react";
 
 export default function PublicProfilePage() {
   const {
-    data, loading, tab, setTab,
-    handleLike, handleComment, handleDeleteComment,
-    totalCompetency, memberDays, profileUrl, qrUrl, id, user,
+    data,
+    loading,
+    tab,
+    setTab,
+    handleLike,
+    handleComment,
+    handleDeleteComment,
+    handleDeletePost,
+    totalCompetency,
+    memberDays,
+    qrUrl,
   } = usePublicProfile();
 
   if (loading) return <Loading />;
 
-  if (!data) return (
-    <div className="min-h-screen flex items-center justify-center text-zinc-500 font-medium">
-      Không tìm thấy hồ sơ người dùng này
-    </div>
-  );
+  if (!data)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-zinc-500 font-medium">
+        Không tìm thấy hồ sơ người dùng này
+      </div>
+    );
 
   const { user: u, stats, score, rank, posts, journals } = data;
 
@@ -51,9 +60,16 @@ export default function PublicProfilePage() {
                   truyenCamHung={u.truyenCamHung ?? 0}
                   totalCompetency={totalCompetency}
                 />
-                <StatsBlock postCount={stats.postCount} memberDays={memberDays} />
+                <StatsBlock
+                  postCount={stats.postCount}
+                  memberDays={memberDays}
+                />
               </div>
-              <QrCodeSection qrUrl={qrUrl} userName={u.name} referralCode={u.referralCode} />
+              <QrCodeSection
+                qrUrl={qrUrl}
+                userName={u.name}
+                referralCode={u.referralCode}
+              />
             </div>
           )}
 
@@ -63,19 +79,23 @@ export default function PublicProfilePage() {
 
               <div className="space-y-4">
                 {posts.map((post) => (
-                  <div key={post.id} className="transition-all duration-300 hover:translate-y-[-2px]">
+                  <div
+                    key={post.id}
+                    className="transition-all duration-300 hover:-translate-y-0.5"
+                  >
                     <PostCard
                       post={post}
                       onLike={handleLike}
                       onComment={handleComment}
                       onDeleteComment={handleDeleteComment}
+                      onDeletePost={handleDeletePost}
                     />
                   </div>
                 ))}
 
                 {posts.length === 0 && journals.length === 0 && (
-                  <div className="text-center py-20 rounded-3xl bg-gradient-to-b from-[#08102b] to-[#04081c] border border-white/5">
-                    <div className="size-16 rounded-full bg-white/[0.02] border border-white/5 flex items-center justify-center mx-auto mb-4 text-zinc-600 shadow-inner">
+                  <div className="text-center py-20 rounded-3xl bg-linear-to-b from-[#08102b] to-[#04081c] border border-white/5">
+                    <div className="size-16 rounded-full bg-white/2 border border-white/5 flex items-center justify-center mx-auto mb-4 text-zinc-600 shadow-inner">
                       <FileText size={28} />
                     </div>
                     <p className="text-zinc-500 text-xs font-semibold uppercase tracking-wider">

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { api, type MemberListResponse } from "@/service/api";
+import { profileService } from "@/service/profile.service";
+import type { MemberListResponse } from "@/service/api";
 
 export function useMembers() {
   const [data, setData] = useState<MemberListResponse | null>(null);
@@ -11,26 +12,19 @@ export function useMembers() {
 
   useEffect(() => {
     let active = true;
-
-    const loadMembers = async () => {
+    const id = window.setTimeout(async () => {
       setLoading(true);
       try {
-        const res = await api.profile.listMembers(page, 50);
-        if (active) {
-          setData(res);
-        }
+        const res = await profileService.listMembers(page, 50);
+        if (active) setData(res);
       } catch {
       } finally {
-        if (active) {
-          setLoading(false);
-        }
+        if (active) setLoading(false);
       }
-    };
-
-    void loadMembers();
-
+    }, 0);
     return () => {
       active = false;
+      window.clearTimeout(id);
     };
   }, [page]);
 

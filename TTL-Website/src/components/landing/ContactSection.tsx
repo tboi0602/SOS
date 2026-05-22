@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { useToast } from "@/components/ui/Toast";
 import { useContact } from "@/hook/landing/useContact"
 import { useScrollAnimation } from "@/hook/landing/useScrollAnimation"
 import { cn } from "@/utils/cn";
@@ -43,6 +45,12 @@ function CTABanner() {
 function ContactForm() {
   const { form, status, updateField, handleSubmit } = useContact();
   const { ref, visible } = useScrollAnimation(0.1);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (status === "success") toast("Tin nhắn đã được gửi thành công!", "success");
+    if (status === "error") toast("Có lỗi xảy ra, vui lòng thử lại.", "error");
+  }, [status]);
 
   return (
     <section id="contact" className="relative py-28 overflow-hidden">
@@ -120,16 +128,6 @@ function ContactForm() {
                 </span>
                 <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               </button>
-              {status === "success" && (
-                <p className="text-center text-sm text-success">
-                  Tin nhắn đã được gửi thành công!
-                </p>
-              )}
-              {status === "error" && (
-                <p className="text-center text-sm text-danger">
-                  Có lỗi xảy ra, vui lòng thử lại.
-                </p>
-              )}
             </div>
           </div>
 

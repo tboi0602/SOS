@@ -6,6 +6,7 @@ import ProfileBanner from "@/components/profile/ProfileBanner";
 import ProfileForm from "@/components/profile/ProfileForm";
 import PasswordForm from "@/components/profile/PasswordForm";
 import Loading from "@/components/ui/Loading";
+import { Settings } from "lucide-react";
 
 const BG = "linear-gradient(145deg, #09132e, #070d22)";
 
@@ -20,8 +21,6 @@ export default function SettingsPage() {
     bio,
     saving,
     uploading,
-    profileMsg,
-    profileError,
     facebook,
     twitter,
     tiktok,
@@ -31,8 +30,6 @@ export default function SettingsPage() {
     newPassword,
     confirmNewPassword,
     changingPassword,
-    pwMsg,
-    pwError,
     setName,
     setJob,
     setAddress,
@@ -66,9 +63,13 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-5rem)] px-4 sm:px-6 py-6 text-white select-none">
+    <div className="min-h-dvh px-4 sm:px-6 py-6 text-white select-none">
       <div className="max-w-5xl mx-auto space-y-5">
-        {/* Banner */}
+        <div className="flex items-center gap-2.5 mb-2">
+          <Settings size={18} className="text-cyan" />
+          <h1 className="text-lg font-bold text-white">Cài đặt tài khoản</h1>
+        </div>
+
         <AnimatedBorder style={{ background: BG }}>
           <ProfileBanner
             name={name}
@@ -81,7 +82,6 @@ export default function SettingsPage() {
           />
         </AnimatedBorder>
 
-        {/* Main */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
           <div className="lg:col-span-3">
             <AnimatedBorder style={{ background: BG }}>
@@ -91,8 +91,6 @@ export default function SettingsPage() {
                 address={address}
                 bio={bio}
                 saving={saving}
-                msg={profileMsg}
-                error={profileError}
                 facebook={facebook}
                 twitter={twitter}
                 tiktok={tiktok}
@@ -115,8 +113,6 @@ export default function SettingsPage() {
                 newPassword={newPassword}
                 confirmNewPassword={confirmNewPassword}
                 changingPassword={changingPassword}
-                msg={pwMsg}
-                error={pwError}
                 onCurrentPasswordChange={setCurrentPassword}
                 onNewPasswordChange={setNewPassword}
                 onConfirmNewPasswordChange={setConfirmNewPassword}

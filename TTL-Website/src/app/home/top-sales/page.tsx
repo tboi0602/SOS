@@ -1,43 +1,56 @@
 "use client";
 
-import { TrendingUp, Loader2 } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { useTopSales } from "@/hook/top-sales";
 import TopSalesHeader from "@/components/top-sales/TopSalesHeader";
 import Podium from "@/components/top-sales/Podium";
 import RankingList from "@/components/top-sales/RankingList";
+import { Skeleton } from "@/components/ui/Skeleton";
 
 export default function TopSalesPage() {
   const { members, loading } = useTopSales();
-
-  if (loading) {
-    return (
-      <div className="min-h-[calc(100vh-5rem)] flex flex-col items-center justify-center space-y-3">
-        <div className="relative size-10 flex items-center justify-center">
-          <Loader2 className="animate-spin text-cyan size-8" />
-        </div>
-        <p className="text-[10px] font-bold tracking-widest text-zinc-600 uppercase">
-          Đang đồng bộ thứ hạng...
-        </p>
-      </div>
-    );
-  }
+  const top3 = members.slice(0, 3);
+  const rest = members.slice(3);
 
   return (
-    <div className="min-h-[calc(100vh-5rem)] px-4 sm:px-6 py-8 text-white select-none relative z-10 font-sans">
-      <div className="max-w-4xl mx-auto space-y-8 animate-[fadeIn_0.5s_ease-out]">
+    <div className="min-h-dvh px-4 sm:px-6 py-6">
+      <div className="max-w-5xl mx-auto space-y-5">
         <TopSalesHeader />
-        {members.length > 0 && <Podium members={members} />}
-        {members.length > 0 && <RankingList members={members} />}
-        {members.length === 0 && (
-          <div className="text-center py-24 rounded-3xl bg-black/20 border border-white/5">
-            <div className="size-16 rounded-full bg-white/2 border border-white/5 flex items-center justify-center mx-auto mb-4 text-zinc-600 shadow-inner">
-              <TrendingUp size={26} />
-            </div>
-            <p className="text-zinc-500 text-xs font-semibold uppercase tracking-wider">
-              Hệ thống chưa có dữ liệu xếp hạng
-            </p>
-          </div>
-        )}
+        <Skeleton name="top-sales" loading={loading}>
+          <>
+            {members.length === 0 && (
+              <div className="text-center py-24 rounded-3xl bg-white/1 border border-white/5">
+                <div className="size-16 rounded-full bg-white/2 border border-white/5 flex items-center justify-center mx-auto mb-4 text-zinc-600 shadow-inner">
+                  <TrendingUp size={26} />
+                </div>
+                <p className="text-zinc-500 text-xs font-semibold uppercase tracking-wider">
+                  Hệ thống chưa có dữ liệu xếp hạng
+                </p>
+              </div>
+            )}
+
+            {top3.length > 0 && <Podium members={members} />}
+
+            {rest.length > 0 && (
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="h-px flex-1 bg-linear-to-r from-transparent via-white/10 to-transparent" />
+                  <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase">
+                    Xếp hạng tiếp theo
+                  </span>
+                  <div className="h-px flex-1 bg-linear-to-r from-transparent via-white/10 to-transparent" />
+                </div>
+                <RankingList members={rest} />
+              </div>
+            )}
+
+            {members.length > 3 && (
+              <p className="text-[10px] text-zinc-600 text-center font-medium tracking-wider">
+                Hiển thị {members.length} thành viên có điểm số cao nhất
+              </p>
+            )}
+          </>
+        </Skeleton>
       </div>
     </div>
   );

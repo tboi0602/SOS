@@ -1,6 +1,6 @@
 "use client";
 
-import { Video, Upload, ImagePlus } from "lucide-react";
+import { Video, Upload, ImagePlus, FileImage, Film } from "lucide-react";
 import Image from "next/image";
 import { X } from "lucide-react";
 import type { MediaFile } from "@/hook/post";
@@ -28,19 +28,18 @@ export function MediaUploader({
 }: MediaUploaderProps) {
   return (
     <div className="glass-strong rounded-2xl p-5 space-y-4">
-      <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">
-        Ảnh & Video
+      <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+        <Film size={12} /> Ảnh & Video
       </h3>
 
-      {/* Drag and Drop Area */}
       <div
         onDragEnter={onDrag}
         onDragLeave={onDrag}
         onDragOver={onDrag}
         onDrop={onDrop}
-        className={`relative rounded-xl border-2 border-dashed transition-all p-6 text-center cursor-pointer ${dragActive
-            ? "border-cyan bg-cyan/10"
-            : "border-white/10 bg-white/3 hover:border-white/20"
+        className={`relative rounded-xl border-2 border-dashed transition-all duration-200 p-6 text-center cursor-pointer ${dragActive
+            ? "border-cyan bg-cyan/10 scale-[1.01]"
+            : "border-white/10 bg-white/3 hover:border-white/20 hover:bg-white/5"
           }`}
       >
         <input
@@ -61,10 +60,12 @@ export function MediaUploader({
         />
 
         <div className="flex flex-col items-center gap-2">
-          <Upload size={24} className="text-zinc-500" />
+          <div className={`size-12 rounded-xl flex items-center justify-center transition-all duration-200 ${dragActive ? "bg-cyan/20 scale-110" : "bg-white/5"}`}>
+            <Upload size={22} className={`transition-colors ${dragActive ? "text-cyan" : "text-zinc-500"}`} />
+          </div>
           <div>
             <p className="text-sm text-white font-medium">
-              Kéo ảnh/video vào đây
+              {dragActive ? "Thả file để tải lên" : "Kéo ảnh/video vào đây"}
             </p>
             <p className="text-xs text-zinc-500 mt-1">
               hoặc chọn file từ máy tính
@@ -72,30 +73,29 @@ export function MediaUploader({
           </div>
         </div>
 
-        {/* File Upload Buttons */}
         <div className="flex items-center justify-center gap-2 mt-4">
           <button
             type="button"
             onClick={() => imageInputRef.current?.click()}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan/10 text-cyan text-xs font-medium hover:bg-cyan/20 transition-all"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan/10 text-cyan text-xs font-medium hover:bg-cyan/20 transition-all cursor-pointer"
           >
             <ImagePlus size={14} /> Ảnh
           </button>
           <button
             type="button"
             onClick={() => videoInputRef.current?.click()}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-400/10 text-purple-400 text-xs font-medium hover:bg-purple-400/20 transition-all"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-400/10 text-purple-400 text-xs font-medium hover:bg-purple-400/20 transition-all cursor-pointer"
           >
             <Video size={14} /> Video
           </button>
         </div>
       </div>
 
-      {/* Media Preview Grid */}
       {mediaFiles.length > 0 && (
         <div>
-          <p className="text-[11px] text-zinc-500 uppercase tracking-wider mb-3">
-            {mediaFiles.length} file{mediaFiles.length > 1 ? "s" : ""} được chọn
+          <p className="text-[11px] text-zinc-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+            <FileImage size={11} />
+            {mediaFiles.length} file{mediaFiles.length > 1 ? "" : ""} đã chọn
           </p>
           <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
             {mediaFiles.map((media, i) => (
@@ -120,15 +120,18 @@ export function MediaUploader({
                   <button
                     type="button"
                     onClick={() => onRemoveMedia(i)}
-                    className="size-8 rounded-full bg-danger/80 text-white flex items-center justify-center hover:bg-danger transition-all"
+                    className="size-8 rounded-full bg-danger/80 text-white flex items-center justify-center hover:bg-danger transition-all cursor-pointer"
                   >
                     <X size={16} />
                   </button>
                 </div>
-                <span className="absolute top-1 left-1 px-2 py-1 bg-black/60 rounded text-[10px] text-white font-medium">
+                <span className="absolute top-1 left-1 px-2 py-1 bg-black/60 backdrop-blur-sm rounded text-[10px] text-white font-medium">
                   {media.file.size > 1024 * 1024
                     ? (media.file.size / (1024 * 1024)).toFixed(1) + " MB"
                     : (media.file.size / 1024).toFixed(0) + " KB"}
+                </span>
+                <span className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-black/60 backdrop-blur-sm rounded text-[9px] text-zinc-400 font-medium">
+                  {media.type === "image" ? "IMG" : "VID"}
                 </span>
               </div>
             ))}

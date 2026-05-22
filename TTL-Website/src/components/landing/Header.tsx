@@ -7,7 +7,7 @@ import { cn } from "@/utils/cn";
 import { NAV_LINKS, SITE_NAME } from "@/utils/constants";
 import Image from "next/image";
 import Link from "next/link";
-import { LogIn, UserPlus, LogOut, ChevronDown, Settings, LayoutGrid } from "lucide-react";
+import { LogIn, UserPlus, LogOut, ChevronDown, Settings } from "lucide-react";
 
 export default function Header() {
   const [open, setOpen] = useState(false);

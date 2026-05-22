@@ -1,43 +1,92 @@
-import { api } from "@/service/api"
+import { request, uploadFiles } from "./client"
+import type { Post, PostListResponse, Comment } from "@/types/post"
 
 export const postService = {
   list(page = 1, limit = 10) {
-    return api.posts.list(page, limit)
+    return request<PostListResponse>(
+      `/api/v1/posts?page=${page}&limit=${limit}`,
+    )
   },
 
-  myPosts(page = 1, limit = 10) {
-    return api.posts.myPosts(page, limit)
+  myPosts(params?: { page?: number; limit?: number; status?: string; dateFrom?: string; dateTo?: string }) {
+    const q = new URLSearchParams()
+    if (params?.page) q.set("page", String(params.page))
+    if (params?.limit) q.set("limit", String(params.limit))
+    if (params?.status) q.set("status", params.status)
+    if (params?.dateFrom) q.set("dateFrom", params.dateFrom)
+    if (params?.dateTo) q.set("dateTo", params.dateTo)
+    const query = q.toString()
+    const url = `/api/v1/posts/my-posts${query ? "?" + query : ""}`
+    return request<PostListResponse & { counts?: Record<string, number> }>(url)
   },
 
   getById(id: string) {
-    return api.posts.getById(id)
+    return request<{ post: Post }>(`/api/v1/posts/${id}`)
   },
 
-  create(data: { content: string; images?: string[]; videos?: string[]; productLink?: string | null; hashtags?: string[] }) {
-    return api.posts.create(data)
+  search(q: string) {
+    const params = new URLSearchParams({ q })
+    return request<{ posts: Post[]; total: number }>(
+      `/api/v1/posts/search?${params}`,
+    )
+  },
+
+  create(data: {
+    content: string
+    images?: string[]
+    videos?: string[]
+    productLink?: string | null
+    hashtags?: string[]
+  }) {
+    return request<{ post: Post }>("/api/v1/posts", {
+      method: "POST",
+      body: data,
+    })
   },
 
   uploadMedia(files: File[]) {
-    return api.posts.uploadMedia(files)
+    return uploadFiles<{ urls: string[] }>("/api/v1/posts/upload", files, "files")
   },
 
-  update(id: string, data: { content?: string; images?: string[]; videos?: string[]; productLink?: string | null; hashtags?: string[] }) {
-    return api.posts.update(id, data)
+  update(
+    id: string,
+    data: {
+      content?: string
+      images?: string[]
+      videos?: string[]
+      productLink?: string | null
+      hashtags?: string[]
+    },
+  ) {
+    return request<{ post: Post }>(`/api/v1/posts/${id}`, {
+      method: "PUT",
+      body: data,
+    })
   },
 
   delete(id: string) {
-    return api.posts.delete(id)
+    return request<{ message: string }>(`/api/v1/posts/${id}`, {
+      method: "DELETE",
+    })
   },
 
   toggleLike(id: string) {
-    return api.posts.toggleLike(id)
+    return request<{ liked: boolean }>(`/api/v1/posts/${id}/like`, {
+      method: "POST",
+    })
   },
 
   addComment(postId: string, content: string) {
-    return api.posts.addComment(postId, content)
+    return request<{ comment: Comment }>(
+      `/api/v1/posts/${postId}/comments`,
+      { method: "POST", body: { content } },
+    )
   },
 
   deleteComment(postId: string, commentId: string) {
-    return api.posts.deleteComment(postId, commentId)
+    return request<{ message: string }>(
+      `/api/v1/posts/${postId}/comments/${commentId}`,
+      { method: "DELETE" },
+    )
   },
 }

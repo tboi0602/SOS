@@ -8,13 +8,20 @@ import { authService } from "@/service/auth.service";
 export function useAuthRegister() {
   const router = useRouter();
   const { register, user, refreshUser } = useAuth();
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-    job: "",
-    address: "",
-    referralCode: "",
+  const [form, setForm] = useState(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const ref = params.get("ref");
+      return {
+        name: "",
+        email: "",
+        password: "",
+        job: "",
+        address: "",
+        referralCode: ref || "",
+      };
+    }
+    return { name: "", email: "", password: "", job: "", address: "", referralCode: "" };
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);

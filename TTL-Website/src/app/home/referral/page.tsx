@@ -23,18 +23,26 @@ function ReferralHeader() {
         </p>
       </div>
     </div>
-  )
+  );
 }
 
 export default function ReferralPage() {
   const {
-    user, code, link, qrUrl, copied, qrDownloaded, qrRef,
-    handleCopyCode, handleCopyLink, handleDownloadQR,
+    user,
+    code,
+    link,
+    qrUrl,
+    copied,
+    qrDownloaded,
+    qrRef,
+    handleCopyCode,
+    handleCopyLink,
+    handleDownloadQR,
   } = useReferral();
 
   return (
-    <div className="min-h-[calc(100vh-5rem)] px-4 sm:px-6 py-8 text-white select-none relative z-10 font-sans">
-      <div className="max-w-5xl mx-auto space-y-8 animate-[fadeIn_0.5s_ease-out]">
+    <div className="min-h-screen px-4 sm:px-6 py-8 text-white select-none relative z-10 font-sans">
+      <div className="max-w-5xl mx-auto space-y-8">
         <ReferralHeader />
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -45,8 +53,16 @@ export default function ReferralPage() {
               qrRef={qrRef}
               onDownloadQR={handleDownloadQR}
             />
-            <ReferralCodeCard code={code} copied={copied} onCopy={handleCopyCode} />
-            <ReferralLinkCard link={link} copied={copied} onCopy={handleCopyLink} />
+            <ReferralCodeCard
+              code={code}
+              copied={copied}
+              onCopy={handleCopyCode}
+            />
+            <ReferralLinkCard
+              link={link}
+              copied={copied}
+              onCopy={handleCopyLink}
+            />
           </div>
 
           <div className="lg:col-span-3 space-y-4">

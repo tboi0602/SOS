@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuthLogin as useLogin } from "@/hook/auth";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
+import { useEffect } from "react";
+import { useToast } from "@/components/ui/Toast";
 import { Eye, EyeOff, Loader2, LogIn } from "lucide-react";
 
 export default function LoginPage() {
@@ -22,6 +24,11 @@ export default function LoginPage() {
     handleGoogle,
     handleResendActivation,
   } = useLogin();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (error) toast(error, "error");
+  }, [error]);
 
   return (
     <div className="relative min-h-screen flex bg-[#0c1e3a] overflow-hidden">
@@ -95,12 +102,6 @@ export default function LoginPage() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-5">
-                {error && (
-                  <div className="rounded-xl bg-danger/15 border border-danger/30 px-4 py-3 text-sm text-danger">
-                    {error}
-                  </div>
-                )}
-
                 <div className="space-y-2">
                   <label
                     htmlFor="email"

@@ -21,7 +21,7 @@ export default function MembersPagination({ page, totalPages, onPageChange }: Me
         <button
           disabled={page <= 1}
           onClick={() => onPageChange(Math.max(1, page - 1))}
-          className="size-8 rounded-lg flex items-center justify-center border border-white/5 text-zinc-400 hover:text-white bg-white/[0.02] hover:bg-white/5 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
+          className="size-8 rounded-lg flex items-center justify-center border border-white/5 text-zinc-400 hover:text-white bg-white/2 hover:bg-white/5 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
         >
           <ChevronLeft size={14} />
         </button>
@@ -33,7 +33,7 @@ export default function MembersPagination({ page, totalPages, onPageChange }: Me
         <button
           disabled={page >= totalPages}
           onClick={() => onPageChange(page + 1)}
-          className="size-8 rounded-lg flex items-center justify-center border border-white/5 text-zinc-400 hover:text-white bg-white/[0.02] hover:bg-white/5 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
+          className="size-8 rounded-lg flex items-center justify-center border border-white/5 text-zinc-400 hover:text-white bg-white/2 hover:bg-white/5 disabled:opacity-20 disabled:cursor-not-allowed transition-all cursor-pointer"
         >
           <ChevronRight size={14} />
         </button>

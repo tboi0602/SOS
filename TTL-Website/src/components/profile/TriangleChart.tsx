@@ -96,7 +96,7 @@ export default function TriangleChart({
       {/* Icons + labels + scores at vertices */}
       {vertices.map((v, i) => {
         const Icon = [Clock, Shield, Megaphone][i];
-        const labels = ["KỶ LUẬT", "ĐẠO ĐỨC", "TRUYỀN CẢM HỨNG"];
+        const labels = ["KỶ LUẬT", "ĐẠO ĐỨC", "CẢM HỨNG"];
         const isTop = i === 0;
         const dx = i === 0 ? 0 : i === 1 ? 1 : -1;
         return (
@@ -118,7 +118,7 @@ export default function TriangleChart({
               </div>
             </foreignObject>
             <text
-              x={v.x + dx}
+              x={v.x + dx *-12}
               y={isTop ? v.y - 30 : v.y + 34}
               textAnchor={isTop ? "middle" : dx > 0 ? "start" : "end"}
               fontSize="10"
@@ -129,7 +129,7 @@ export default function TriangleChart({
               {labels[i]}
             </text>
             <text
-              x={v.x + dx * 40}
+              x={v.x + dx * 15}
               y={isTop ? v.y - 48 : v.y + 52}
               textAnchor={isTop ? "middle" : dx > 0 ? "start" : "end"}
               fontSize="16"

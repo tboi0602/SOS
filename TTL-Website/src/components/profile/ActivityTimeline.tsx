@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  TrendingUp,
-  Award,
-  Calendar,
-  Shield,
-  Star,
-} from "lucide-react";
+import { TrendingUp, Award, Calendar, Shield, Star } from "lucide-react";
 
 interface Activity {
   icon: string;

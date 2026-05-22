@@ -8,7 +8,7 @@ const inputStyle =
 
 export default function PasswordForm({
   currentPassword, newPassword, confirmNewPassword,
-  changingPassword, msg, error,
+  changingPassword,
   onCurrentPasswordChange, onNewPasswordChange, onConfirmNewPasswordChange,
   onSubmit,
 }: {
@@ -16,8 +16,6 @@ export default function PasswordForm({
   newPassword: string;
   confirmNewPassword: string;
   changingPassword: boolean;
-  msg: string;
-  error: string;
   onCurrentPasswordChange: (v: string) => void;
   onNewPasswordChange: (v: string) => void;
   onConfirmNewPasswordChange: (v: string) => void;
@@ -37,43 +35,61 @@ export default function PasswordForm({
           <p className="text-[10px] text-zinc-500 mt-1">Đổi mật khẩu đăng nhập</p>
         </div>
 
-        {msg && (
-          <div className="rounded-lg bg-emerald-500/10 border border-emerald-500/20 px-3 py-2.5 text-[11px] text-emerald-400 font-medium flex items-center gap-2">
-            <div className="size-1.5 rounded-full bg-emerald-400 shrink-0" /> {msg}
-          </div>
-        )}
-        {error && (
-          <div className="rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2.5 text-[11px] text-red-400 font-medium flex items-center gap-2">
-            <div className="size-1.5 rounded-full bg-red-400 shrink-0" /> {error}
-          </div>
-        )}
-
         <div className="space-y-3">
-          {[
-            { label: "Mật khẩu hiện tại", val: currentPassword, set: onCurrentPasswordChange, show: showCur, toggle: () => setShowCur(!showCur) },
-            { label: "Mật khẩu mới", val: newPassword, set: onNewPasswordChange, show: showNew, toggle: () => setShowNew(!showNew), placeholder: "Ít nhất 6 ký tự" },
-            { label: "Xác nhận mật khẩu", val: confirmNewPassword, set: onConfirmNewPasswordChange, show: showCon, toggle: () => setShowCon(!showCon), placeholder: "Nhập lại mật khẩu mới" },
-          ].map((f) => (
-            <div key={f.label} className="space-y-1.5">
-              <label className="text-[10px] text-zinc-500 font-bold tracking-wider uppercase flex items-center gap-1.5">
-                <Lock size={10} /> {f.label}
-              </label>
-              <div className="relative">
-                <input
-                  type={f.show ? "text" : "password"}
-                  value={f.val}
-                  onChange={(e) => f.set(e.target.value)}
-                  placeholder={(f as any).placeholder || ""}
-                  required
-                  minLength={f.label.includes("mới") && !f.label.includes("nhận") ? 6 : undefined}
-                  className={`${inputStyle} pr-9`}
-                />
-                <button type="button" onClick={f.toggle} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-400 transition-colors cursor-pointer">
-                  {f.show ? <EyeOff size={14} /> : <Eye size={14} />}
-                </button>
-              </div>
+          <div className="space-y-1.5">
+            <label className="text-[10px] text-zinc-500 font-bold tracking-wider uppercase flex items-center gap-1.5">
+              <Lock size={10} /> Mật khẩu hiện tại
+            </label>
+            <div className="relative">
+              <input
+                type={showCur ? "text" : "password"}
+                value={currentPassword}
+                onChange={(e) => onCurrentPasswordChange(e.target.value)}
+                required
+                className={`${inputStyle} pr-9`}
+              />
+              <button type="button" onClick={() => setShowCur(!showCur)} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-400 transition-colors cursor-pointer">
+                {showCur ? <EyeOff size={14} /> : <Eye size={14} />}
+              </button>
             </div>
-          ))}
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-[10px] text-zinc-500 font-bold tracking-wider uppercase flex items-center gap-1.5">
+              <Lock size={10} /> Mật khẩu mới
+            </label>
+            <div className="relative">
+              <input
+                type={showNew ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => onNewPasswordChange(e.target.value)}
+                placeholder="Ít nhất 6 ký tự"
+                required
+                minLength={6}
+                className={`${inputStyle} pr-9`}
+              />
+              <button type="button" onClick={() => setShowNew(!showNew)} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-400 transition-colors cursor-pointer">
+                {showNew ? <EyeOff size={14} /> : <Eye size={14} />}
+              </button>
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-[10px] text-zinc-500 font-bold tracking-wider uppercase flex items-center gap-1.5">
+              <Lock size={10} /> Xác nhận mật khẩu
+            </label>
+            <div className="relative">
+              <input
+                type={showCon ? "text" : "password"}
+                value={confirmNewPassword}
+                onChange={(e) => onConfirmNewPasswordChange(e.target.value)}
+                placeholder="Nhập lại mật khẩu mới"
+                required
+                className={`${inputStyle} pr-9`}
+              />
+              <button type="button" onClick={() => setShowCon(!showCon)} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-600 hover:text-zinc-400 transition-colors cursor-pointer">
+                {showCon ? <EyeOff size={14} /> : <Eye size={14} />}
+              </button>
+            </div>
+          </div>
         </div>
 
         <button

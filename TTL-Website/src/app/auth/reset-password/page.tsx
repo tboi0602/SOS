@@ -1,6 +1,7 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
+import { useToast } from "@/components/ui/Toast";
 import Image from "next/image";
 import Link from "next/link";
 import { useAuthResetPassword as useResetPassword } from "@/hook/auth";
@@ -28,6 +29,11 @@ function ResetPasswordContent() {
     handleSubmit,
     router,
   } = useResetPassword();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (error) toast(error, "error");
+  }, [error]);
 
   if (!token) {
     return (
@@ -98,11 +104,6 @@ function ResetPasswordContent() {
                 </p>
               </div>
               <form onSubmit={handleSubmit} className="space-y-5">
-                {error && (
-                  <div className="rounded-xl bg-danger/15 border border-danger/30 px-4 py-3 text-sm text-danger">
-                    {error}
-                  </div>
-                )}
                 <div className="space-y-2">
                   <label
                     htmlFor="password"

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Briefcase } from "lucide-react";
+import { Briefcase, Shield, Medal, Sparkles } from "lucide-react";
 import type { MemberInfo } from "@/service/api";
 
 interface MembersGridProps {
@@ -13,55 +13,60 @@ export default function MembersGrid({ filtered }: MembersGridProps) {
   const router = useRouter();
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-      {filtered.map((m, index) => (
-        <div
-          key={m.id}
-          style={{ animationDelay: `${index * 30}ms` }}
-          onClick={() => router.push(`/home/members/${m.id}`)}
-          className="rounded-2xl bg-gradient-to-b from-white/[0.03] to-transparent border border-white/5 p-4 flex items-center gap-4 hover:border-cyan/30 hover:bg-black/40 transition-all duration-300 group cursor-pointer hover:-translate-y-0.5 animate-[scaleUp_0.4s_ease-out_both]"
-        >
-          <div className="relative shrink-0">
-            <div className="absolute -inset-0.5 rounded-xl bg-gradient-to-br from-primary to-cyan opacity-0 group-hover:opacity-30 blur-sm transition duration-300" />
-            {m.avatar ? (
-              <Image
-                src={m.avatar}
-                alt={m.name}
-                width={44}
-                height={44}
-                className="relative size-11 rounded-xl object-cover ring-1 ring-white/10"
-              />
-            ) : (
-              <div className="relative size-11 rounded-xl bg-[#0f172a] border border-white/10 flex items-center justify-center text-base font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-zinc-500 shadow-md">
-                {m.name.charAt(0).toUpperCase()}
+    <div className="rounded-2xl border bg-white/1 border-white/5 overflow-hidden">
+      <div className="divide-y gap-1 divide-white/5">
+        {filtered.map((m, i) => {
+          const score = m.kyLuat != null ? Math.round((m.kyLuat + (m.daoDuc ?? 0) + (m.truyenCamHung ?? 0)) / 3) : null;
+          return (
+            <div
+              key={m.id}
+              onClick={() => router.push(`/home/members/${m.id}`)}
+              className="w-full flex items-center gap-4 px-5 py-3.5 hover:bg-white/2 transition-all cursor-pointer group"
+            >
+              <div className="shrink-0">
+                {m.avatar ? (
+                  <Image src={m.avatar} alt={m.name} width={40} height={40} className="size-10 rounded-xl object-cover ring-1 ring-white/10 group-hover:ring-primary/30 transition-all" />
+                ) : (
+                  <div className="size-10 rounded-xl bg-linear-to-br from-primary/15 to-cyan/10 flex items-center justify-center text-sm font-bold text-primary">
+                    {m.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
-          <div className="flex-1 min-w-0 space-y-0.5">
-            <p className="text-xs font-bold text-white group-hover:text-cyan transition-colors truncate tracking-wide">
-              {m.name}
-            </p>
-            <p className="text-[10px] text-zinc-500 truncate font-light flex items-center gap-1">
-              <Briefcase size={10} className="text-zinc-600 shrink-0" /> {m.job || "Thành viên hệ thống"}
-            </p>
-          </div>
+              <div className="flex-1 min-w-0 grid grid-cols-6 gap-3 items-center">
+                <div className="col-span-2 min-w-0">
+                  <p className="text-sm font-semibold text-white group-hover:text-cyan transition-colors truncate">{m.name}</p>
+                  <p className="text-[11px] text-zinc-500 truncate flex items-center gap-1 mt-0.5">
+                    <Briefcase size={10} className="shrink-0 text-zinc-600" /> {m.job || "Thành viên"}
+                  </p>
+                </div>
 
-          <div className="shrink-0 pl-1">
-            {m.isActive ? (
-              <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-[9px] font-bold text-emerald-400">
-                <span className="size-1 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="hidden xl:inline">Hoạt động</span>
+                <div className="col-span-3 grid grid-cols-3 gap-2 text-center">
+                  <div className="px-2 py-1.5 rounded-lg bg-black/20 border border-white/5">
+                    <p className="text-xs font-bold text-cyan">{m.kyLuat ?? 0}</p>
+                    <p className="text-[9px] text-zinc-600 flex items-center justify-center gap-0.5"><Shield size={9} /> Kỷ luật</p>
+                  </div>
+                  <div className="px-2 py-1.5 rounded-lg bg-black/20 border border-white/5">
+                    <p className="text-xs font-bold text-emerald-400">{m.daoDuc ?? 0}</p>
+                    <p className="text-[9px] text-zinc-600 flex items-center justify-center gap-0.5"><Medal size={9} /> Đạo đức</p>
+                  </div>
+                  <div className="px-2 py-1.5 rounded-lg bg-black/20 border border-white/5">
+                    <p className="text-xs font-bold text-amber-400">{m.truyenCamHung ?? 0}</p>
+                    <p className="text-[9px] text-zinc-600 flex items-center justify-center gap-0.5"><Sparkles size={9} /> TH</p>
+                  </div>
+                </div>
+
+                {score !== null && (
+                  <div className="text-right">
+                    <span className="text-sm font-mono font-bold text-white">{score}</span>
+                    <p className="text-[9px] text-zinc-600 uppercase tracking-wider">Điểm</p>
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-zinc-500/10 border border-zinc-500/20 text-[9px] font-bold text-zinc-500">
-                <span className="size-1 rounded-full bg-zinc-600" />
-                <span className="hidden xl:inline">Chưa kích hoạt</span>
-              </div>
-            )}
-          </div>
-        </div>
-      ))}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

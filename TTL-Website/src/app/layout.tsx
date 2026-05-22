@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import { AuthProvider } from "@/lib/auth-context";
+import { ToastProvider } from "@/components/ui/Toast";
 import "./globals.css";
-import ChatBox from "@/components/landing/ChatBox";
+import ChatBox from "@/components/ui/ChatBox";
 
 const beVietnam = Be_Vietnam_Pro({
   variable: "--font-sans",
@@ -54,8 +55,10 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <AuthProvider>
-          <ChatBox />
-          {children}
+          <ToastProvider>
+            <ChatBox />
+            {children}
+          </ToastProvider>
         </AuthProvider>
         <Script
           src="https://accounts.google.com/gsi/client"

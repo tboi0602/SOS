@@ -1,87 +1,135 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback } from "react"
-import { api, type Submission } from "@/service/api"
+import { useState, useEffect, useCallback } from "react";
+import { submissionService } from "@/service/submission.service";
+import type { Submission } from "@/service/api";
 
 export function useVideoSubmissions() {
-  const [submissions, setSubmissions] = useState<Submission[]>([])
-  const [loading, setLoading] = useState(true)
-  const [title, setTitle] = useState("")
-  const [videoUrl, setVideoUrl] = useState("")
-  const [note, setNote] = useState("")
-  const [creating, setCreating] = useState(false)
-  const [penalty, setPenalty] = useState<{ penalized: boolean; daysOverdue: number; deducted?: number } | null>(null)
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [title, setTitle] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [note, setNote] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [penalty, setPenalty] = useState<{ penalized: boolean; daysOverdue: number; deducted?: number } | null>(null);
 
-  const fetchSubmissions = useCallback(async () => {
-    setLoading(true)
+  const [filter, setFilter] = useState("all");
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [counts, setCounts] = useState<Record<string, number>>({ all: 0, pending: 0, approved: 0, rejected: 0 });
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+
+  const fetchSubmissions = useCallback(async (p?: number) => {
+    setLoading(true);
     try {
-      const res = await api.submission.getMySubmissions()
-      setSubmissions(res.submissions)
+      const res = await submissionService.getMySubmissions({
+        page: p ?? page,
+        limit: 10,
+        status: filter,
+        dateFrom: dateFrom || undefined,
+        dateTo: dateTo || undefined,
+      });
+      setSubmissions(res.submissions);
+      setTotal(res.total);
+      setTotalPages(res.totalPages);
+      if (res.counts) setCounts(res.counts);
     } catch {
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [])
+  }, [filter, dateFrom, dateTo, page]);
 
   const checkPenalty = useCallback(async () => {
     try {
-      const res = await api.submission.checkPenalty()
-      setPenalty(res)
-    } catch {
-    }
-  }, [])
+      const res = await submissionService.checkPenalty();
+      setPenalty(res);
+    } catch {}
+  }, []);
 
   useEffect(() => {
-    let active = true
-    const load = async () => {
-      if (!active) return
-      await Promise.all([fetchSubmissions(), checkPenalty()])
-    }
-    void load()
-    return () => { active = false }
-  }, [fetchSubmissions, checkPenalty])
+    let active = true;
+    const id = window.setTimeout(async () => {
+      if (!active) return;
+      await Promise.all([fetchSubmissions(), checkPenalty()]);
+    }, 0);
+    return () => {
+      active = false;
+      window.clearTimeout(id);
+    };
+  }, [fetchSubmissions, checkPenalty]);
 
   const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!title.trim()) return
-    setCreating(true)
+    e.preventDefault();
+    if (!title.trim()) return;
+    setCreating(true);
     try {
-      await api.submission.create({
+      await submissionService.create({
         title: title.trim(),
         videoUrl: videoUrl.trim() || undefined,
         note: note.trim() || undefined,
-      })
-      setTitle("")
-      setVideoUrl("")
-      setNote("")
-      await fetchSubmissions()
-      await checkPenalty()
+      });
+      setTitle("");
+      setVideoUrl("");
+      setNote("");
+      setPage(1);
+      await fetchSubmissions(1);
+      await checkPenalty();
     } catch {
     } finally {
-      setCreating(false)
+      setCreating(false);
     }
-  }
+  };
 
   const handleDelete = async (id: string) => {
     try {
-      await api.submission.delete(id)
-      setSubmissions((prev) => prev.filter((s) => s.id !== id))
-    } catch {
-    }
-  }
+      await submissionService.delete(id);
+      setSubmissions((prev) => prev.filter((s) => s.id !== id));
+    } catch {}
+  };
 
-  const approvedCount = submissions.filter((s) => s.status === "approved").length
-  const totalPoints = submissions.reduce((sum, s) => sum + s.points, 0)
+  const handleFilterChange = (f: string) => {
+    setFilter(f);
+    setPage(1);
+  };
+
+  const handleDateFromChange = (v: string) => {
+    setDateFrom(v);
+    setPage(1);
+  };
+
+  const handleDateToChange = (v: string) => {
+    setDateTo(v);
+    setPage(1);
+  };
+
+  const totalPoints = submissions.reduce((sum, s) => sum + s.points, 0);
 
   return {
     submissions,
     loading,
-    title, setTitle,
-    videoUrl, setVideoUrl,
-    note, setNote,
-    creating, handleCreate, handleDelete,
+    title,
+    setTitle,
+    videoUrl,
+    setVideoUrl,
+    note,
+    setNote,
+    creating,
+    handleCreate,
+    handleDelete,
     penalty,
-    approvedCount,
     totalPoints,
-  }
+    filter,
+    handleFilterChange,
+    dateFrom,
+    handleDateFromChange,
+    dateTo,
+    handleDateToChange,
+    counts,
+    page,
+    totalPages,
+    total,
+    setPage,
+  };
 }
