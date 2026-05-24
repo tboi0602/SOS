@@ -83,25 +83,25 @@ export default function AdminDashboard() {
                 label: "Tổng thành viên",
                 value: stats.total,
                 icon: Users,
-                color: "from-blue-500 to-blue-600",
+                color: "from-blue-400 to-blue-600",
               },
               {
                 label: "Đang hoạt động",
                 value: stats.active,
                 icon: Award,
-                color: "from-emerald-500 to-emerald-600",
+                color: "from-blue-400 to-blue-600",
               },
               {
                 label: "Tổng điểm",
                 value: stats.totalScore.toLocaleString("vi-VN"),
                 icon: TrendingUp,
-                color: "from-violet-500 to-violet-600",
+                color: "from-blue-400 to-blue-600",
               },
               {
                 label: "Bài viết",
                 value: stats.totalPosts.toLocaleString("vi-VN"),
                 icon: FileText,
-                color: "from-amber-500 to-amber-600",
+                color: "from-blue-400 to-blue-600",
               },
             ].map((card) => {
               const Icon = card.icon;
@@ -419,7 +419,7 @@ export default function AdminDashboard() {
                         </span>
                       ) : (
                         <span className="text-xs text-danger bg-danger/10 px-2 py-0.5 rounded-full font-medium">
-                          Đã chặn
+                          Chưa kích hoạt
                         </span>
                       )}
                     </td>

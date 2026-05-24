@@ -25,7 +25,7 @@ function ActivateContent() {
             </h1>
             <p className="text-zinc-400">{message}</p>
             <button
-              onClick={() => router.push("/")}
+              onClick={() => router.push("/home")}
               className="mt-4 rounded-xl bg-primary hover:bg-primary-light text-white font-semibold px-6 py-3 text-sm transition-all cursor-pointer"
             >
               Về trang chủ

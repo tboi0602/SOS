@@ -41,7 +41,7 @@ export default function ReferralPage() {
   } = useReferral();
 
   return (
-    <div className="min-h-screen px-4 sm:px-6 py-8 text-white select-none relative z-10 font-sans">
+    <div className="min-h-screen px-4 sm:px-6 py-8 text-white select-none relative z-10">
       <div className="max-w-5xl mx-auto space-y-8">
         <ReferralHeader />
 

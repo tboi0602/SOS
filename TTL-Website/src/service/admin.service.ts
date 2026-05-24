@@ -64,12 +64,26 @@ export const adminService = {
     })
   },
 
-  getActivityLog(page = 1, limit = 50) {
+  getActivityLog(page = 1, limit = 50, dateFrom?: string, dateTo?: string) {
     const params = new URLSearchParams({
       page: String(page),
       limit: String(limit),
     })
+    if (dateFrom) params.set("dateFrom", dateFrom)
+    if (dateTo) params.set("dateTo", dateTo)
     return request<ActivityLogResponse>(`/api/v1/admin/activity-log?${params}`)
+  },
+
+  deleteActivityLog(id: string) {
+    return request<{ message: string }>(`/api/v1/admin/activity-log/${id}`, {
+      method: "DELETE",
+    });
+  },
+
+  deleteAllActivityLog() {
+    return request<{ message: string; count: number }>("/api/v1/admin/activity-log", {
+      method: "DELETE",
+    });
   },
 
   listPosts(page = 1, limit = 20) {

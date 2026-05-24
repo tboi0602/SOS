@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import {
@@ -20,6 +21,7 @@ import {
 } from "lucide-react";
 import type { Post } from "@/service/api";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import LoginRequiredModal from "@/components/ui/LoginRequiredModal";
 import { useToast } from "@/components/ui/Toast";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
@@ -51,6 +53,7 @@ export default function PostCard({
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -255,7 +258,7 @@ export default function PostCard({
         {/* Action Buttons */}
         <div className="flex items-center gap-1 mt-2">
           <button
-            onClick={() => onLike(post.id)}
+            onClick={() => user ? onLike(post.id) : setShowLoginModal(true)}
             className={`flex items-center justify-center gap-1.5 flex-1 py-2 rounded-lg text-sm transition-all cursor-pointer ${post.liked ? "text-cyan bg-cyan/10" : "text-zinc-400 hover:text-cyan hover:bg-white/5"}`}
           >
             <ThumbsUp size={16} fill={post.liked ? "currentColor" : "none"} />
@@ -275,25 +278,36 @@ export default function PostCard({
       {/* Comments Section */}
       {showComments && (
         <div className="border-t border-white/6">
-          <form
-            onSubmit={handleComment}
-            className="flex items-center gap-2 px-5 py-3 border-b border-white/6"
-          >
-            <input
-              type="text"
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-              placeholder="Viết bình luận..."
-              className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-primary/30 transition-colors"
-            />
-            <button
-              type="submit"
-              disabled={!commentText.trim() || commenting}
-              className="text-primary hover:text-primary-light disabled:opacity-30 transition-colors cursor-pointer p-1"
+          {user ? (
+            <form
+              onSubmit={handleComment}
+              className="flex items-center gap-2 px-5 py-3 border-b border-white/6"
             >
-              <Send size={16} />
-            </button>
-          </form>
+              <input
+                type="text"
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+                placeholder="Viết bình luận..."
+                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-primary/30 transition-colors"
+              />
+              <button
+                type="submit"
+                disabled={!commentText.trim() || commenting}
+                className="text-primary hover:text-primary-light disabled:opacity-30 transition-colors cursor-pointer p-1"
+              >
+                <Send size={16} />
+              </button>
+            </form>
+          ) : (
+            <div className="px-5 py-3 border-b border-white/6 text-center">
+              <button
+                onClick={() => setShowLoginModal(true)}
+                className="text-xs text-primary hover:text-primary-light transition-colors cursor-pointer"
+              >
+                Đăng nhập để bình luận
+              </button>
+            </div>
+          )}
           <div className="px-5 py-2 space-y-3 max-h-64 overflow-y-auto">
             {post.comments.length === 0 && (
               <p className="text-xs text-zinc-600 text-center py-3">
@@ -335,10 +349,14 @@ export default function PostCard({
         </div>
       )}
 
-      {/* Lightbox */}
-      {activeImageIndex !== null && (
-        <div className="fixed inset-0 bg-[#13223d]/65 backdrop-blur-sm z-50 flex flex-col items-center justify-center select-none">
-          <div className="absolute top-0 inset-x-0 p-4 flex items-center justify-between text-white/80 z-55">
+      {/* Lightbox — portal ra body để tránh ảnh hưởng từ CSS cha */}
+      {typeof window === "object" && activeImageIndex !== null && createPortal(
+        <div
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center select-none"
+          style={{ background: "rgba(19,34,61,0.65)", backdropFilter: "blur(6px)" }}
+          onClick={() => setActiveImageIndex(null)}
+        >
+          <div className="absolute top-0 inset-x-0 p-4 flex items-center justify-between text-white/80 z-10">
             <span className="text-sm text-[#34d6ff] font-bold">
               Ảnh {activeImageIndex + 1} trên {post.images.length}
             </span>
@@ -349,31 +367,34 @@ export default function PostCard({
               <X size={24} />
             </button>
           </div>
-          <div className="relative w-full max-w-5xl h-full flex items-center justify-center px-4 py-16">
+          <div
+            className="relative w-full max-w-5xl h-full flex items-center justify-center px-4 py-16"
+            onClick={(e) => e.stopPropagation()}
+          >
             <img
               src={getImageUrl(post.images[activeImageIndex])}
               alt=""
               className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
             />
           </div>
           {post.images.length > 1 && (
             <>
               <button
-                onClick={handlePrevImage}
-                className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/5 hover:bg-white/15 active:scale-95 border border-white/10 rounded-full text-white transition-all cursor-pointer z-55"
+                onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/5 hover:bg-white/15 active:scale-95 border border-white/10 rounded-full text-white transition-all cursor-pointer z-10"
               >
                 <ChevronLeft size={24} />
               </button>
               <button
-                onClick={handleNextImage}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/5 hover:bg-white/15 active:scale-95 border border-white/10 rounded-full text-white transition-all cursor-pointer z-55"
+                onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/5 hover:bg-white/15 active:scale-95 border border-white/10 rounded-full text-white transition-all cursor-pointer z-10"
               >
                 <ChevronRight size={24} />
               </button>
             </>
           )}
-        </div>
+        </div>,
+        document.body
       )}
 
       <ConfirmDialog
@@ -385,6 +406,12 @@ export default function PostCard({
         variant="danger"
         onConfirm={handleDeleteConfirm}
         onCancel={() => setConfirmDelete(false)}
+      />
+
+      <LoginRequiredModal
+        open={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        message="Vui lòng đăng nhập để tương tác với bài viết."
       />
     </div>
   );

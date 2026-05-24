@@ -137,22 +137,24 @@ export default function ChatBox() {
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
             className="w-90 sm:w-100 rounded-2xl bg-[#0c1e3a]/95 backdrop-blur-xl border border-white/8 shadow-2xl shadow-black/30 overflow-hidden origin-bottom-right"
           >
-            <div className="flex items-center justify-between px-5 py-4 border-b border-white/6">
-              <Image
-                src="/images/logo.png"
-                alt="SOS"
-                width={36}
-                height={36}
-                unoptimized
-              />
-              <div>
-                <p className="text-sm font-semibold text-white flex items-center gap-1.5">
-                  SOS AI
-                  <Sparkles size={12} className="text-cyan" />
-                </p>
-                <p className="text-[10px] text-zinc-500">
-                  Trợ lý ảo — Hệ thống bán hàng toàn diện
-                </p>
+            <div className="flex items-center justify-between  px-5 py-4 border-b border-white/6">
+              <div className="flex items-center gap-2">
+                <Image
+                  src="/images/logo.png"
+                  alt="SOS"
+                  width={36}
+                  height={36}
+                  unoptimized
+                />
+                <div>
+                  <p className="text-sm font-semibold text-white flex items-center gap-1.5">
+                    SOS AI
+                    <Sparkles size={12} className="text-cyan" />
+                  </p>
+                  <p className="text-[10px] text-zinc-500">
+                    Trợ lý ảo — Hệ thống bán hàng toàn diện
+                  </p>
+                </div>
               </div>
               <button
                 onClick={() => setOpen(false)}
@@ -229,7 +231,7 @@ export default function ChatBox() {
 
       <button
         onClick={() => setOpen(!open)}
-        className="group relative w-14 h-14 rounded-full flex items-center justify-center cursor-pointer focus-visible:ring-2 focus-visible:ring-white transition-all duration-300 hover:scale-110 active:scale-95"
+        className=" group relative w-14 h-14 rounded-full flex items-center justify-center cursor-pointer focus-visible:ring-2 focus-visible:ring-white transition-all duration-300 hover:scale-110 active:scale-95"
         aria-label={open ? "Đóng chat" : "Mở chat"}
       >
         <div className="absolute inset-0 rounded-full bg-primary/20 backdrop-blur-xl border border-white/20 shadow-xl shadow-primary/30 group-hover:shadow-primary/50 transition-shadow duration-300" />
@@ -250,7 +252,10 @@ export default function ChatBox() {
           )}
         </span>
         {!open && (
-          <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-success animate-pulse border-2 border-[#0c1e3a] z-20" />
+          <>
+            <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-success border-2 border-[#0c1e3a] z-20" />
+            <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5  rounded-full bg-success animate-ping border-2 border-[#0c1e3a] z-19" />
+          </>
         )}
       </button>
     </div>

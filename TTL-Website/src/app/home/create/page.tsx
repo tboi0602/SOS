@@ -8,10 +8,12 @@ import { MediaUploader } from "@/components/post/MediaUploader";
 import { ProductLinkInput } from "@/components/post/ProductLinkInput";
 import { HashtagInput } from "@/components/post/HashtagInput";
 import { SubmitBar } from "@/components/post/SubmitBar";
-import { useEffect } from "react";
+import LoginRequiredModal from "@/components/ui/LoginRequiredModal";
+import { useState } from "react";
 
 export default function CreatePostPage() {
   const router = useRouter();
+  const [showLoginModal, setShowLoginModal] = useState(true);
   const {
     user,
     content,
@@ -36,12 +38,6 @@ export default function CreatePostPage() {
     handleHashtagKey,
     handleSubmit,
   } = useCreatePost();
-
-  useEffect(() => {
-    if (!user) {
-      router.push("/auth/login");
-    }
-  }, [user, router]);
 
   return (
     <div className="min-h-screen flex justify-center items-center px-4 sm:px-6 py-6 text-white">
@@ -102,6 +98,12 @@ export default function CreatePostPage() {
           />
         </form>
       </div>
+
+      <LoginRequiredModal
+        open={showLoginModal && !user}
+        onClose={() => setShowLoginModal(false)}
+        message="Vui lòng đăng nhập để đăng bài viết."
+      />
     </div>
   );
 }

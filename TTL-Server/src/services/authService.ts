@@ -1,11 +1,12 @@
 import bcrypt from "bcryptjs";
 import { v4 as uuid } from "uuid";
 import { OAuth2Client } from "google-auth-library";
-import { User } from "../models/User";
 import { signToken } from "../utils/jwt";
 import { sendActivationEmail, sendResetPasswordEmail } from "./mail";
 import { logger } from "../lib/logger";
 import { config } from "../config";
+import { getDb } from "../db";
+import { toSafeUser } from "../lib/safeUser";
 import {
   BadRequestError,
   UnauthorizedError,
@@ -30,19 +31,22 @@ export const authService = {
     address?: string | null;
     referralCode?: string | null;
   }) {
-    const existing = await User.findByEmail(data.email);
+    const existing = await getDb().user.findUnique({ where: { email: data.email } });
     if (existing) {
       throw new ConflictError("Email đã được đăng ký");
     }
 
     let referredById: string | null = null;
     if (data.referralCode) {
-      const referrer = await User.findByReferralCode(data.referralCode);
+      const referrer = await getDb().user.findFirst({ where: { referralCode: data.referralCode } });
       if (!referrer) {
         throw new BadRequestError("Mã giới thiệu không hợp lệ");
       }
       referredById = referrer.id;
-      await User.addPoints(referrer.id, { truyenCamHung: 2 });
+      await getDb().user.update({
+        where: { id: referrer.id },
+        data: { truyenCamHung: { increment: 2 } },
+      });
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 12);
@@ -51,15 +55,20 @@ export const authService = {
       Date.now() + ACTIVATION_TOKEN_EXPIRY_HOURS * 60 * 60 * 1000,
     );
 
-    const { id, referralCode } = await User.create({
-      email: data.email,
-      password: hashedPassword,
-      name: data.name,
-      job: data.job ?? null,
-      address: data.address ?? null,
-      referredBy: referredById,
-      activationToken,
-      activationTokenExpires,
+    const id = uuid();
+    await getDb().user.create({
+      data: {
+        id,
+        email: data.email,
+        password: hashedPassword,
+        name: data.name,
+        job: data.job ?? null,
+        address: data.address ?? null,
+        referredBy: referredById,
+        referralCode: id,
+        activationToken,
+        activationTokenExpires,
+      },
     });
 
     sendActivationEmail(data.email, data.name, activationToken);
@@ -69,6 +78,7 @@ export const authService = {
       email: data.email,
       tokenVersion: 0,
       role: "user",
+      permissions: [],
     });
 
     return {
@@ -80,7 +90,7 @@ export const authService = {
         role: "user",
         job: data.job ?? null,
         address: data.address ?? null,
-        referralCode,
+        referralCode: id,
         kyLuat: 0,
         daoDuc: 0,
         truyenCamHung: 0,
@@ -90,7 +100,7 @@ export const authService = {
   },
 
   async login(email: string, password: string) {
-    const user = await User.findByEmail(email);
+    const user = await getDb().user.findUnique({ where: { email } });
     if (!user) {
       throw new UnauthorizedError("Email hoặc mật khẩu không đúng");
     }
@@ -106,10 +116,16 @@ export const authService = {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      await User.incrementLoginAttempts(user.id);
+      await getDb().user.update({
+        where: { id: user.id },
+        data: { loginAttempts: { increment: 1 } },
+      });
       const attempts = user.loginAttempts + 1;
       if (attempts >= MAX_LOGIN_ATTEMPTS) {
-        await User.lockAccount(user.id, LOCK_DURATION_MINUTES);
+        await getDb().user.update({
+          where: { id: user.id },
+          data: { lockedUntil: new Date(Date.now() + LOCK_DURATION_MINUTES * 60 * 1000) },
+        });
         throw new TooManyRequestsError(
           `Tài khoản đã bị khoá do đăng nhập sai quá nhiều lần. Vui lòng thử lại sau ${LOCK_DURATION_MINUTES} phút`,
         );
@@ -117,7 +133,10 @@ export const authService = {
       throw new UnauthorizedError("Email hoặc mật khẩu không đúng");
     }
 
-    await User.resetLoginAttempts(user.id);
+    await getDb().user.update({
+      where: { id: user.id },
+      data: { loginAttempts: 0, lockedUntil: null },
+    });
 
     if (!user.isActive) {
       throw new ForbiddenError(
@@ -126,14 +145,16 @@ export const authService = {
       );
     }
 
+    const perms = Array.isArray(user.permissions) ? user.permissions as string[] : []
     const token = signToken({
       userId: user.id,
       email: user.email,
       tokenVersion: user.tokenVersion,
       role: user.role,
+      permissions: perms,
     });
 
-    return { token, user: User.toSafeUser(user) };
+    return { token, user: toSafeUser(user) };
   },
 
   async googleAuth(credential: string) {
@@ -147,32 +168,43 @@ export const authService = {
       throw new UnauthorizedError("Xác thực Google thất bại");
     }
 
-    let user = await User.findByEmail(payload.email);
+    let user = await getDb().user.findUnique({ where: { email: payload.email } });
     if (!user) {
       const tempPassword = await bcrypt.hash(uuid(), 12);
-      await User.create({
-        email: payload.email,
-        avatar: payload.picture || null,
-        password: tempPassword,
-        name: payload.name || payload.email,
+      const id = uuid();
+      await getDb().user.create({
+        data: {
+          id,
+          email: payload.email,
+          avatar: payload.picture || null,
+          password: tempPassword,
+          name: payload.name || payload.email,
+          referralCode: id,
+          isActive: true,
+        },
       });
-      user = await User.findByEmail(payload.email)!;
-      await User.update(user!.id, { isActive: true });
-      user = await User.findByEmail(payload.email)!;
+      user = await getDb().user.findUnique({ where: { email: payload.email } })!;
     }
 
+    const gPerms = Array.isArray(user!.permissions) ? user!.permissions as string[] : []
     const token = signToken({
       userId: user!.id,
       email: user!.email,
       tokenVersion: user!.tokenVersion,
       role: user!.role,
+      permissions: gPerms,
     });
 
-    return { token, user: User.toSafeUser(user!) };
+    return { token, user: toSafeUser(user!) };
   },
 
   async activate(token: string) {
-    const user = await User.findByActivationToken(token);
+    const user = await getDb().user.findFirst({
+      where: {
+        activationToken: token,
+        activationTokenExpires: { gte: new Date() },
+      },
+    });
     if (!user) {
       throw new BadRequestError("Mã kích hoạt không hợp lệ hoặc đã hết hạn");
     }
@@ -181,16 +213,30 @@ export const authService = {
       return { message: "Tài khoản đã được kích hoạt trước đó" };
     }
 
-    await User.update(user.id, {
-      isActive: true,
-      activationToken: null,
-      activationTokenExpires: null,
+    await getDb().user.update({
+      where: { id: user.id },
+      data: {
+        isActive: true,
+        activationToken: null,
+        activationTokenExpires: null,
+      },
     });
-    return { message: "Kích hoạt tài khoản thành công" };
+
+    const updatedUser = await getDb().user.findUnique({ where: { id: user.id } });
+    const perms = Array.isArray(updatedUser!.permissions) ? updatedUser!.permissions as string[] : []
+    const jwtToken = signToken({
+      userId: updatedUser!.id,
+      email: updatedUser!.email,
+      tokenVersion: updatedUser!.tokenVersion,
+      role: updatedUser!.role,
+      permissions: perms,
+    });
+
+    return { message: "Kích hoạt tài khoản thành công", token: jwtToken, user: toSafeUser(updatedUser!) };
   },
 
   async resendActivation(email: string) {
-    const user = await User.findByEmail(email);
+    const user = await getDb().user.findUnique({ where: { email } });
     if (!user) {
       throw new NotFoundError("Email không tồn tại trong hệ thống");
     }
@@ -203,14 +249,17 @@ export const authService = {
     const activationTokenExpires = new Date(
       Date.now() + ACTIVATION_TOKEN_EXPIRY_HOURS * 60 * 60 * 1000,
     );
-    await User.update(user.id, { activationToken, activationTokenExpires });
+    await getDb().user.update({
+      where: { id: user.id },
+      data: { activationToken, activationTokenExpires },
+    });
 
     sendActivationEmail(user.email, user.name, activationToken);
     return { message: "Email kích hoạt đã được gửi lại" };
   },
 
   async forgotPassword(email: string) {
-    const user = await User.findByEmail(email);
+    const user = await getDb().user.findUnique({ where: { email } });
     if (!user) {
       return {
         message:
@@ -220,7 +269,10 @@ export const authService = {
 
     const resetToken = uuid();
     const resetTokenExpires = new Date(Date.now() + 60 * 60 * 1000);
-    await User.update(user.id, { resetToken, resetTokenExpires });
+    await getDb().user.update({
+      where: { id: user.id },
+      data: { resetToken, resetTokenExpires },
+    });
 
     sendResetPasswordEmail(user.email, user.name, resetToken);
     return {
@@ -229,7 +281,9 @@ export const authService = {
   },
 
   async resetPassword(token: string, password: string) {
-    const user = await User.findByResetToken(token);
+    const user = await getDb().user.findFirst({
+      where: { resetToken: token, resetTokenExpires: { gte: new Date() } },
+    });
     if (!user) {
       throw new BadRequestError(
         "Mã đặt lại mật khẩu không hợp lệ hoặc đã hết hạn",
@@ -237,7 +291,15 @@ export const authService = {
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-    await User.updatePassword(user.id, hashedPassword);
+    await getDb().user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpires: null,
+        tokenVersion: { increment: 1 },
+      },
+    });
     return { message: "Mật khẩu đã được đặt lại thành công" };
   },
 
@@ -246,7 +308,7 @@ export const authService = {
     currentPassword: string,
     newPassword: string,
   ) {
-    const user = await User.findByEmail(email);
+    const user = await getDb().user.findUnique({ where: { email } });
     if (!user) {
       throw new UnauthorizedError("Không tìm thấy người dùng");
     }
@@ -260,7 +322,15 @@ export const authService = {
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 12);
-    await User.updatePassword(user.id, hashedPassword);
+    await getDb().user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpires: null,
+        tokenVersion: { increment: 1 },
+      },
+    });
     return { message: "Mật khẩu đã được thay đổi thành công" };
   },
 
@@ -296,11 +366,11 @@ export const authService = {
       throw new BadRequestError("Không có thông tin nào để cập nhật");
     }
 
-    return User.update(userId, updateData);
+    return getDb().user.update({ where: { id: userId }, data: updateData });
   },
 
   async getProfile(userId: string) {
-    const user = await User.findById(userId);
+    const user = await getDb().user.findUnique({ where: { id: userId } });
     if (!user) {
       throw new NotFoundError("Người dùng không tồn tại");
     }
@@ -308,7 +378,7 @@ export const authService = {
   },
 
   async checkReferral(code: string) {
-    const user = await User.findByReferralCode(code);
+    const user = await getDb().user.findFirst({ where: { referralCode: code } });
     return { valid: !!user, name: user?.name || null };
   },
 };

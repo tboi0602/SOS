@@ -1,10 +1,10 @@
-import { User } from "../models/User";
+import { toSafeUser } from "../lib/safeUser";
 import { getDb } from "../db";
 import { NotFoundError } from "../lib/errors";
 
 export const profileService = {
-  async getPublicProfile(targetUserId: string, currentUserId: string) {
-    const user = await User.findById(targetUserId);
+  async getPublicProfile(targetUserId: string, currentUserId: string | null) {
+    const user = await getDb().user.findUnique({ where: { id: targetUserId } });
     if (!user) throw new NotFoundError("Người dùng không tồn tại");
 
     const [postCount, referredCount, posts, journals] = await Promise.all([
@@ -30,7 +30,7 @@ export const profileService = {
       }),
     ]);
 
-    const safe = User.toSafeUser(user);
+    const safe = toSafeUser(user);
     const score = Math.round((safe.kyLuat + safe.daoDuc + safe.truyenCamHung) / 3);
     const rank = score >= 85 ? "Xuất sắc" : score >= 70 ? "Tốt" : score >= 50 ? "Khá" : "Cơ bản";
 
@@ -62,16 +62,16 @@ export const profileService = {
   },
 
   async getProfile(userId: string) {
-    const user = await User.findById(userId, true);
+    const user = await getDb().user.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundError("Người dùng không tồn tại");
 
-    const [postCount, commentCount, likeCount, referredCount, recentPosts, recentComments] = await Promise.all([
+    const [postCount, commentCount, likeCount, referredCount, recentPosts, recentComments, recentJournals, recentSubmissions] = await Promise.all([
       getDb().post.count({ where: { userId } }),
       getDb().comment.count({ where: { userId } }),
       getDb().like.count({ where: { post: { userId } } }),
       getDb().user.count({ where: { referredBy: userId } }),
       getDb().post.findMany({
-        where: { userId },
+        where: { userId, status: "approved" },
         orderBy: { createdAt: "desc" },
         take: 5,
         select: { createdAt: true, content: true },
@@ -82,24 +82,64 @@ export const profileService = {
         take: 5,
         include: { post: { select: { content: true } } },
       }),
+      getDb().journal.findMany({
+        where: { userId, status: "approved" },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        select: { createdAt: true, title: true },
+      }),
+      getDb().submission.findMany({
+        where: { userId, status: "approved" },
+        orderBy: { createdAt: "desc" },
+        take: 5,
+        select: { createdAt: true, title: true },
+      }),
     ]);
 
     const membershipDays = Math.floor(
       (Date.now() - (user.createdAt?.getTime() || Date.now())) / 86400000,
     );
 
-    const kyLuat = Math.min(100, Math.round(postCount * 5 + commentCount * 3 + membershipDays * 0.5));
-    const daoDuc = Math.min(100, Math.round(likeCount * 2 + referredCount * 10 + (user.isActive ? 20 : 0)));
-    const truyenCamHung = Math.min(100, Math.round(postCount * 3 + likeCount * 3 + referredCount * 15));
+    const safe = toSafeUser(user);
+    const kyLuat = safe.kyLuat;
+    const daoDuc = safe.daoDuc;
+    const truyenCamHung = safe.truyenCamHung;
     const score = Math.round((kyLuat + daoDuc + truyenCamHung) / 3);
 
-    const rank = score >= 85 ? "Xuất sắc" : score >= 70 ? "Tốt" : score >= 50 ? "Khá" : "Cơ bản";
+    const rank = score >= 85 ? "Xuất sắc" : score >= 75 ? "Tốt" : score >= 50 ? "Khá" : "Cơ bản";
+
+    // Compute real percentile rank
+    const allUsers = await getDb().user.findMany({
+      where: { role: { not: "admin" }, isActive: true },
+      select: { kyLuat: true, daoDuc: true, truyenCamHung: true },
+    });
+    const allScores = allUsers
+      .map((u) => Math.round((u.kyLuat + u.daoDuc + u.truyenCamHung) / 3))
+      .filter((s) => s > 0)
+      .sort((a, b) => b - a);
+    const rankIndex = allScores.findIndex((s) => s <= score);
+    const topPercent =
+      allScores.length === 0
+        ? "Chưa có dữ liệu"
+        : rankIndex === -1
+          ? `Top ${Math.round((1 / allScores.length) * 100)}%`
+          : `Top ${Math.round(((rankIndex + 1) / allScores.length) * 100)}%`;
 
     const activities = [
       ...recentPosts.map((p) => ({
         type: "post" as const,
         title: p.content.length > 60 ? p.content.substring(0, 60) + "..." : p.content,
         time: timeAgo(p.createdAt),
+      })),
+      ...recentJournals.map((j) => ({
+        type: "journal" as const,
+        title: `Nhật ký: ${j.title.length > 60 ? j.title.substring(0, 60) + "..." : j.title}`,
+        time: timeAgo(j.createdAt),
+      })),
+      ...recentSubmissions.map((s) => ({
+        type: "submission" as const,
+        title: `Bài dự thi: ${s.title.length > 60 ? s.title.substring(0, 60) + "..." : s.title}`,
+        time: timeAgo(s.createdAt),
       })),
       ...recentComments.map((c) => ({
         type: "comment" as const,
@@ -134,7 +174,7 @@ export const profileService = {
       truyenCamHung: computeTrend(truyenCamHung, postData),
     };
 
-    const safeUser = User.toSafeUser(user);
+    const safeUser = toSafeUser(user);
 
     return {
       user: safeUser,
@@ -148,8 +188,8 @@ export const profileService = {
       competency: {
         score,
         rank,
-        topPercent: score >= 85 ? "Top 5%" : score >= 70 ? "Top 15%" : score >= 50 ? "Top 35%" : "Top 60%",
-        level: score >= 85 ? "Chuyên gia" : score >= 70 ? "Nâng cao" : score >= 50 ? "Trung bình" : "Cơ bản",
+        topPercent,
+        level: score >= 85 ? "Chuyên gia" : score >= 75 ? "Nâng cao" : score >= 50 ? "Trung bình" : "Cơ bản",
         strength: kyLuat >= Math.max(daoDuc, truyenCamHung) ? "Kỷ luật" : daoDuc >= truyenCamHung ? "Đạo đức" : "Truyền cảm hứng",
       },
       core: { kyLuat, daoDuc, truyenCamHung },
@@ -171,17 +211,23 @@ export const profileService = {
     ]);
 
     return {
-      members: users.map((u) => ({
-        id: u.id,
-        name: u.name,
-        email: u.email,
-        role: u.role,
-        job: u.job,
-        avatar: u.avatar,
-        referralCode: u.referralCode,
-        isActive: u.isActive,
-        createdAt: u.createdAt.toISOString(),
-      })),
+      members: users.map((u) => {
+        const safe = toSafeUser(u);
+        return {
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          role: u.role,
+          job: u.job,
+          avatar: u.avatar,
+          referralCode: u.referralCode,
+          isActive: u.isActive,
+          createdAt: u.createdAt.toISOString(),
+          kyLuat: safe.kyLuat,
+          daoDuc: safe.daoDuc,
+          truyenCamHung: safe.truyenCamHung,
+        };
+      }),
       total,
       page,
       totalPages: Math.ceil(total / limit),
@@ -191,12 +237,10 @@ export const profileService = {
   async getTopSales() {
     const users = await getDb().user.findMany({
       where: { role: { not: "admin" }, isActive: true },
-      orderBy: { createdAt: "desc" },
-      take: 50,
     });
 
     const scored = users.map((u) => {
-      const safe = User.toSafeUser(u);
+      const safe = toSafeUser(u);
       const score = Math.round((safe.kyLuat + safe.daoDuc + safe.truyenCamHung) / 3);
       return {
         id: u.id,
@@ -216,7 +260,7 @@ export const profileService = {
     });
 
     const ranked = scored.sort((a, b) => b.score - a.score).filter((m) => m.score > 0);
-    return { members: ranked };
+    return { members: ranked.slice(0, 50) };
   },
 
   async getReferredMembers(userId: string) {
@@ -225,14 +269,24 @@ export const profileService = {
       orderBy: { createdAt: "desc" },
       take: 20,
     });
-    return members.map((m) => ({
-      id: m.id,
-      name: m.name,
-      referralCode: m.referralCode,
-      avatar: m.avatar,
-      isActive: m.isActive,
-      createdAt: m.createdAt.toISOString(),
-    }));
+    return members.map((m) => {
+      const safe = toSafeUser(m);
+      const score = Math.round((safe.kyLuat + safe.daoDuc + safe.truyenCamHung) / 3);
+      const rank = score >= 85 ? "Xuất sắc" : score >= 70 ? "Tốt" : score >= 50 ? "Khá" : "Cơ bản";
+      return {
+        id: m.id,
+        name: m.name,
+        referralCode: m.referralCode,
+        avatar: m.avatar,
+        isActive: m.isActive,
+        createdAt: m.createdAt.toISOString(),
+        kyLuat: safe.kyLuat,
+        daoDuc: safe.daoDuc,
+        truyenCamHung: safe.truyenCamHung,
+        score,
+        rank,
+      };
+    });
   },
 };
 

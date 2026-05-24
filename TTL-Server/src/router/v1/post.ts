@@ -4,6 +4,7 @@ import path from "path";
 import fs from "fs";
 import { postController } from "../../controllers/postController";
 import { requireAuth } from "../../middleware/auth";
+import { optionalAuth } from "../../middleware/optionalAuth";
 import { validate } from "../../middleware/validate";
 import {
   createPostSchema,
@@ -47,22 +48,21 @@ const upload = multer({
   },
 });
 
-router.use(requireAuth);
-
-router.post("/upload", upload.array("files"), postController.uploadMedia);
-router.post("/", validate(createPostSchema), postController.create);
-router.get("/", postController.getAll);
-router.get("/my-posts", postController.getMyPosts);
-router.get("/search", postController.search);
-router.get("/:id", postController.getById);
-router.put("/:id", validate(updatePostSchema), postController.update);
-router.delete("/:id", postController.delete);
-router.post("/:id/like", postController.toggleLike);
+router.post("/upload", requireAuth, upload.array("files"), postController.uploadMedia);
+router.post("/", requireAuth, validate(createPostSchema), postController.create);
+router.get("/", optionalAuth, postController.getAll);
+router.get("/my-posts", requireAuth, postController.getMyPosts);
+router.get("/search", optionalAuth, postController.search);
+router.get("/:id", optionalAuth, postController.getById);
+router.put("/:id", requireAuth, validate(updatePostSchema), postController.update);
+router.delete("/:id", requireAuth, postController.delete);
+router.post("/:id/like", requireAuth, postController.toggleLike);
 router.post(
   "/:id/comments",
+  requireAuth,
   validate(createCommentSchema),
   postController.addComment,
 );
-router.delete("/:id/comments/:commentId", postController.deleteComment);
+router.delete("/:id/comments/:commentId", requireAuth, postController.deleteComment);
 
 export default router;

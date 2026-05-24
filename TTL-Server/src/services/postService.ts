@@ -1,5 +1,5 @@
 import { getDb } from "../db";
-import { BadRequestError, NotFoundError } from "../lib/errors";
+import { BadRequestError, NotFoundError, ForbiddenError } from "../lib/errors";
 
 const postInclude = {
   user: {
@@ -47,22 +47,24 @@ export const postService = {
         videos: data.videos ?? [],
         productLink: data.productLink ?? null,
         hashtags: data.hashtags ?? [],
+        status: "pending",
       },
       include: postInclude,
     });
     return this.formatPost(post, userId);
   },
 
-  async getAll(userId: string, page = 1, limit = 10) {
+  async getAll(userId: string | null, page = 1, limit = 10) {
     const skip = (page - 1) * limit;
     const [posts, total] = await Promise.all([
       getDb().post.findMany({
+        where: { status: "approved" },
         skip,
         take: limit,
         orderBy: { createdAt: "desc" },
         include: postInclude,
       }),
-      getDb().post.count(),
+      getDb().post.count({ where: { status: "approved" } }),
     ]);
     return {
       posts: posts.map((p) => this.formatPost(p, userId)),
@@ -72,27 +74,37 @@ export const postService = {
     };
   },
 
-  async getMyPosts(userId: string, page = 1, limit = 10) {
+  async getMyPosts(userId: string, page = 1, limit = 10, status?: string, dateFrom?: string, dateTo?: string) {
     const skip = (page - 1) * limit;
-    const [posts, total] = await Promise.all([
+    const where: any = { userId };
+    if (status && status !== "all") where.status = status;
+    if (dateFrom) where.createdAt = { ...where.createdAt, gte: new Date(dateFrom + "T00:00:00") };
+    if (dateTo) where.createdAt = { ...where.createdAt, lte: new Date(dateTo + "T23:59:59") };
+
+    const [posts, total, allCount, pendingCount, approvedCount, rejectedCount] = await Promise.all([
       getDb().post.findMany({
-        where: { userId },
+        where,
         skip,
         take: limit,
         orderBy: { createdAt: "desc" },
         include: postInclude,
       }),
+      getDb().post.count({ where }),
       getDb().post.count({ where: { userId } }),
+      getDb().post.count({ where: { userId, status: "pending" } }),
+      getDb().post.count({ where: { userId, status: "approved" } }),
+      getDb().post.count({ where: { userId, status: "rejected" } }),
     ]);
     return {
       posts: posts.map((p) => this.formatPost(p, userId)),
       total,
       page,
       totalPages: Math.ceil(total / limit),
+      counts: { all: allCount, pending: pendingCount, approved: approvedCount, rejected: rejectedCount },
     };
   },
 
-  async getById(postId: string, userId: string) {
+  async getById(postId: string, userId: string | null) {
     const post = await getDb().post.findUnique({
       where: { id: postId },
       include: postInclude,
@@ -120,6 +132,14 @@ export const postService = {
     if (!post) throw new NotFoundError("Bài viết không tồn tại");
     if (post.userId !== userId)
       throw new BadRequestError("Bạn không có quyền xoá bài viết này");
+
+    await getDb().post.delete({ where: { id: postId } });
+    return { message: "Đã xoá bài viết" };
+  },
+
+  async adminDelete(postId: string) {
+    const post = await getDb().post.findUnique({ where: { id: postId } });
+    if (!post) throw new NotFoundError("Bài viết không tồn tại");
 
     await getDb().post.delete({ where: { id: postId } });
     return { message: "Đã xoá bài viết" };
@@ -168,7 +188,115 @@ export const postService = {
     return { message: "Đã xoá bình luận" };
   },
 
-  formatPost(post: any, currentUserId: string) {
+  async listPending(page = 1, limit = 20) {
+    const skip = (page - 1) * limit;
+    const [posts, total] = await Promise.all([
+      getDb().post.findMany({
+        where: { status: "pending" },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+        include: {
+          user: { select: { id: true, name: true, email: true, avatar: true } },
+          likes: { select: { userId: true } },
+          comments: { select: { id: true, userId: true, content: true, createdAt: true }, orderBy: { createdAt: "asc" } },
+        },
+      }),
+      getDb().post.count({ where: { status: "pending" } }),
+    ]);
+    return { posts, total, page, limit };
+  },
+
+  async listApproved(page = 1, limit = 20) {
+    const skip = (page - 1) * limit;
+    const [posts, total] = await Promise.all([
+      getDb().post.findMany({
+        where: { status: "approved" },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+        include: {
+          user: { select: { id: true, name: true, email: true, avatar: true } },
+          likes: { select: { userId: true } },
+          comments: { select: { id: true, userId: true, content: true, createdAt: true }, orderBy: { createdAt: "asc" } },
+        },
+      }),
+      getDb().post.count({ where: { status: "approved" } }),
+    ]);
+    return { posts, total, page, limit };
+  },
+
+  async listAll(page = 1, limit = 20) {
+    const skip = (page - 1) * limit;
+    const [posts, total] = await Promise.all([
+      getDb().post.findMany({
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+        include: {
+          user: { select: { id: true, name: true, email: true, avatar: true } },
+          likes: { select: { userId: true } },
+          comments: { select: { id: true, userId: true, content: true, createdAt: true }, orderBy: { createdAt: "asc" } },
+        },
+      }),
+      getDb().post.count(),
+    ]);
+    return { posts, total, page, limit };
+  },
+
+  async approve(postId: string, adminNote?: string, actorId?: string) {
+    const post = await getDb().post.findUnique({ where: { id: postId } });
+    if (!post) throw new NotFoundError("Bài viết không tồn tại");
+    if (post.status !== "pending") throw new ForbiddenError("Chỉ duyệt được bài viết đang chờ");
+
+    const updated = await getDb().post.update({
+      where: { id: postId },
+      data: { status: "approved", adminNote: adminNote ?? null },
+      include: postInclude,
+    });
+    await getDb().user.update({
+      where: { id: post.userId },
+      data: { kyLuat: { increment: 1 } },
+    });
+
+    await getDb().auditLog.create({
+      data: {
+        userId: actorId ?? null,
+        action: "APPROVE_POST",
+        resource: "post",
+        resourceId: postId,
+        metadata: { postContent: post.content?.slice(0, 100), authorId: post.userId },
+      },
+    });
+
+    return updated;
+  },
+
+  async reject(postId: string, adminNote?: string, actorId?: string) {
+    const post = await getDb().post.findUnique({ where: { id: postId } });
+    if (!post) throw new NotFoundError("Bài viết không tồn tại");
+    if (post.status !== "pending") throw new ForbiddenError("Chỉ từ chối được bài viết đang chờ");
+
+    const updated = await getDb().post.update({
+      where: { id: postId },
+      data: { status: "rejected", adminNote: adminNote ?? null },
+      include: postInclude,
+    });
+
+    await getDb().auditLog.create({
+      data: {
+        userId: actorId ?? null,
+        action: "REJECT_POST",
+        resource: "post",
+        resourceId: postId,
+        metadata: { postContent: post.content?.slice(0, 100), authorId: post.userId },
+      },
+    });
+
+    return updated;
+  },
+
+  formatPost(post: any, currentUserId: string | null) {
     return {
       id: post.id,
       userId: post.userId,
@@ -178,13 +306,15 @@ export const postService = {
       videos: post.videos ?? [],
       productLink: post.productLink,
       hashtags: post.hashtags ?? [],
-      likeCount: post.likes.length,
-      commentCount: post.comments.length,
-      liked: post.likes.some((l: any) => l.userId === currentUserId),
-      comments: post.comments.map((c: any) => ({
+      status: post.status,
+      adminNote: post.adminNote,
+      likeCount: post.likes ? post.likes.length : 0,
+      commentCount: post.comments ? post.comments.length : 0,
+      liked: post.likes ? post.likes.some((l: any) => l.userId === currentUserId) : false,
+      comments: post.comments ? post.comments.map((c: any) => ({
         ...c,
         isOwner: c.userId === currentUserId,
-      })),
+      })) : [],
       createdAt: post.createdAt,
       updatedAt: post.updatedAt,
     };

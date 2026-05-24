@@ -28,6 +28,7 @@ model User {
   daoDuc                Int          @default(0) @map("dao_duc")
   truyenCamHung         Int          @default(0) @map("truyen_cam_hung")
   isActive              Boolean      @default(false) @map("is_active")
+  permissions           Json         @default("[]")
   activationToken       String?      @map("activation_token")
   activationTokenExpires DateTime?   @map("activation_token_expires")
   resetToken            String?      @map("reset_token")
@@ -110,6 +111,8 @@ model Post {
   videos      Json?     @default("[]")
   productLink String?   @map("product_link")
   hashtags    Json?     @default("[]")
+  status      String    @default("pending")
+  adminNote   String?   @map("admin_note")
   createdAt   DateTime  @default(now()) @map("created_at")
   updatedAt   DateTime  @updatedAt @map("updated_at")
 
@@ -118,6 +121,7 @@ model Post {
   comments Comment[]
 
   @@index([userId])
+  @@index([status])
   @@index([createdAt])
   @@map("posts")
 }

@@ -17,7 +17,7 @@ export const config = {
 
   jwt: {
     secret: requireEnv("JWT_SECRET"),
-    expiresIn: "7d" as const,
+    expiresIn: "2h" as const,
   },
 
   db: {

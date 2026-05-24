@@ -4,6 +4,7 @@ import path from "path"
 import fs from "fs"
 import { journalController } from "../../controllers/journalController"
 import { requireAuth } from "../../middleware/auth"
+import { optionalAuth } from "../../middleware/optionalAuth"
 
 const router = Router()
 
@@ -30,17 +31,15 @@ const upload = multer({
   },
 })
 
-router.use(requireAuth)
-
-router.post("/upload", upload.array("files"), (req, res) => {
+router.post("/upload", requireAuth, upload.array("files"), (req, res) => {
   const files = req.files as Express.Multer.File[]
   const urls = files.map((file) => `/uploads/journals/${file.filename}`)
   res.json({ urls })
 })
 
-router.post("/", journalController.create)
-router.get("/me", journalController.getMyEntries)
-router.get("/user/:userId", journalController.getByUser)
-router.delete("/:id", journalController.delete)
+router.post("/", requireAuth, journalController.create)
+router.get("/me", requireAuth, journalController.getMyEntries)
+router.get("/user/:userId", optionalAuth, journalController.getByUser)
+router.delete("/:id", requireAuth, journalController.delete)
 
 export default router

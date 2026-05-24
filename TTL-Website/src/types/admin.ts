@@ -45,7 +45,7 @@ export interface ActivityLogEntry {
   action: string;
   resource: string;
   resourceId: string | null;
-  metadata: unknown;
+  metadata: Record<string, unknown> | null;
   ip: string | null;
   userAgent: string | null;
   createdAt: string;

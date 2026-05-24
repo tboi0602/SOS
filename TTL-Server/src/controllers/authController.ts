@@ -6,7 +6,7 @@ const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "lax" as const,
-  maxAge: 7 * 24 * 60 * 60 * 1000,
+  maxAge: 2 * 60 * 60 * 1000,
 };
 
 function setTokenCookie(res: Response, token: string) {
@@ -45,6 +45,7 @@ export const authController = {
 
   activate: asyncHandler(async (req: Request, res: Response) => {
     const result = await authService.activate(req.body.token);
+    if (result.token) setTokenCookie(res, result.token);
     res.json(result);
   }),
 

@@ -17,7 +17,7 @@ export function useAuthLogin() {
   const [needsActivation, setNeedsActivation] = useState(false);
 
   useEffect(() => {
-    if (user) {
+    if (user && user.isActive) {
       router.push(
         user.role === "admin" ||
           (Array.isArray(user.permissions) && user.permissions.length > 0)

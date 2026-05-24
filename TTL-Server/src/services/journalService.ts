@@ -1,6 +1,5 @@
 import { getDb } from "../db"
 import { NotFoundError, ForbiddenError } from "../lib/errors"
-import { User } from "../models/User"
 
 export const journalService = {
   async create(userId: string, data: { title: string; content: string; images?: string[] }) {
@@ -17,12 +16,40 @@ export const journalService = {
     return entry
   },
 
-  async getByUser(userId: string) {
-    return getDb().journal.findMany({
-      where: { userId },
-      orderBy: { createdAt: "desc" },
-      take: 50,
-    })
+  async getByUser(
+    userId: string,
+    page = 1,
+    limit = 10,
+    status?: string,
+    dateFrom?: string,
+    dateTo?: string,
+  ) {
+    const skip = (page - 1) * limit
+    const where: any = { userId }
+    if (status && status !== "all") where.status = status
+    if (dateFrom) where.createdAt = { ...where.createdAt, gte: new Date(dateFrom + "T00:00:00") }
+    if (dateTo) where.createdAt = { ...where.createdAt, lte: new Date(dateTo + "T23:59:59") }
+
+    const [entries, total, allCount, pendingCount, approvedCount, rejectedCount] = await Promise.all([
+      getDb().journal.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      getDb().journal.count({ where }),
+      getDb().journal.count({ where: { userId } }),
+      getDb().journal.count({ where: { userId, status: "pending" } }),
+      getDb().journal.count({ where: { userId, status: "approved" } }),
+      getDb().journal.count({ where: { userId, status: "rejected" } }),
+    ])
+    return {
+      entries,
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+      counts: { all: allCount, pending: pendingCount, approved: approvedCount, rejected: rejectedCount },
+    }
   },
 
   async delete(journalId: string, userId: string) {
@@ -63,7 +90,7 @@ export const journalService = {
     return { entries, total, page, limit }
   },
 
-  async approve(journalId: string, adminNote?: string) {
+  async approve(journalId: string, adminNote?: string, actorId?: string) {
     const entry = await getDb().journal.findUnique({ where: { id: journalId } })
     if (!entry) throw new NotFoundError("Nhật ký không tồn tại")
     if (entry.status !== "pending") throw new ForbiddenError("Chỉ duyệt được nhật ký đang chờ")
@@ -72,18 +99,44 @@ export const journalService = {
       where: { id: journalId },
       data: { status: "approved", points: 1, adminNote: adminNote ?? null },
     })
-    await User.addPoints(entry.userId, { truyenCamHung: 1 })
+    await getDb().user.update({
+      where: { id: entry.userId },
+      data: { daoDuc: { increment: 1 } },
+    })
+
+    await getDb().auditLog.create({
+      data: {
+        userId: actorId ?? null,
+        action: "APPROVE_JOURNAL",
+        resource: "journal",
+        resourceId: journalId,
+        metadata: { journalTitle: entry.title?.slice(0, 100), authorId: entry.userId },
+      },
+    })
+
     return updated
   },
 
-  async reject(journalId: string, adminNote?: string) {
+  async reject(journalId: string, adminNote?: string, actorId?: string) {
     const entry = await getDb().journal.findUnique({ where: { id: journalId } })
     if (!entry) throw new NotFoundError("Nhật ký không tồn tại")
     if (entry.status !== "pending") throw new ForbiddenError("Chỉ từ chối được nhật ký đang chờ")
 
-    return getDb().journal.update({
+    const updated = await getDb().journal.update({
       where: { id: journalId },
       data: { status: "rejected", adminNote: adminNote ?? null, points: 0 },
     })
+
+    await getDb().auditLog.create({
+      data: {
+        userId: actorId ?? null,
+        action: "REJECT_JOURNAL",
+        resource: "journal",
+        resourceId: journalId,
+        metadata: { journalTitle: entry.title?.slice(0, 100), authorId: entry.userId },
+      },
+    })
+
+    return updated
   },
 }

@@ -17,6 +17,7 @@ export default function RegisterPage() {
     loading,
     googleLoading,
     error,
+    registered,
     referralStatus,
     referralName,
     setShowPassword,
@@ -96,6 +97,27 @@ export default function RegisterPage() {
               </span>
             </Link>
             <div className="glass-strong rounded-2xl p-8">
+              {registered ? (
+                <div className="flex flex-col items-center text-center gap-3 py-4">
+                  <div className="size-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                    <svg className="size-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                  <h2 className="text-xl font-bold text-white">Đăng ký thành công!</h2>
+                  <p className="text-sm text-zinc-400 leading-relaxed">
+                    Vui lòng kiểm tra email <strong className="text-white">{form.email}</strong> để kích hoạt tài khoản.
+                    Nếu không thấy email, hãy kiểm tra thư mục Spam.
+                  </p>
+                  <Link
+                    href="/auth/login"
+                    className="mt-3 rounded-xl bg-primary hover:bg-primary-light text-white font-semibold px-6 py-3 text-sm transition-all cursor-pointer"
+                  >
+                    Đăng nhập
+                  </Link>
+                </div>
+              ) : (
+              <>
               <div className="text-center mb-6">
                 <h1 className="text-2xl font-bold text-white">Tạo tài khoản</h1>
                 <p className="text-sm text-zinc-400 mt-1">
@@ -218,6 +240,8 @@ export default function RegisterPage() {
                   Đăng nhập
                 </Link>
               </p>
+              </>
+              )}
             </div>
           </div>
         </div>

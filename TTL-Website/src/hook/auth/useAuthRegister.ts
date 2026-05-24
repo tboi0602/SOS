@@ -8,6 +8,7 @@ import { authService } from "@/service/auth.service";
 export function useAuthRegister() {
   const router = useRouter();
   const { register, user, refreshUser } = useAuth();
+  const [registered, setRegistered] = useState(false);
   const [form, setForm] = useState(() => {
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
@@ -36,7 +37,7 @@ export function useAuthRegister() {
   );
 
   useEffect(() => {
-    if (user) router.push("/home");
+    if (user && user.isActive) router.push("/home");
   }, [user, router]);
 
   useEffect(() => {
@@ -103,7 +104,7 @@ export function useAuthRegister() {
         address: form.address || undefined,
         referralCode: form.referralCode || undefined,
       });
-      router.push("/home");
+      setRegistered(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Đăng ký thất bại");
     } finally {
@@ -131,6 +132,7 @@ export function useAuthRegister() {
     loading,
     googleLoading,
     error,
+    registered,
     referralStatus,
     referralName,
     setShowPassword,

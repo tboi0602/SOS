@@ -17,6 +17,7 @@ import {
   Key,
   Menu,
   X,
+  ClipboardList,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -56,6 +57,12 @@ const ALL_NAV_ITEMS = [
     label: "Duyệt nhật ký",
     icon: BookOpen,
     permission: "approve_journals",
+  },
+  {
+    href: "/admin/activity-log",
+    label: "Nhật ký hoạt động",
+    icon: ClipboardList,
+    permission: "manage_users",
   },
 ];
 

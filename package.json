@@ -1,0 +1,19 @@
+{
+  "name": "tamtriluc",
+  "version": "1.0.0",
+  "description": "sửa lại .env để deploy\r bash scripts/deploy.sh .env.docker",
+  "homepage": "https://github.com/tboi0602/SOS#readme",
+  "bugs": {
+    "url": "https://github.com/tboi0602/SOS/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tboi0602/SOS.git"
+  },
+  "scripts": {
+    "deploy": "bash scripts/deploy.sh .env.docker",
+    "deploy:all": "bash scripts/deploy.sh .env.docker",
+    "deploy:vps-only": "bash scripts/deploy.sh .env.docker --vps-only",
+    "deploy:build-only": "bash scripts/deploy.sh .env.docker --no-deploy"
+  }
+}

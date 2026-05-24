@@ -25,6 +25,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
+import LoginRequiredModal from "@/components/ui/LoginRequiredModal";
 
 const MEMBER_PATHS = ["/home/members", "/home/members/referred"];
 
@@ -58,6 +59,7 @@ export default function FeedSidebar() {
   const [mounted, setMounted] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const desktopW = collapsed ? "w-16" : "w-60";
   const mobileOpenRef = useRef(mobileOpen);
 
@@ -151,7 +153,7 @@ export default function FeedSidebar() {
         {/* Đăng bài */}
         <div className={isCollapsed ? "flex justify-center py-2" : "py-3"}>
           <button
-            onClick={() => router.push("/home/create")}
+            onClick={() => user ? router.push("/home/create") : setShowLoginModal(true)}
             className={`flex items-center justify-center ${
               isCollapsed
                 ? "size-9 rounded-xl bg-primary text-white hover:bg-primary-light shadow-lg shadow-primary/25"
@@ -223,7 +225,7 @@ export default function FeedSidebar() {
                   Mọi người
                 </button>
                 <button
-                  onClick={() => router.push("/home/members/referred")}
+                  onClick={() => user ? router.push("/home/members/referred") : setShowLoginModal(true)}
                   className={`w-full flex items-center gap-3 pl-9 pr-3.5 py-2 rounded-lg text-sm transition-all cursor-pointer ${
                     pathname === "/home/members/referred"
                       ? "text-primary font-medium"
@@ -242,7 +244,7 @@ export default function FeedSidebar() {
         <div className="border-t border-white/6 pt-3">
           {isCollapsed ? (
             <button
-              onClick={() => router.push("/home/profile")}
+              onClick={() => user ? router.push("/home/profile") : setShowLoginModal(true)}
               className={`w-full flex justify-center py-3 rounded-xl text-sm transition-all cursor-pointer ${
                 isPersonalActive
                   ? "text-white bg-primary/15"
@@ -255,7 +257,7 @@ export default function FeedSidebar() {
           ) : (
             <>
               <button
-                onClick={() => setPersonalOpen(!personalOpen)}
+                onClick={() => user ? setPersonalOpen(!personalOpen) : setShowLoginModal(true)}
                 className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-all cursor-pointer ${
                   isPersonalActive
                     ? "text-white bg-primary/15 font-medium"
@@ -278,7 +280,7 @@ export default function FeedSidebar() {
                   return (
                     <button
                       key={item.href}
-                      onClick={() => router.push(item.href)}
+                      onClick={() => user ? router.push(item.href) : setShowLoginModal(true)}
                       className={`w-full flex items-center gap-3 pl-9 pr-3.5 py-2 rounded-lg text-sm transition-all cursor-pointer ${
                         active
                           ? "text-primary font-medium"
@@ -500,7 +502,7 @@ export default function FeedSidebar() {
           </button>
 
           <button
-            onClick={() => router.push("/home/profile")}
+            onClick={() => user ? router.push("/home/profile") : setShowLoginModal(true)}
             className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${isPersonalActive ? "text-primary" : "text-zinc-500"}`}
           >
             <User size={20} />
@@ -508,6 +510,11 @@ export default function FeedSidebar() {
           </button>
         </div>
       </nav>
+
+      <LoginRequiredModal
+        open={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+      />
     </>
   );
 }

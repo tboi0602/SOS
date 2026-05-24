@@ -21,6 +21,7 @@ postService
   }, [id]);
 
   const handleLike = async (postId: string) => {
+    if (!user) return;
     try {
       const res = await postService.toggleLike(postId);
       setPost((prev) =>
@@ -36,6 +37,7 @@ postService
   };
 
   const handleComment = async (postId: string, content: string) => {
+    if (!user) return;
     const res = await postService.addComment(postId, content);
     const newComment: Comment = {
       ...res.comment,
@@ -59,6 +61,7 @@ postService
   };
 
   const handleDeleteComment = async (postId: string, commentId: string) => {
+    if (!user) return;
     await postService.deleteComment(postId, commentId);
     setPost((prev) =>
       prev
@@ -72,6 +75,7 @@ postService
   };
 
   const handleDeletePost = async (postId: string) => {
+    if (!user) return;
     await postService.delete(postId);
     setPost(null);
   };

@@ -101,10 +101,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       referralCode?: string;
     }) => {
       const res = await authService.register(data);
-      setAndPersistUser(res.user);
+      setUser(res.user);
       return res.user;
     },
-    [setAndPersistUser],
+    [],
   );
 
   const logout = useCallback(async () => {

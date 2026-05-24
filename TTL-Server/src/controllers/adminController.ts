@@ -11,7 +11,7 @@ export const adminController = {
       const page = Math.max(1, parseInt(s(req.query.page, "1")) || 1)
       const limit = Math.min(50, Math.max(1, parseInt(s(req.query.limit, "20")) || 20))
       const search = s(req.query.search, "") || undefined
-      const result = await adminService.listUsers(page, limit, search)
+      const result = await adminService.listUsers(page, limit, search, req.user?.userId)
       res.json(result)
     } catch (err) {
       next(err)
@@ -49,6 +49,73 @@ export const adminController = {
     try {
       const stats = await adminService.getStats()
       res.json(stats)
+    } catch (err) {
+      next(err)
+    }
+  },
+
+  async getDashboard(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await adminService.getDashboard(req.user?.userId)
+      res.json(result)
+    } catch (err) {
+      next(err)
+    }
+  },
+
+  async updateUserPermissions(req: Request, res: Response, next: NextFunction) {
+    try {
+      const user = await adminService.updateUserPermissions(s(req.params.id), req.body.permissions, req.user?.userId)
+      res.json({ user })
+    } catch (err) {
+      next(err)
+    }
+  },
+
+  async blockUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await adminService.blockUser(s(req.params.id), req.user?.userId)
+      res.json(result)
+    } catch (err) {
+      next(err)
+    }
+  },
+
+  async unblockUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await adminService.unblockUser(s(req.params.id), req.user?.userId)
+      res.json(result)
+    } catch (err) {
+      next(err)
+    }
+  },
+
+  async getActivityLog(req: Request, res: Response, next: NextFunction) {
+    try {
+      const page = Math.max(1, parseInt(s(req.query.page, "1")) || 1)
+      const limit = Math.min(100, Math.max(1, parseInt(s(req.query.limit, "50")) || 50))
+      const dateFrom = s(req.query.dateFrom) || undefined
+      const dateTo = s(req.query.dateTo) || undefined
+      const result = await adminService.getActivityLog(page, limit, dateFrom, dateTo)
+      res.json(result)
+    } catch (err) {
+      next(err)
+    }
+  },
+
+  async deleteActivityLog(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await adminService.deleteActivityLog(s(req.params.id))
+      res.json(result)
+    } catch (err) {
+      next(err)
+    }
+  },
+
+  async deleteAllActivityLog(req: Request, res: Response, next: NextFunction) {
+    try {
+      const result = await adminService.deleteAllActivityLog()
+      res.json(result)
     } catch (err) {
       next(err)
     }

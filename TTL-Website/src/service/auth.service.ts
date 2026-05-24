@@ -38,7 +38,7 @@ export const authService = {
   },
 
   activate(token: string) {
-    return request<{ message: string }>("/api/v1/auth/activate", {
+    return request<{ message: string; token?: string; user?: User }>("/api/v1/auth/activate", {
       method: "POST",
       body: { token },
     })

@@ -4,7 +4,7 @@ import { asyncHandler } from "../lib/asyncHandler"
 
 export const profileController = {
   getPublicProfile: asyncHandler(async (req: Request, res: Response) => {
-    const data = await profileService.getPublicProfile(req.params.userId as string, req.user!.userId)
+    const data = await profileService.getPublicProfile(req.params.userId as string, req.user?.userId ?? null)
     res.json(data)
   }),
 

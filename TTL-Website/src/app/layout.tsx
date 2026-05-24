@@ -32,7 +32,7 @@ export const metadata: Metadata = {
       "Đánh thức tiềm năng — Kiến tạo tương lai. Trang bị hành trang Sales & Marketing thực chiến cho thế hệ trẻ Việt Nam.",
     url: siteUrl,
     siteName: "SOS",
-    images: [{ url: "/images/hero-visual.png", width: 1200, height: 630 }],
+    images: [{ url: `${siteUrl}/images/hero-visual.png`, width: 1200, height: 630 }],
     locale: "vi_VN",
     type: "website",
   },
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     title: "SOS — Sales Omni System",
     description:
       "Đánh thức tiềm năng — Kiến tạo tương lai. Trang bị hành trang Sales & Marketing thực chiến cho thế hệ trẻ Việt Nam.",
-    images: ["/images/hero-visual.png"],
+    images: [`${siteUrl}/images/hero-visual.png`],
   },
 };
 

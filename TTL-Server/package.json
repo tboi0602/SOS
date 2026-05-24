@@ -5,7 +5,12 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "db:up": "docker compose -f ../docker-compose.yml up -d postgres",
+    "db:push": "prisma db push",
+    "db:gen": "prisma generate",
+    "db:setup": "prisma db push && prisma generate",
+    "dev:full": "docker compose -f ../docker-compose.yml up -d postgres && sleep 3 && prisma db push && prisma generate && tsx watch src/index.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

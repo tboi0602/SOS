@@ -40,7 +40,7 @@ export default function TriangleChart({
       width="100%"
       height="100%"
       viewBox="0 0 480 440"
-      className="overflow-visible font-sans"
+      className="overflow-visible"
       style={{ maxWidth: "520px", maxHeight: "480px" }}
     >
       <defs>
@@ -61,10 +61,7 @@ export default function TriangleChart({
         <polygon
           key={si}
           points={vertices
-            .map(
-              (v) =>
-                `${cx + (v.x - cx) * scale},${cy + (v.y - cy) * scale}`
-            )
+            .map((v) => `${cx + (v.x - cx) * scale},${cy + (v.y - cy) * scale}`)
             .join(" ")}
           fill="none"
           stroke="rgba(0, 183, 255, 0.521)"
@@ -118,7 +115,7 @@ export default function TriangleChart({
               </div>
             </foreignObject>
             <text
-              x={v.x + dx *-12}
+              x={v.x + dx * -12}
               y={isTop ? v.y - 30 : v.y + 34}
               textAnchor={isTop ? "middle" : dx > 0 ? "start" : "end"}
               fontSize="10"

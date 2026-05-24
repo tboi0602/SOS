@@ -1,2 +1,11 @@
 /.claude
 /docs
+
+# Environment files with secrets
+.env.docker
+*.local
+
+# Docker data (DB bind mount)
+data/
+
+/.codegraph

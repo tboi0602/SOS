@@ -6,9 +6,10 @@ export interface JwtPayload {
   email: string
   tokenVersion: number
   role: string
+  permissions: string[]
 }
 
-export function signToken(payload: { userId: string; email: string; tokenVersion: number; role: string }): string {
+export function signToken(payload: { userId: string; email: string; tokenVersion: number; role: string; permissions: string[] }): string {
   return jwt.sign(payload, config.jwt.secret, { expiresIn: config.jwt.expiresIn })
 }
 

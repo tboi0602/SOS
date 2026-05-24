@@ -38,7 +38,7 @@ export default function PublicProfilePage() {
   const { user: u, stats, score, rank, posts, journals } = data;
 
   return (
-    <div className="min-h-screen px-4 sm:px-6 py-10 text-white select-none relative overflow-hidden font-sans">
+    <div className="min-h-screen px-4 sm:px-6 py-10 text-white select-none relative overflow-hidden">
       <div className="max-w-5xl mx-auto space-y-8 relative z-10 animate-[fadeIn_0.6s_ease-out]">
         <ProfileHero
           user={u}
@@ -81,7 +81,7 @@ export default function PublicProfilePage() {
                 {posts.map((post) => (
                   <div
                     key={post.id}
-                    className="transition-all duration-300 hover:-translate-y-0.5"
+                    className="transition-all duration-300 hover:-translate-y-0.5 max-w-2xl mx-auto"
                   >
                     <PostCard
                       post={post}

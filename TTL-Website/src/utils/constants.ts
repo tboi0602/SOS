@@ -1,7 +1,6 @@
 import type { NavLink, Feature, ApproachStep, GalleryImage } from "@/types/landing"
 
 export const SITE_NAME = "SOS"
-export const SITE_DESC = "Sales Omni System — Hệ thống bán hàng toàn diện"
 
 export const NAV_LINKS: NavLink[] = [
   { href: "#hero", label: "Trang chủ" },

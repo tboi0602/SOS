@@ -24,6 +24,7 @@ export function usePublicProfile() {
   }, [id]);
 
   const handleLike = async (postId: string) => {
+    if (!user) return;
     try {
       const res = await postService.toggleLike(postId);
       setData((prev) =>
@@ -46,6 +47,7 @@ export function usePublicProfile() {
   };
 
   const handleComment = async (postId: string, content: string) => {
+    if (!user) return;
     try {
       const res = await postService.addComment(postId, content);
       const newComment: Comment = {
@@ -74,6 +76,7 @@ export function usePublicProfile() {
   };
 
   const handleDeleteComment = async (postId: string, commentId: string) => {
+    if (!user) return;
     try {
       await postService.deleteComment(postId, commentId);
       setData((prev) =>
@@ -99,6 +102,7 @@ export function usePublicProfile() {
   };
 
   const handleDeletePost = async (postId: string) => {
+    if (!user) return;
     try {
       await postService.delete(postId);
       setData((prev) =>

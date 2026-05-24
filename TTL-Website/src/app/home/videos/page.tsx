@@ -192,7 +192,7 @@ export default function TacPhamPage() {
                     </span>{" "}
                     trước khi cộng{" "}
                     <span className="text-amber-400 font-semibold">
-                      +1 điểm Truyền cảm hứng
+                      +2 điểm Kỷ luật
                     </span>
                   </p>
                 </div>

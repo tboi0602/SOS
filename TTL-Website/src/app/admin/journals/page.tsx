@@ -18,7 +18,8 @@ export default function JournalPage() {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div className="p-6">
+    <div className="min-h-screen px-4 sm:px-6 py-8 text-white select-none relative z-10">
+      <div className="max-w-8xl mx-auto space-y-8">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-lg font-bold text-white flex items-center gap-2">
@@ -142,6 +143,7 @@ export default function JournalPage() {
           </div>
         )}
       </Skeleton>
+    </div>
     </div>
   );
 }
