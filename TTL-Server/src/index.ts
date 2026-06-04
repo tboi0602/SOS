@@ -16,6 +16,8 @@ import adminRoutes from "./router/v1/admin"
 import profileRoutes from "./router/v1/profile"
 import journalRoutes from "./router/v1/journal"
 import submissionRoutes from "./router/v1/submission"
+import notificationRoutes from "./router/v1/notification"
+import lessonRoutes from "./router/v1/lesson"
 
 async function main() {
   logger.info("Starting server", { nodeEnv: config.nodeEnv, port: config.port })
@@ -71,6 +73,8 @@ async function main() {
   app.use("/api/v1/profile", profileRoutes)
   app.use("/api/v1/journal", journalRoutes)
   app.use("/api/v1/submissions", submissionRoutes)
+  app.use("/api/v1/notifications", notificationRoutes)
+  app.use("/api/v1/lessons", lessonRoutes)
 
   app.use((_req, res) => {
     res.status(404).json({ error: "API endpoint không tồn tại", code: "NOT_FOUND" })

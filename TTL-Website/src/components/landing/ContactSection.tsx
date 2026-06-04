@@ -11,7 +11,7 @@ import { SectionGlow } from "@/components/landing/Effects";
 
 function CTABanner() {
   return (
-    <section className="relative py-28 overflow-hidden">
+    <section className="relative py-24 overflow-hidden">
       <div className="absolute inset-0 gradient-mesh" />
       <SectionGlow position="center" color="rgba(24,86,255,0.05)" size="ellipse_60%_40%" />
 
@@ -53,7 +53,7 @@ function ContactForm() {
   }, [status]);
 
   return (
-    <section id="contact" className="relative py-28 overflow-hidden">
+    <section id="contact" className="relative py-24 overflow-hidden">
       <div className="absolute inset-0 gradient-mesh-cyan" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6">

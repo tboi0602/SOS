@@ -39,6 +39,8 @@ interface UpdateData {
 
 export const postService = {
   async create(userId: string, data: CreateData) {
+    const user = await getDb().user.findUnique({ where: { id: userId }, select: { role: true } });
+    const isAdmin = user?.role === "admin";
     const post = await getDb().post.create({
       data: {
         userId,
@@ -47,10 +49,21 @@ export const postService = {
         videos: data.videos ?? [],
         productLink: data.productLink ?? null,
         hashtags: data.hashtags ?? [],
-        status: "pending",
+        status: isAdmin ? "approved" : "pending",
       },
       include: postInclude,
     });
+    if (isAdmin) {
+      await getDb().notification.create({
+        data: {
+          userId: null,
+          title: "Bài viết mới từ SOS",
+          content: data.content.slice(0, 120),
+          type: "auto",
+          link: "/home/news",
+        },
+      });
+    }
     return this.formatPost(post, userId);
   },
 
@@ -186,6 +199,33 @@ export const postService = {
 
     await getDb().comment.delete({ where: { id: commentId } });
     return { message: "Đã xoá bình luận" };
+  },
+
+  async getNews(page = 1, limit = 20) {
+    const skip = (page - 1) * limit;
+    const admins = await getDb().user.findMany({
+      where: { role: "admin" },
+      select: { id: true },
+    });
+    const adminIds = admins.map((a: any) => a.id);
+    if (adminIds.length === 0) return { posts: [], total: 0, page, totalPages: 0 };
+
+    const [posts, total] = await Promise.all([
+      getDb().post.findMany({
+        where: { userId: { in: adminIds }, status: "approved" },
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: postInclude,
+      }),
+      getDb().post.count({ where: { userId: { in: adminIds }, status: "approved" } }),
+    ]);
+    return {
+      posts: posts.map((p) => this.formatPost(p, null)),
+      total,
+      page,
+      totalPages: Math.ceil(total / limit),
+    };
   },
 
   async listPending(page = 1, limit = 20) {

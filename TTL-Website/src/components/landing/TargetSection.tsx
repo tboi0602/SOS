@@ -12,7 +12,7 @@ export default function TargetSection() {
   const { ref, visible } = useScrollAnimation(0.1);
 
   return (
-    <section className="relative py-28 overflow-hidden">
+    <section className="relative py-24 overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(24,86,255,0.05)_0%,transparent_60%)]" />
       <SectionGlow position="bottom" color="rgba(200,168,78,0.03)" />
 

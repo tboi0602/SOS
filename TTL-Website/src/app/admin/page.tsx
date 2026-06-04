@@ -38,12 +38,13 @@ const PERMISSION_LABELS: Record<string, string> = {
 
 const chartTooltipStyle = {
   contentStyle: {
-    background: "#0c1e3a",
-    border: "1px solid rgba(255,255,255,0.06)",
+    background: "var(--color-primary-dark)",
+    border: "1px solid var(--color-glass-border)",
     borderRadius: "12px",
     fontSize: "12px",
+    color: "var(--color-foreground)",
   },
-  labelStyle: { color: "#fff" },
+  labelStyle: { color: "var(--color-foreground)" },
 };
 
 export default function AdminDashboard() {
@@ -89,26 +90,26 @@ export default function AdminDashboard() {
                 label: "Đang hoạt động",
                 value: stats.active,
                 icon: Award,
-                color: "from-blue-400 to-blue-600",
+                color: "from-emerald-400 to-emerald-600",
               },
               {
                 label: "Tổng điểm",
                 value: stats.totalScore.toLocaleString("vi-VN"),
                 icon: TrendingUp,
-                color: "from-blue-400 to-blue-600",
+                color: "from-amber-400 to-amber-600",
               },
               {
                 label: "Bài viết",
                 value: stats.totalPosts.toLocaleString("vi-VN"),
                 icon: FileText,
-                color: "from-blue-400 to-blue-600",
+                color: "from-violet-400 to-violet-600",
               },
             ].map((card) => {
               const Icon = card.icon;
               return (
                 <div
                   key={card.label}
-                  className="relative overflow-hidden rounded-2xl bg-[#0c1e3a]/60 border border-white/6 p-5 hover:border-white/20 transition-all"
+                  className="relative overflow-hidden rounded-2xl bg-primary-dark/60 border border-white/6 p-5 hover:border-white/20 transition-all"
                 >
                   <div
                     className={`absolute inset-0 bg-linear-to-br ${card.color} opacity-[0.06]`}
@@ -133,7 +134,7 @@ export default function AdminDashboard() {
 
           {/* Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="rounded-2xl bg-[#0c1e3a]/60 border border-white/6 p-5">
+            <div className="rounded-2xl bg-primary-dark/60 border border-white/6 p-5">
               <h3 className="text-sm font-semibold text-white mb-4">
                 Top 10 điểm số
               </h3>
@@ -184,7 +185,7 @@ export default function AdminDashboard() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
-            <div className="rounded-2xl bg-[#0c1e3a]/60 border border-white/6 p-5">
+            <div className="rounded-2xl bg-primary-dark/60 border border-white/6 p-5">
               <h3 className="text-sm font-semibold text-white mb-4">
                 Top 10 hoạt động
               </h3>
@@ -251,7 +252,7 @@ export default function AdminDashboard() {
                   setSearch(e.target.value);
                   setPage(1);
                 }}
-                className="w-full pl-9 pr-4 py-2 bg-[#0c1e3a]/60 border border-white/6 rounded-xl text-sm text-white placeholder-zinc-500 outline-none focus:border-primary/40 transition-colors"
+                className="w-full pl-9 pr-4 py-2 bg-primary-dark/60 border border-white/6 rounded-xl text-sm text-white placeholder-zinc-500 outline-none focus:border-primary/40 transition-colors"
               />
             </div>
             <span className="text-xs text-zinc-500">
@@ -264,7 +265,7 @@ export default function AdminDashboard() {
           <div className="overflow-x-auto rounded-2xl border border-white/6">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-[#0c1e3a]/80">
+                <tr className="bg-primary-dark/80">
                   <SortHeader
                     column="name"
                     label="Thành viên"

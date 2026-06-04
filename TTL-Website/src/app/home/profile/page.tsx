@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { profileService } from "@/service/profile.service";
-import type { ProfileResponse, ReferredMember } from "@/service/api";
+import { useProfile } from "@/hook/profile/useProfile";
 import AnimatedBorder from "@/components/profile/AnimatedBorder";
 import TriangleChart from "@/components/profile/TriangleChart";
 import ProfileHeader from "@/components/profile/ProfileHeader";
@@ -18,23 +16,7 @@ const BG = "linear-gradient(145deg, #09132e, #070d22)";
 
 export default function ProfilePage() {
   const { user } = useAuth();
-  const [profile, setProfile] = useState<ProfileResponse | null>(null);
-  const [referred, setReferred] = useState<ReferredMember[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!user) return;
-    Promise.all([
-      profileService.getProfile(),
-      profileService.getReferredMembers(),
-    ])
-      .then(([p, r]) => {
-        setProfile(p);
-        setReferred(r.members);
-      })
-      .catch(console.error)
-      .finally(() => setLoading(false));
-  }, [user]);
+  const { profile, referred, loading } = useProfile(user);
 
   if (!user) return null;
 

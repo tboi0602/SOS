@@ -45,6 +45,7 @@ model User {
   likes                 Like[]
   comments              Comment[]
   submissions           Submission[]
+  notifications         Notification[]
 
   @@map("users")
 }
@@ -135,6 +136,35 @@ model Like {
 
   @@id([userId, postId])
   @@map("likes")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String?  @map("user_id")
+  title     String
+  content   String
+  type      String   @default("manual")
+  link      String?
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isRead])
+  @@map("notifications")
+}
+
+model Lesson {
+  id        String   @id @default(uuid())
+  title     String
+  content   String?
+  images    Json?    @default("[]")
+  videoUrl  String?  @map("video_url")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("lessons")
 }
 
 model Comment {

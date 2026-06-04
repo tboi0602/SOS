@@ -1,9 +1,9 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
 import {
   ThumbsUp,
@@ -128,9 +128,11 @@ export default function PostCard({
             onClick={() => router.push(`/home/members/${post.userId}`)}
           >
             {post.user.avatar ? (
-              <img
+              <Image
                 src={getImageUrl(post.user.avatar)}
                 alt={`${post.user.name}'s avatar`}
+                width={40}
+                height={40}
                 className="size-10 rounded-full object-cover"
               />
             ) : (
@@ -160,11 +162,12 @@ export default function PostCard({
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
                 className="p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
+                aria-label="Tùy chọn bài viết"
               >
                 <MoreVertical size={16} />
               </button>
               {menuOpen && (
-                <div className="absolute right-0 top-full mt-1 min-w-36 rounded-xl bg-[#0f1a2e] border border-white/10 shadow-2xl py-1 z-40">
+                <div className="absolute right-0 top-full mt-1 min-w-36 rounded-xl bg-primary-dark border border-white/10 shadow-2xl py-1 z-40">
                   {onEditPost && (
                     <button
                       onClick={() => {
@@ -227,6 +230,7 @@ export default function PostCard({
                   className="relative overflow-hidden rounded-xl border border-white/6 aspect-square max-h-75 cursor-pointer group"
                   onClick={() => setActiveImageIndex(i)}
                 >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={getImageUrl(url)}
                     alt={`Post attachment ${i + 1}`}
@@ -259,6 +263,7 @@ export default function PostCard({
         <div className="flex items-center gap-1 mt-2">
           <button
             onClick={() => user ? onLike(post.id) : setShowLoginModal(true)}
+            aria-label={post.liked ? "Bỏ thích" : "Thích"}
             className={`flex items-center justify-center gap-1.5 flex-1 py-2 rounded-lg text-sm transition-all cursor-pointer ${post.liked ? "text-cyan bg-cyan/10" : "text-zinc-400 hover:text-cyan hover:bg-white/5"}`}
           >
             <ThumbsUp size={16} fill={post.liked ? "currentColor" : "none"} />
@@ -266,6 +271,7 @@ export default function PostCard({
           </button>
           <button
             onClick={() => setShowComments(!showComments)}
+            aria-label="Bình luận"
             className="flex items-center justify-center gap-1.5 flex-1 py-2 rounded-lg text-sm text-zinc-400 hover:text-cyan hover:bg-white/5 transition-all cursor-pointer"
           >
             <MessageCircle size={16} />
@@ -357,12 +363,13 @@ export default function PostCard({
           onClick={() => setActiveImageIndex(null)}
         >
           <div className="absolute top-0 inset-x-0 p-4 flex items-center justify-between text-white/80 z-10">
-            <span className="text-sm text-[#34d6ff] font-bold">
+            <span className="text-sm text-cyan font-bold">
               Ảnh {activeImageIndex + 1} trên {post.images.length}
             </span>
             <button
               onClick={() => setActiveImageIndex(null)}
               className="p-2 hover:bg-white/10 rounded-full transition-colors cursor-pointer text-white"
+              aria-label="Đóng"
             >
               <X size={24} />
             </button>
@@ -371,9 +378,10 @@ export default function PostCard({
             className="relative w-full max-w-5xl h-full flex items-center justify-center px-4 py-16"
             onClick={(e) => e.stopPropagation()}
           >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={getImageUrl(post.images[activeImageIndex])}
-              alt=""
+              alt={`Ảnh bài viết ${activeImageIndex + 1}`}
               className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
             />
           </div>
@@ -382,12 +390,14 @@ export default function PostCard({
               <button
                 onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
                 className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/5 hover:bg-white/15 active:scale-95 border border-white/10 rounded-full text-white transition-all cursor-pointer z-10"
+                aria-label="Ảnh trước"
               >
                 <ChevronLeft size={24} />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
                 className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/5 hover:bg-white/15 active:scale-95 border border-white/10 rounded-full text-white transition-all cursor-pointer z-10"
+                aria-label="Ảnh tiếp"
               >
                 <ChevronRight size={24} />
               </button>

@@ -204,13 +204,16 @@ export const adminService = {
     return { message: "Đã bỏ chặn người dùng thành công" };
   },
 
-  async getActivityLog(page = 1, limit = 50, dateFrom?: string, dateTo?: string) {
+  async getActivityLog(page = 1, limit = 50, dateFrom?: string, dateTo?: string, action?: string) {
     const where: Record<string, unknown> = {};
     if (dateFrom) {
       where.createdAt = { ...(where.createdAt as object || {}), gte: new Date(dateFrom + "T00:00:00") };
     }
     if (dateTo) {
       where.createdAt = { ...(where.createdAt as object || {}), lte: new Date(dateTo + "T23:59:59") };
+    }
+    if (action) {
+      where.action = action;
     }
 
     const [logs, total] = await Promise.all([

@@ -96,7 +96,8 @@ export const adminController = {
       const limit = Math.min(100, Math.max(1, parseInt(s(req.query.limit, "50")) || 50))
       const dateFrom = s(req.query.dateFrom) || undefined
       const dateTo = s(req.query.dateTo) || undefined
-      const result = await adminService.getActivityLog(page, limit, dateFrom, dateTo)
+      const action = s(req.query.action) || undefined
+      const result = await adminService.getActivityLog(page, limit, dateFrom, dateTo, action)
       res.json(result)
     } catch (err) {
       next(err)

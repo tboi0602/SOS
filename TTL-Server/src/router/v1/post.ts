@@ -52,6 +52,7 @@ router.post("/upload", requireAuth, upload.array("files"), postController.upload
 router.post("/", requireAuth, validate(createPostSchema), postController.create);
 router.get("/", optionalAuth, postController.getAll);
 router.get("/my-posts", requireAuth, postController.getMyPosts);
+router.get("/news", optionalAuth, postController.getNews);
 router.get("/search", optionalAuth, postController.search);
 router.get("/:id", optionalAuth, postController.getById);
 router.put("/:id", requireAuth, validate(updatePostSchema), postController.update);

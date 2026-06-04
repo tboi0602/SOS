@@ -15,7 +15,7 @@ export default function FeaturesSection() {
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section id="features" className="relative py-28 overflow-hidden">
+    <section id="features" className="relative py-24 overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(24,86,255,0.04)_0%,transparent_60%)]" />
       <SectionGlow position="center" color="rgba(34,211,238,0.03)" />
 

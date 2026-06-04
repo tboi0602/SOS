@@ -173,6 +173,7 @@ export default function ActivityLogPage() {
   const [total, setTotal] = useState(0);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [actionFilter, setActionFilter] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteAllOpen, setDeleteAllOpen] = useState(false);
@@ -181,7 +182,7 @@ export default function ActivityLogPage() {
 
   const fetchLogs = () => {
     setLoading(true);
-    adminService.getActivityLog(page, limit, dateFrom || undefined, dateTo || undefined).then((res) => {
+    adminService.getActivityLog(page, limit, dateFrom || undefined, dateTo || undefined, actionFilter || undefined).then((res) => {
       setLogs(res.logs);
       setTotal(res.total);
       setLoading(false);
@@ -190,7 +191,7 @@ export default function ActivityLogPage() {
 
   useEffect(() => {
     fetchLogs();
-  }, [page, dateFrom, dateTo]);
+  }, [page, dateFrom, dateTo, actionFilter]);
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -238,14 +239,30 @@ export default function ActivityLogPage() {
             onFromChange={(v) => { setDateFrom(v); setPage(1); }}
             onToChange={(v) => { setDateTo(v); setPage(1); }}
           />
-          {(dateFrom || dateTo) && (
+          {(dateFrom || dateTo || actionFilter) && (
             <button
-              onClick={() => { setDateFrom(""); setDateTo(""); setPage(1); }}
+              onClick={() => { setDateFrom(""); setDateTo(""); setActionFilter(""); setPage(1); }}
               className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[11px] text-zinc-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
             >
               Xoá lọc
             </button>
           )}
+        </div>
+
+        <div className="flex flex-wrap gap-1.5">
+          {[{ value: "", label: "Tất cả" }, ...Object.entries(ACTION_LABELS).map(([value, info]) => ({ value, label: info.label }))].map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => { setActionFilter(opt.value); setPage(1); }}
+              className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
+                actionFilter === opt.value
+                  ? "bg-primary/15 text-primary border border-primary/25"
+                  : "bg-white/5 text-zinc-500 hover:text-white hover:bg-white/10 border border-transparent"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
         </div>
 
         <Skeleton name="admin-table" loading={loading} rows={logs.length || 1}>

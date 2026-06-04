@@ -8,7 +8,7 @@ export default function HomeLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[#071224]">
+    <div className="min-h-screen bg-background">
       <div className="fixed inset-0 gradient-mesh pointer-events-none" />
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(24,86,255,0.04)_0%,transparent_60%)] pointer-events-none" />
 

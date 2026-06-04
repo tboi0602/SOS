@@ -93,6 +93,13 @@ export const postController = {
     res.json(result)
   }),
 
+  getNews: asyncHandler(async (req: Request, res: Response) => {
+    const page = Math.max(1, parseInt(req.query.page as string) || 1)
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit as string) || 20))
+    const result = await postService.getNews(page, limit)
+    res.json(result)
+  }),
+
   uploadMedia: asyncHandler(async (req: Request, res: Response) => {
     const files = req.files as any[]
     if (!files || files.length === 0) {

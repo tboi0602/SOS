@@ -64,13 +64,14 @@ export const adminService = {
     })
   },
 
-  getActivityLog(page = 1, limit = 50, dateFrom?: string, dateTo?: string) {
+  getActivityLog(page = 1, limit = 50, dateFrom?: string, dateTo?: string, action?: string) {
     const params = new URLSearchParams({
       page: String(page),
       limit: String(limit),
     })
     if (dateFrom) params.set("dateFrom", dateFrom)
     if (dateTo) params.set("dateTo", dateTo)
+    if (action) params.set("action", action)
     return request<ActivityLogResponse>(`/api/v1/admin/activity-log?${params}`)
   },
 

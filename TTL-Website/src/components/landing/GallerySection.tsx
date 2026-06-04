@@ -82,7 +82,7 @@ export default function GallerySection() {
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section className="relative py-28 overflow-hidden">
+    <section className="relative py-24 overflow-hidden">
       <div className="absolute inset-0 gradient-mesh-cyan" />
       <SectionGlow position="center" color="rgba(24,86,255,0.03)" />
 

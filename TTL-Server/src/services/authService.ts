@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import { v4 as uuid } from "uuid";
 import { OAuth2Client } from "google-auth-library";
 import { signToken } from "../utils/jwt";
-import { sendActivationEmail, sendResetPasswordEmail } from "./mail";
+import { sendActivationEmail, sendResetPasswordEmail, sendWelcomeEmail } from "./mail";
 import { logger } from "../lib/logger";
 import { config } from "../config";
 import { getDb } from "../db";
@@ -184,6 +184,8 @@ export const authService = {
         },
       });
       user = await getDb().user.findUnique({ where: { email: payload.email } })!;
+
+      sendWelcomeEmail(user!.email, user!.name);
     }
 
     const gPerms = Array.isArray(user!.permissions) ? user!.permissions as string[] : []

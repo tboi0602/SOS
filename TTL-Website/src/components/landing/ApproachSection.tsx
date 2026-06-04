@@ -41,7 +41,7 @@ function StepCard({ step, title, desc, index }: typeof APPROACH_DATA[0] & { inde
 
 export default function ApproachSection() {
   return (
-    <section id="approach" className="relative py-28 overflow-hidden">
+    <section id="approach" className="relative py-24 overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_100%,rgba(34,211,238,0.04)_0%,transparent_60%)]" />
       <SectionGlow position="center" color="rgba(34,211,238,0.03)" size="ellipse_50%_40%" />
 

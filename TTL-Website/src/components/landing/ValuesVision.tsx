@@ -14,7 +14,7 @@ function VisionPart() {
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section className="relative py-28 md:py-36 overflow-hidden">
+    <section className="relative py-24 md:py-32 overflow-hidden">
       <div className="absolute inset-0 gradient-mesh" />
       <SectionGlow position="center" color="rgba(200,168,78,0.04)" size="ellipse_50%_40%" />
 
@@ -72,7 +72,7 @@ function ValuesPart() {
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
   return (
-    <section id="values" className="relative py-28 overflow-hidden">
+    <section id="values" className="relative py-24 overflow-hidden">
       <div className="absolute inset-0 gradient-mesh-cyan" />
       <SectionGlow position="center" color="rgba(34,211,238,0.03)" size="ellipse_60%_40%" />
 

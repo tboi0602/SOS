@@ -12,9 +12,9 @@ router.use(requireAdminOrPermission)
 
 router.get("/dashboard", adminController.getDashboard)
 router.get("/stats", adminController.getStats)
-router.get("/activity-log", requirePermission("manage_users"), adminController.getActivityLog)
-router.delete("/activity-log", requirePermission("manage_users"), adminController.deleteAllActivityLog)
-router.delete("/activity-log/:id", requirePermission("manage_users"), adminController.deleteActivityLog)
+router.get("/activity-log", adminController.getActivityLog)
+router.delete("/activity-log", adminController.deleteAllActivityLog)
+router.delete("/activity-log/:id", adminController.deleteActivityLog)
 
 router.get("/users", requirePermission("manage_users"), adminController.listUsers)
 router.get("/users/:id", requirePermission("manage_users"), adminController.getUserById)

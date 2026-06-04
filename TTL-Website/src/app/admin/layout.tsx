@@ -14,10 +14,13 @@ import {
   Video,
   BookOpen,
   FileText,
+  Edit3,
   Key,
   Menu,
   X,
   ClipboardList,
+  Bell,
+  GraduationCap,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -41,6 +44,12 @@ const ALL_NAV_ITEMS = [
     permission: "manage_permissions",
   },
   {
+    href: "/admin/posts/manage",
+    label: "Quản lý bài đăng",
+    icon: Edit3,
+    permission: null,
+  },
+  {
     href: "/admin/posts",
     label: "Duyệt bài viết",
     icon: FileText,
@@ -62,7 +71,19 @@ const ALL_NAV_ITEMS = [
     href: "/admin/activity-log",
     label: "Nhật ký hoạt động",
     icon: ClipboardList,
-    permission: "manage_users",
+    permission: null,
+  },
+  {
+    href: "/admin/notifications",
+    label: "Thông báo",
+    icon: Bell,
+    permission: null,
+  },
+  {
+    href: "/admin/elearning",
+    label: "E-learning",
+    icon: GraduationCap,
+    permission: null,
   },
 ];
 
@@ -212,10 +233,10 @@ export default function AdminLayout({
   );
 
   return (
-    <div className="min-h-screen bg-[#071224]">
+    <div className="min-h-screen bg-background">
       {/* Desktop sidebar */}
       <aside
-        className={`hidden lg:flex fixed left-0 top-0 bottom-0 z-30 flex-col bg-[#0c1e3a]/80 backdrop-blur-xl border-r border-white/6 transition-all duration-300 ${
+        className={`hidden lg:flex fixed left-0 top-0 bottom-0 z-30 flex-col bg-primary-dark/80 backdrop-blur-xl border-r border-white/6 transition-all duration-300 ${
           collapsed ? "w-16" : "w-64"
         }`}
       >
@@ -223,7 +244,7 @@ export default function AdminLayout({
       </aside>
 
       {/* Mobile header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 h-14 bg-[#0c1e3a]/95 backdrop-blur-xl border-b border-white/6">
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 h-14 bg-primary-dark/95 backdrop-blur-xl border-b border-white/6">
         <button
           onClick={() => setMobileOpen(true)}
           className="p-2 text-zinc-400 hover:text-white transition-colors cursor-pointer"
@@ -260,7 +281,7 @@ export default function AdminLayout({
 
       {/* Mobile drawer */}
       <div
-        className={`lg:hidden fixed top-0 left-0 z-50 w-72 h-dvh max-h-dvh bg-[#0c1e3a] border-r border-white/6 shadow-2xl transition-transform duration-300 ${
+        className={`lg:hidden fixed top-0 left-0 z-50 w-72 h-dvh max-h-dvh bg-primary-dark border-r border-white/6 shadow-2xl transition-transform duration-300 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         onClick={(e) => e.stopPropagation()}

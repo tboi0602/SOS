@@ -115,7 +115,7 @@ export function usePublicProfile() {
 
   const profileUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/members/${id}`
+      ? `${window.location.origin}/home/members/${id}`
       : "";
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(profileUrl)}&color=001425&bgcolor=00c3ff`;
 

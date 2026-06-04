@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/auth-context";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { SITE_NAME } from "@/utils/constants";
+import { notificationService } from "@/service/notification.service";
 import {
   LayoutGrid,
   TrendingUp,
@@ -23,6 +24,9 @@ import {
   X,
   ChevronLeft,
   ChevronRight,
+  Bell,
+  Newspaper,
+  BookOpen,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import LoginRequiredModal from "@/components/ui/LoginRequiredModal";
@@ -38,7 +42,12 @@ const PERSONAL_PATHS = [
 
 const NAV_ITEMS = [
   { href: "/home", label: "Bảng tin", icon: LayoutGrid },
+  { href: "/home/news", label: "Tin tức", icon: Newspaper },
   { href: "/home/top-sales", label: "Top doanh số", icon: TrendingUp },
+];
+
+const BOTTOM_NAV_ITEMS = [
+  { href: "/home/elearning", label: "E-learning", icon: BookOpen },
 ];
 
 const PERSONAL_SUB_ITEMS = [
@@ -60,8 +69,17 @@ export default function FeedSidebar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const desktopW = collapsed ? "w-16" : "w-60";
   const mobileOpenRef = useRef(mobileOpen);
+
+  useEffect(() => {
+    if (!user) { setUnreadCount(0); return; }
+    const fetch = () => notificationService.list(1, 1).then((res) => setUnreadCount(res.unreadCount)).catch(() => {});
+    fetch();
+    const id = setInterval(fetch, 30000);
+    return () => clearInterval(id);
+  }, [user]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -70,7 +88,6 @@ export default function FeedSidebar() {
     return () => window.clearTimeout(timer);
   }, []);
 
-  // Sync sidebar width as CSS variable for layout
   useEffect(() => {
     const value = collapsed ? "4rem" : "15rem";
     document.documentElement.style.setProperty("--sidebar-width", value);
@@ -79,12 +96,10 @@ export default function FeedSidebar() {
     };
   }, [collapsed]);
 
-  // keep a ref in sync so the pathname-only effect can check current state
   useEffect(() => {
     mobileOpenRef.current = mobileOpen;
   }, [mobileOpen]);
 
-  // Close mobile sidebar on route change (schedule to avoid sync setState in effect)
   useEffect(() => {
     if (!mobileOpenRef.current) return;
     const id = window.setTimeout(() => {
@@ -97,7 +112,6 @@ export default function FeedSidebar() {
 
   const sidebarContent = (isCollapsed: boolean) => (
     <div className="flex flex-col h-full">
-      {/* Logo */}
       <div
         className={`flex items-center ${isCollapsed ? "justify-center" : "justify-between"} px-5 pt-6 pb-4`}
       >
@@ -131,6 +145,26 @@ export default function FeedSidebar() {
 
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {NAV_ITEMS.map((item) => {
+          const Icon = item.icon;
+          const active = isActive(item.href);
+          return (
+            <button
+              key={item.href}
+              onClick={() => router.push(item.href)}
+              className={`w-full flex items-center gap-3 ${isCollapsed ? "justify-center px-0 py-3" : "px-3.5 py-2.5"} rounded-xl text-sm transition-all cursor-pointer ${
+                active
+                  ? "text-white bg-primary/15 font-medium"
+                  : "text-zinc-400 hover:text-white hover:bg-white/6"
+              }`}
+              title={isCollapsed ? item.label : undefined}
+            >
+              <Icon size={18} className="shrink-0" />
+              {!isCollapsed && <span className="truncate">{item.label}</span>}
+            </button>
+          );
+        })}
+
+        {BOTTOM_NAV_ITEMS.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.href);
           return (
@@ -222,7 +256,7 @@ export default function FeedSidebar() {
                   }`}
                 >
                   <Users size={15} />
-                  Mọi người
+                  Cộng đồng
                 </button>
                 <button
                   onClick={() => user ? router.push("/home/members/referred") : setShowLoginModal(true)}
@@ -301,6 +335,23 @@ export default function FeedSidebar() {
       <div className="border-t border-white/6 mx-4" />
 
       <div className="px-4 py-4 space-y-3">
+        {/* Notification bell */}
+        {user && (
+          <button
+            onClick={() => router.push("/home/notifications")}
+            className={`w-full flex items-center gap-3 ${isCollapsed ? "justify-center px-0 py-3" : "px-3.5 py-2.5"} rounded-xl text-sm transition-all cursor-pointer text-zinc-400 hover:text-white hover:bg-white/6 relative`}
+            title={isCollapsed ? "Thông báo" : undefined}
+          >
+            <Bell size={18} className="shrink-0" />
+            {!isCollapsed && <span className="flex-1 text-left">Thông báo</span>}
+            {unreadCount > 0 && (
+              <span className={`${isCollapsed ? "absolute -top-0.5 -right-0.5" : ""} flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-danger text-white text-[9px] font-bold`}>
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            )}
+          </button>
+        )}
+
         {/* Collapse toggle - prominent button */}
         <button
           onClick={() => setCollapsed(!collapsed)}
@@ -445,7 +496,17 @@ export default function FeedSidebar() {
             {SITE_NAME}
           </span>
         </span>
-        <div className="size-8" />
+        <button
+          onClick={() => router.push("/home/notifications")}
+          className="p-2 text-zinc-400 hover:text-white transition-colors cursor-pointer relative"
+        >
+          <Bell size={20} />
+          {unreadCount > 0 && (
+            <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-[16px] h-[16px] px-1 rounded-full bg-danger text-white text-[8px] font-bold">
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </span>
+          )}
+        </button>
       </header>
 
       {/* Mobile overlay */}
@@ -498,7 +559,7 @@ export default function FeedSidebar() {
             className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${isMembersActive ? "text-primary" : "text-zinc-500"}`}
           >
             <Users size={20} />
-            <span className="text-[10px]">Thành viên</span>
+            <span className="text-[10px]">Cộng đồng</span>
           </button>
 
           <button

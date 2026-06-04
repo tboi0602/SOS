@@ -83,6 +83,10 @@ export const postService = {
     )
   },
 
+  getNews(page = 1, limit = 20) {
+    return request<PostListResponse>(`/api/v1/posts/news?page=${page}&limit=${limit}`);
+  },
+
   deleteComment(postId: string, commentId: string) {
     return request<{ message: string }>(
       `/api/v1/posts/${postId}/comments/${commentId}`,

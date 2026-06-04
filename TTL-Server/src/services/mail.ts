@@ -145,6 +145,40 @@ export async function sendActivationEmail(
   }
 }
 
+export async function sendWelcomeEmail(
+  email: string,
+  name: string,
+) {
+  logger.info("sendWelcomeEmail", { email });
+
+  const body = `
+    <p>Xin chào <strong>${name}</strong>,</p>
+    <p>Cảm ơn bạn đã đăng ký tài khoản tại <strong>SOS</strong> — Hệ thống đào tạo Sales &amp; Marketing thực chiến dành cho giới trẻ Việt Nam.</p>
+    <p style="margin-top:16px;">Tài khoản của bạn đã được kích hoạt thành công. Bạn có thể bắt đầu ngay hành trình phát triển kỹ năng bán hàng, đạo đức và cảm hứng của mình.</p>
+    <div style="text-align:center;">
+      <a href="${FRONTEND_URL}/home" class="btn">Bắt đầu ngay</a>
+    </div>
+    <div class="divider" />
+    <p style="color:${BRAND.textMuted}; font-size:13px;">
+      Nếu bạn có bất kỳ câu hỏi nào, hãy liên hệ với chúng tôi qua hotline <strong>0904 373 123</strong> hoặc email <strong>support@vnsales.org</strong>.
+    </p>
+  `;
+
+  try {
+    await resend.emails.send({
+      from: FROM,
+      to: email,
+      subject: "Chào mừng bạn đến với SOS — Sales Omni System",
+      html: wrapLayout(body),
+    });
+  } catch (err) {
+    logger.error("sendWelcomeEmail failed", {
+      error: err instanceof Error ? err.message : String(err),
+      email,
+    });
+  }
+}
+
 export async function sendResetPasswordEmail(
   email: string,
   name: string,

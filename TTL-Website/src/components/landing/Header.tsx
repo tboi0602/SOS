@@ -7,24 +7,30 @@ import { cn } from "@/utils/cn";
 import { NAV_LINKS, SITE_NAME } from "@/utils/constants";
 import Image from "next/image";
 import Link from "next/link";
-import { LogIn, UserPlus, LogOut, ChevronDown, Settings } from "lucide-react";
+import { LogIn, UserPlus, LogOut, ChevronDown, Settings, Bell } from "lucide-react";
+import { notificationService } from "@/service/notification.service";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
+  const [progress, setProgress] = useState(0);
+  const [unreadCount, setUnreadCount] = useState(0);
   const { user, logout } = useAuth();
 
   useEffect(() => {
+    if (!user) { setUnreadCount(0); return; }
+    const fetch = () => notificationService.list(1, 1).then((res) => setUnreadCount(res.unreadCount)).catch(() => {});
+    fetch();
+    const id = setInterval(fetch, 30000);
+    return () => clearInterval(id);
+  }, [user]);
+
+  useEffect(() => {
     const handleScroll = () => {
-      const progressBar = document.getElementById("progressBar");
-      if (progressBar) {
-        const scrollTop = window.scrollY;
-        const docHeight =
-          document.documentElement.scrollHeight - window.innerHeight;
-        const progress = Math.min(scrollTop / docHeight, 1);
-        progressBar.style.transform = `scaleX(${progress})`;
-      }
+      setProgress(
+        Math.min(window.scrollY / (document.documentElement.scrollHeight - window.innerHeight), 1)
+      );
 
       const sections = document.querySelectorAll("section[id]");
       let current = "hero";
@@ -44,8 +50,7 @@ export default function Header() {
     <>
       <div
         className="scroll-progress"
-        id="progressBar"
-        style={{ transform: "scaleX(0)" }}
+        style={{ transform: `scaleX(${progress})` }}
       />
 
       <motion.header
@@ -56,7 +61,7 @@ export default function Header() {
       >
         <div
           className={cn(
-            "rounded-2xl backdrop-blur-sm bg-[#0c1e3a]/60 border border-white/10 shadow-lg shadow-black/10",
+            "rounded-2xl backdrop-blur-sm bg-primary-dark/60 border border-white/10 shadow-lg shadow-black/10",
             "transition-all duration-300",
           )}
         >
@@ -82,28 +87,51 @@ export default function Header() {
             </Link>
 
             <nav className="hidden md:flex items-center gap-1">
-              {NAV_LINKS.map((l) => {
-                const sectionId = l.href.replace("#", "");
-                return (
-                  <a
-                    key={l.href}
-                    href={l.href}
-                    className={cn(
-                      "px-3.5 py-2 rounded-lg text-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary nav-link",
-                      activeSection === sectionId
-                        ? "text-white active"
-                        : "text-zinc-400 hover:text-white hover:bg-white/10",
-                    )}
-                  >
-                    {l.label}
-                  </a>
-                );
-              })}
+              <div className="flex items-center gap-1 mr-1 pr-2 border-r border-white/10">
+                {NAV_LINKS.map((l) => {
+                  const sectionId = l.href.replace("#", "");
+                  return (
+                    <a
+                      key={l.href}
+                      href={l.href}
+                      className={cn(
+                        "px-3.5 py-2 rounded-lg text-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary nav-link",
+                        activeSection === sectionId
+                          ? "text-white active"
+                          : "text-zinc-400 hover:text-white hover:bg-white/10",
+                      )}
+                    >
+                      {l.label}
+                    </a>
+                  );
+                })}
+              </div>
+              <Link
+                href="/home/members"
+                className="px-3.5 py-2 rounded-lg text-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary text-zinc-400 hover:text-white hover:bg-white/10"
+              >
+                Cộng đồng
+              </Link>
+              <Link
+                href="/home/news"
+                className="px-3.5 py-2 rounded-lg text-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary text-zinc-400 hover:text-white hover:bg-white/10"
+              >
+                Tin tức
+              </Link>
             </nav>
 
             <div className="hidden md:flex items-center gap-2">
               {user ? (
-                <div className="relative">
+                <div className="relative flex items-center gap-1">
+                  <Link
+                    href="/home/notifications"
+                    className="relative p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+                  >
+                    <Bell size={18} />
+                    {unreadCount > 0 && (
+                      <span className="absolute top-1 right-1 size-2 rounded-full bg-danger" />
+                    )}
+                  </Link>
                   <button
                     onClick={() => setUserOpen(!userOpen)}
                     className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm text-zinc-300 hover:text-white hover:bg-white/10 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary"
@@ -125,14 +153,14 @@ export default function Header() {
                           {user.email}
                         </p>
                       </div>
-                      <a
+                      <Link
                         href="/home/settings"
                         onClick={() => setUserOpen(false)}
                         className="flex items-center gap-2 px-4 py-2.5 text-sm text-zinc-300 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
                       >
                         <Settings size={14} />
                         Cài đặt tài khoản
-                      </a>
+                      </Link>
                       <button
                         onClick={() => {
                           logout();
@@ -148,20 +176,20 @@ export default function Header() {
                 </div>
               ) : (
                 <>
-                  <a
+                  <Link
                     href="/auth/login"
                     className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm text-zinc-300 hover:text-white hover:bg-white/10 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary"
                   >
                     <LogIn size={15} />
                     Đăng nhập
-                  </a>
-                  <a
+                  </Link>
+                  <Link
                     href="/auth/register"
                     className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary-light transition-all shadow-lg shadow-primary/25 cursor-pointer focus-visible:ring-2 focus-visible:ring-white"
                   >
                     <UserPlus size={15} />
                     Đăng ký
-                  </a>
+                  </Link>
                 </>
               )}
             </div>
@@ -204,6 +232,20 @@ export default function Header() {
                   {l.label}
                 </a>
               ))}
+              <Link
+                href="/home/members"
+                onClick={() => setOpen(false)}
+                className="text-sm text-zinc-300 hover:text-white hover:bg-white/5 px-3 py-2 rounded-lg transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                Cộng đồng
+              </Link>
+              <Link
+                href="/home/news"
+                onClick={() => setOpen(false)}
+                className="text-sm text-zinc-300 hover:text-white hover:bg-white/5 px-3 py-2 rounded-lg transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                Tin tức
+              </Link>
               <div className="flex gap-3 pt-2">
                 {user ? (
                   <button
@@ -217,20 +259,20 @@ export default function Header() {
                   </button>
                 ) : (
                   <>
-                    <a
+                    <Link
                       href="/auth/login"
                       onClick={() => setOpen(false)}
                       className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-sm text-zinc-300 border border-white/10 hover:bg-white/10 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary"
                     >
                       <LogIn size={15} /> Đăng nhập
-                    </a>
-                    <a
+                    </Link>
+                    <Link
                       href="/auth/register"
                       onClick={() => setOpen(false)}
-                      className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary-light transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-white"
+                      className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary-light transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary"
                     >
                       <UserPlus size={15} /> Đăng ký
-                    </a>
+                    </Link>
                   </>
                 )}
               </div>
