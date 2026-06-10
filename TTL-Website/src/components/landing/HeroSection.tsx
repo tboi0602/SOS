@@ -1,33 +1,62 @@
-"use client";
+"use client"
 
-import { useRef } from "react";
-import dynamic from "next/dynamic";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
-import { HERO } from "@/utils/constants";
-import { ArrowRight, Play } from "lucide-react";
-import { useMousePosition } from "@/hook/common";
-import TiltContainer from "@/components/ui/TiltContainer";
+import { useRef } from "react"
+import { motion, useScroll, useTransform } from "framer-motion"
+import dynamic from "next/dynamic"
+import { HERO } from "@/utils/constants"
+import { ArrowRight, Play, Sparkles } from "lucide-react"
+import { useMousePosition } from "@/hook/common"
 
 const ThreeScene = dynamic(() => import("@/components/landing/ThreeScene"), {
   ssr: false,
-});
-const RotatingCube = dynamic(() => import("@/components/ui/RotatingCube"), {
+})
+const RotatingStar = dynamic(() => import("@/components/ui/RotatingStar"), {
   ssr: false,
-});
+})
 
-const ease = [0.16, 1, 0.3, 1] as const;
+const ease = [0.16, 1, 0.3, 1] as const
+
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.06,
+      delayChildren: 0.2,
+    },
+  },
+}
+
+const wordVariants = {
+  hidden: { y: 48, opacity: 0, rotateX: -15, filter: "blur(4px)" },
+  visible: {
+    y: 0,
+    opacity: 1,
+    rotateX: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.8, ease },
+  },
+}
+
+const actionVariants = {
+  hidden: { y: 24, opacity: 0, scale: 0.95 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.5, ease },
+  },
+}
 
 function HeroLighting() {
-  const { x, y } = useMousePosition();
-  const { scrollYProgress } = useScroll();
+  const { x, y } = useMousePosition()
+  const { scrollYProgress } = useScroll()
 
   return (
     <>
       <motion.div
         className="absolute top-1/4 -left-32 w-125 h-125 rounded-full pointer-events-none"
         style={{
-          background:
-            "radial-gradient(circle, rgba(34,211,238,0.08) 0%, transparent 70%)",
+          background: "radial-gradient(circle, var(--glow-gold) 0%, transparent 70%)",
           x: useTransform(scrollYProgress, [0, 0.3], [x * 40 - 20, 0]),
           y: useTransform(scrollYProgress, [0, 0.3], [y * 40 - 20, 0]),
           opacity: useTransform(scrollYProgress, [0, 0.2], [1, 0]),
@@ -36,155 +65,127 @@ function HeroLighting() {
       <motion.div
         className="absolute bottom-1/4 -right-24 w-100 h-100 rounded-full pointer-events-none"
         style={{
-          background:
-            "radial-gradient(circle, rgba(24,86,255,0.1) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(139,101,8,0.06) 0%, transparent 70%)",
           x: useTransform(scrollYProgress, [0, 0.3], [x * -30 + 15, 0]),
           y: useTransform(scrollYProgress, [0, 0.3], [y * -30 + 15, 0]),
           opacity: useTransform(scrollYProgress, [0, 0.2], [1, 0]),
         }}
       />
     </>
-  );
+  )
 }
 
 function HeroVisual() {
-  const { scrollYProgress } = useScroll();
-  const scale = useTransform(scrollYProgress, [0, 0.15], [1, 0.96]);
+  const { scrollYProgress } = useScroll()
+  const scale = useTransform(scrollYProgress, [0, 0.15], [1, 0.96])
+  const yOffset = useTransform(scrollYProgress, [0, 0.15], [0, 20])
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 40, filter: "blur(8px)" }}
+      initial={{ opacity: 0, x: 60, filter: "blur(12px)" }}
       animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-      transition={{ duration: 0.7, ease, delay: 0.3 }}
+      transition={{ duration: 0.9, ease, delay: 0.3 }}
       className="hidden lg:flex items-center justify-center w-full"
-      style={{ scale }}
+      style={{ scale, y: yOffset }}
     >
       <div className="relative w-full h-120 min-h-100">
-        <div className="absolute -top-4 -right-4 w-32 h-32 rounded-full bg-cyan/10 blur-3xl animate-pulse-soft" />
+        <div className="absolute -top-6 -right-6 w-40 h-40 rounded-full bg-accent/10 blur-3xl animate-pulse-soft" />
         <div
-          className="absolute -bottom-4 -left-12 w-48 h-48 rounded-full bg-primary/10 blur-3xl animate-pulse-soft"
+          className="absolute -bottom-6 -left-16 w-56 h-56 rounded-full bg-primary/15 blur-3xl animate-pulse-soft"
           style={{ animationDelay: "-1.5s" }}
         />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-accent/5 blur-3xl" />
-        <div className="size-full cursor-pointer">
-          <TiltContainer className="size-full" limit={8}>
-            <RotatingCube />
-          </TiltContainer>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full bg-accent/5 blur-3xl" />
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-accent/5 blur-3xl animate-pulse-soft" />
+        <div className="relative size-full cursor-pointer">
+          <RotatingStar />
         </div>
       </div>
     </motion.div>
-  );
+  )
 }
 
 export default function HeroSection() {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true });
-  const { scrollYProgress } = useScroll();
-  const heroGlow = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
-  const sceneOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const ref = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll()
+  const sceneOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
+
+  const titleWords = HERO.title.split(" ")
 
   return (
-    <section
-      id="hero"
-      className="relative min-h-screen flex items-center overflow-hidden"
-    >
-      <motion.div
-        className="absolute inset-0 z-0"
-        style={{ opacity: sceneOpacity }}
-      >
+    <section id="hero" ref={ref} className="relative min-h-screen flex items-center overflow-hidden">
+      <motion.div className="absolute inset-0 z-0" style={{ opacity: sceneOpacity }}>
         <ThreeScene />
       </motion.div>
 
-      <motion.div
-        className="absolute inset-0 gradient-mesh"
-        style={{
-          opacity: useTransform(scrollYProgress, [0, 0.15], [0.6, 0.2]),
-        }}
-      />
-      <div className="absolute inset-0 bg-linear-to-r from-[#0c1e3a] via-transparent to-[#0c1e3a] opacity-80" />
-      <motion.div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_60%,rgba(34,211,238,0.03)_0%,transparent_70%)]"
-        style={{ opacity: heroGlow }}
-      />
-      <motion.div
-        className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_50%_30%,rgba(24,86,255,0.04)_0%,transparent_70%)]"
-        style={{ opacity: heroGlow }}
-      />
-      <div className="absolute bottom-0 left-0 right-0 h-48 bg-linear-to-t from-[#0c1e3a] to-transparent" />
+      <motion.div className="absolute inset-0 z-[1] gradient-mesh" style={{ opacity: useTransform(scrollYProgress, [0, 0.2], [0.8, 0.3]) }} />
+      <div className="absolute inset-0 z-[1]" style={{ background: "linear-gradient(90deg, var(--hero-gradient-from) 0%, transparent 40%, transparent 60%, var(--hero-gradient-from) 100%)" }} />
+
+      <div className="absolute bottom-0 left-0 right-0 h-48 z-[1] bg-linear-to-t from-[var(--fade-to-bottom)] to-transparent" />
 
       <HeroLighting />
 
-      <div
-        ref={ref}
-        className="relative z-10 mx-auto w-full max-w-7xl px-6 pt-24 pb-20"
-      >
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-8 pt-32 pb-24">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
           <motion.div
-            initial={{ opacity: 0, y: 40, filter: "blur(8px)" }}
-            animate={inView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
-            transition={{ duration: 0.7, ease }}
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
           >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, ease, delay: 0.1 }}
-              className="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 mb-6"
+            <motion.span
+              initial={{ y: -24, opacity: 0, scale: 0.96 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7, ease }}
+              className="inline-flex items-center gap-2.5 glass rounded-full px-5 py-2 mb-8"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-cyan animate-pulse" />
-              <span className="text-[11px] font-semibold text-zinc-400 tracking-[0.15em] uppercase">
+              <Sparkles size={14} className="text-accent" />
+              <span className="text-[10px] font-semibold" style={{ color: "var(--text-tertiary)" }}>
                 {HERO.badge}
               </span>
-            </motion.div>
+            </motion.span>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, ease, delay: 0.2 }}
-              className="heading-xl font-extrabold text-white leading-[1.05] whitespace-pre-line"
-            >
-              {HERO.title.split("\n")[0]}
-              <br />
-              <span className="text-gradient">{HERO.title.split("\n")[1]}</span>
-            </motion.h1>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-[1.08] tracking-tight" style={{ color: "var(--text-primary)" }}>
+              {titleWords.map((w, i) => (
+                <motion.span
+                  key={i}
+                  variants={wordVariants}
+                  className="word inline-block mr-[0.28em]"
+                >
+                  {w === "Trí" || w === "tuệ" || w === "Lưu" || w === "truyền" ? <span className="text-gradient">{w}</span> : w}
+                </motion.span>
+              ))}
+              <motion.span
+                variants={wordVariants}
+                className="block mt-3 text-sm sm:text-base font-semibold tracking-[0.15em] text-accent/80"
+              >
+                {HERO.tagline}
+              </motion.span>
+            </h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, ease, delay: 0.35 }}
-              className="mt-6 text-base sm:text-lg text-zinc-400 leading-relaxed max-w-lg"
+              initial={{ y: 24, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.6, ease, delay: 0.25 }}
+              className="mt-8 text-base sm:text-lg leading-relaxed max-w-lg"
+              style={{ color: "var(--text-tertiary)" }}
             >
               {HERO.subtitle}
             </motion.p>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.5, delay: 0.45 }}
-              className="divider-gradient mt-8 max-w-xs"
-            />
+            <div className="h-px mt-10 max-w-xs" style={{ background: "linear-gradient(90deg, var(--glass-border), transparent)" }} />
 
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, ease, delay: 0.55 }}
-              className="mt-8 flex flex-wrap items-center gap-4"
+              initial={{ y: 24, opacity: 0, scale: 0.95 }}
+              animate={{ y: 0, opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, ease, delay: 0.35 }}
+              className="mt-10 flex flex-wrap items-center gap-4"
             >
-              <a
-                href="/home"
-                className="group relative btn-glow inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl text-sm font-semibold text-white bg-primary z-10 transition-all"
-              >
+              <a href="/home" className="btn-el group relative inline-flex items-center gap-2.5 px-8 py-4 rounded-xl text-sm font-semibold text-[var(--text-primary)] bg-accent hover:bg-accent-dark shadow-lg shadow-accent/25 transition-all duration-300">
                 <span className="relative z-10 flex items-center gap-2">
                   {HERO.cta}
-                  <ArrowRight
-                    size={16}
-                    className="group-hover:translate-x-1 transition-transform"
-                  />
+                  <ArrowRight size={16} className="group-hover:translate-x-1.5 transition-transform duration-300" />
                 </span>
               </a>
-              <a
-                href="#features"
-                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl text-sm font-semibold text-zinc-300 glass glass-hover"
-              >
+              <a href="#truth" className="btn-el inline-flex items-center gap-2.5 px-8 py-4 rounded-xl text-sm font-semibold glass" style={{ color: "var(--text-tertiary)" }}>
                 <Play size={15} />
                 {HERO.secondary}
               </a>
@@ -192,35 +193,8 @@ export default function HeroSection() {
           </motion.div>
 
           <HeroVisual />
+          </div>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, ease, delay: 0.65 }}
-        >
-          <div className="relative mt-16 flex items-center gap-6 text-xs text-zinc-600">
-            <span className="tracking-[0.15em] uppercase">Đối tác</span>
-            <div className="gradient-line flex-1" />
-          </div>
-          <div className="mt-4 flex flex-wrap gap-6 text-sm text-zinc-500">
-            {[
-              "Doanh nghiệp vừa & nhỏ",
-              "Startup",
-              "Bán lẻ",
-              "Sàn TMĐT",
-              "Nhà phân phối",
-            ].map((p) => (
-              <span
-                key={p}
-                className="px-4 py-2 glass rounded-lg text-xs cursor-pointer hover:bg-white/10 transition-all"
-              >
-                {p}
-              </span>
-            ))}
-          </div>
-        </motion.div>
-      </div>
     </section>
-  );
+  )
 }

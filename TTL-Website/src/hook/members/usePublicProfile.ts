@@ -117,7 +117,7 @@ export function usePublicProfile() {
     typeof window !== "undefined"
       ? `${window.location.origin}/home/members/${id}`
       : "";
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(profileUrl)}&color=001425&bgcolor=00c3ff`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(profileUrl)}&color=FFFFFF&bgcolor=1A1A1A`;
 
   const memberDays = data?.user?.createdAt
     ? Math.floor((mountedAt - new Date(data.user.createdAt).getTime()) / 86400000)
@@ -125,7 +125,7 @@ export function usePublicProfile() {
 
   const totalCompetency =
     Math.round(
-      ((data?.user.kyLuat ?? 0) + (data?.user.daoDuc ?? 0) + (data?.user.truyenCamHung ?? 0)) / 3,
+      ((data?.user.kyLuat ?? 0) + (data?.user.daoDuc ?? 0) + (data?.user.truyenCamHung ?? 0) + (data?.user.postScore ?? 0) + (data?.user.referredScore ?? 0)) / 5,
     ) || 0;
 
   return {

@@ -48,10 +48,10 @@ export default function ProfileBanner({
     <div className="p-5 sm:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-5">
       <div className="relative group shrink-0">
         <div
-          className="size-24 sm:size-28 rounded-full p-1 overflow-hidden transition-shadow duration-300 group-hover:shadow-[0_0_40px_rgba(0,183,255,0.5)]"
+          className="size-24 sm:size-28 rounded-full p-1 overflow-hidden transition-shadow duration-300 group-hover:shadow-[0_0_40px_var(--clr-accent)]"
           style={{
-            background: "linear-gradient(135deg, #00b7ff, #0066ff)",
-            boxShadow: "0 0 25px rgba(0,183,255,0.35)",
+            background: "linear-gradient(135deg, var(--clr-accent), var(--clr-accent-dark))",
+            boxShadow: "0 0 25px color-mix(in srgb, var(--clr-accent) 35%, transparent)",
           }}
         >
           <div className="relative w-full h-full rounded-full overflow-hidden">
@@ -65,7 +65,7 @@ export default function ProfileBanner({
                 unoptimized
               />
             ) : (
-              <div className="w-full h-full rounded-full bg-[#0f2546] flex items-center justify-center text-3xl sm:text-4xl font-bold text-white">
+              <div className="w-full h-full rounded-full bg-[var(--surface-elevated)] flex items-center justify-center text-3xl sm:text-4xl font-bold" style={{ color: "var(--text-primary)" }}>
                 {name.charAt(0).toUpperCase() || "U"}
               </div>
             )}
@@ -75,12 +75,13 @@ export default function ProfileBanner({
           type="button"
           onClick={() => fileRef.current?.click()}
           disabled={uploading}
-          className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-10"
+          className="absolute inset-0 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-10"
+          style={{ background: "rgba(0,0,0,0.5)" }}
         >
           {uploading ? (
-            <Loader2 size={20} className="animate-spin text-white" />
+            <Loader2 size={20} style={{ color: "#fff" }} className="animate-spin" />
           ) : (
-            <Camera size={20} className="text-white" />
+            <Camera size={20} style={{ color: "#fff" }} />
           )}
         </button>
         <input
@@ -94,32 +95,32 @@ export default function ProfileBanner({
 
       <div className="flex-1 text-center sm:text-left space-y-2">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-white">
+          <h1 className="text-xl sm:text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
             {name || "Người dùng"}
           </h1>
-          <p className="text-xs text-zinc-500 font-mono mt-0.5">{email}</p>
+          <p className="text-xs text-[var(--text-tertiary)] font-mono mt-0.5">{email}</p>
         </div>
 
         {referralCode && (
           <button
             type="button"
             onClick={copyReferral}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[11px] text-zinc-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface-elevated)] border border-[var(--border-base)] text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-elevated)] transition-all cursor-pointer"
           >
             {copied ? (
               <><Check size={12} className="text-green-400" /> Đã sao chép</>
             ) : (
-              <><Copy size={12} /> Mã giới thiệu: <span className="text-cyan font-mono font-bold">{referralCode}</span></>
+              <><Copy size={12} /> Mã giới thiệu: <span className="text-[var(--clr-accent)] font-mono font-bold">{referralCode}</span></>
             )}
           </button>
         )}
 
-        <p className="text-xs text-zinc-500 leading-relaxed max-w-lg">
+        <p className="text-xs text-[var(--text-tertiary)] leading-relaxed max-w-lg">
           {bio || "Chưa có giới thiệu"}
         </p>
       </div>
 
-      <p className="hidden sm:block text-[9px] text-zinc-600 self-start shrink-0 mt-1 select-none">
+      <p className="hidden sm:block text-[9px] text-[var(--text-dim)] self-start shrink-0 mt-1 select-none">
         Di chuột lên ảnh để đổi
       </p>
     </div>

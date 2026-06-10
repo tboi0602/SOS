@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import Image from "next/image";
 import { SITE_NAME } from "@/utils/constants";
+import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
+import { adminService } from "@/service/admin.service";
 import {
   LayoutDashboard,
   Users,
@@ -21,77 +23,71 @@ import {
   ClipboardList,
   Bell,
   GraduationCap,
+  Camera,
 } from "lucide-react";
 import Link from "next/link";
 
-const ALL_NAV_ITEMS = [
+interface NavItem {
+  href: string;
+  label: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  permission: string | null;
+}
+
+interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
+const NAV_GROUPS: NavGroup[] = [
   {
-    href: "/admin",
-    label: "Bảng điều khiển",
-    icon: LayoutDashboard,
-    permission: null,
+    label: "Tổng quan",
+    items: [
+      { href: "/admin", label: "Bảng điều khiển", icon: LayoutDashboard, permission: null },
+    ],
   },
   {
-    href: "/admin/users",
-    label: "Quản lý người dùng",
-    icon: Users,
-    permission: "manage_users",
+    label: "Người dùng",
+    items: [
+      { href: "/admin/users", label: "Danh sách", icon: Users, permission: "manage_users" },
+      { href: "/admin/permissions", label: "Phân quyền", icon: Key, permission: "manage_permissions" },
+    ],
   },
   {
-    href: "/admin/permissions",
-    label: "Phân quyền",
-    icon: Key,
-    permission: "manage_permissions",
+    label: "Nội dung",
+    items: [
+      { href: "/admin/posts/manage", label: "Bài đăng", icon: Edit3, permission: null },
+      { href: "/admin/posts", label: "Duyệt bài viết", icon: FileText, permission: "approve_posts" },
+      { href: "/admin/submissions", label: "Duyệt tác phẩm", icon: Video, permission: "approve_submissions" },
+      { href: "/admin/journals", label: "Duyệt nhật ký", icon: BookOpen, permission: "approve_journals" },
+      { href: "/admin/customer-visits", label: "Gặp khách hàng", icon: Camera, permission: "manage_posts" },
+      { href: "/admin/pending-members", label: "Chờ duyệt", icon: Users, permission: null },
+      { href: "/admin/membership-flow", label: "Đăng ký thành viên", icon: GraduationCap, permission: null },
+    ],
   },
   {
-    href: "/admin/posts/manage",
-    label: "Quản lý bài đăng",
-    icon: Edit3,
-    permission: null,
+    label: "Truyền thông & Học tập",
+    items: [
+      { href: "/admin/notifications", label: "Thông báo", icon: Bell, permission: "manage_notifications" },
+      { href: "/admin/elearning", label: "E-learning", icon: GraduationCap, permission: "manage_lessons" },
+    ],
   },
   {
-    href: "/admin/posts",
-    label: "Duyệt bài viết",
-    icon: FileText,
-    permission: "approve_posts",
-  },
-  {
-    href: "/admin/submissions",
-    label: "Duyệt tác phẩm",
-    icon: Video,
-    permission: "approve_submissions",
-  },
-  {
-    href: "/admin/journals",
-    label: "Duyệt nhật ký",
-    icon: BookOpen,
-    permission: "approve_journals",
-  },
-  {
-    href: "/admin/activity-log",
-    label: "Nhật ký hoạt động",
-    icon: ClipboardList,
-    permission: null,
-  },
-  {
-    href: "/admin/notifications",
-    label: "Thông báo",
-    icon: Bell,
-    permission: null,
-  },
-  {
-    href: "/admin/elearning",
-    label: "E-learning",
-    icon: GraduationCap,
-    permission: null,
+    label: "Giám sát",
+    items: [
+      { href: "/admin/activity-log", label: "Hoạt động", icon: ClipboardList, permission: null },
+    ],
   },
 ];
 
-function getNavItems(role: string, permissions: string[]) {
-  if (role === "admin") return ALL_NAV_ITEMS;
-  return ALL_NAV_ITEMS.filter(
-    (item) => !item.permission || permissions.includes(item.permission),
-  );
+function getNavGroups(role: string, permissions: string[]) {
+  if (role === "admin") return NAV_GROUPS;
+  return NAV_GROUPS.map((group) => ({
+    ...group,
+    items: group.items.filter(
+      (item) => !item.permission || permissions.includes(item.permission),
+    ),
+  })).filter((group) => group.items.length > 0);
 }
 
 export default function AdminLayout({
@@ -104,9 +100,42 @@ export default function AdminLayout({
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  const [pendingCount, setPendingCount] = useState(0);
+
+  const fetchPendingCount = useCallback(async () => {
+    try {
+      const res = await adminService.getPendingMembers(1, 1);
+      setPendingCount(res.total);
+    } catch {
+      setPendingCount(0);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchPendingCount();
+    const interval = setInterval(fetchPendingCount, 30000);
+    return () => clearInterval(interval);
+  }, [fetchPendingCount]);
+
+  const toggleGroup = (label: string) => {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev);
+      if (next.has(label)) next.delete(label);
+      else next.add(label);
+      return next;
+    });
+  };
+
   const perms: string[] = Array.isArray(user?.permissions)
     ? user.permissions!
     : [];
+
+  const navGroups = useMemo(() => (user ? getNavGroups(user.role, perms) : []), [user, perms]);
+
+  useEffect(() => {
+    setExpandedGroups(new Set(navGroups.filter((g) => g.items.length >= 2).map((g) => g.label)));
+  }, [collapsed, navGroups]);
 
   useEffect(() => {
     const value = collapsed ? "4rem" : "16rem";
@@ -131,8 +160,6 @@ export default function AdminLayout({
     return () => window.clearTimeout(id);
   }, [pathname]);
 
-  const navItems = user ? getNavItems(user.role, perms) : [];
-
   const sidebarContent = (isCollapsed: boolean) => (
     <div className="flex flex-col h-full">
       <div
@@ -141,15 +168,13 @@ export default function AdminLayout({
         <Image
           src="/images/logo.png"
           alt={SITE_NAME}
-          width={28}
-          height={28}
+          width={150}
+          height={150}
           unoptimized
         />
         {!isCollapsed && (
           <>
-            <span className="text-sm font-bold tracking-tight bg-linear-to-r from-white via-cyan to-primary bg-clip-text text-transparent">
-              {SITE_NAME}
-            </span>
+            <span className="sr-only">{SITE_NAME}</span>
             <span className="ml-auto text-[10px] uppercase tracking-wider text-primary font-semibold bg-primary/10 px-2 py-0.5 rounded-full">
               Admin
             </span>
@@ -157,43 +182,120 @@ export default function AdminLayout({
         )}
         <button
           onClick={() => setMobileOpen(false)}
-          className="lg:hidden p-1 text-zinc-500 hover:text-white transition-colors cursor-pointer"
+          className="lg:hidden p-1 transition-colors cursor-pointer"
+          style={{ color: "var(--text-tertiary)" }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = "var(--text-primary)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-tertiary)"; }}
         >
           <X size={20} />
         </button>
       </div>
 
-      <div className="border-t border-white/6 mx-4" />
+      <div className="border-t mx-4" style={{ borderColor: "var(--border-base)" }} />
 
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const active = pathname === item.href;
+        {navGroups.map((group) => {
+          const isExpanded = expandedGroups.has(group.label);
+          const hasActiveChild = group.items.some((item) => pathname === item.href);
+          const isSingle = group.items.length === 1;
+          const Icon0 = group.items[0]?.icon;
+
+          /* Single-item group → render directly, no toggle */
+          if (isSingle) {
+            const item = group.items[0];
+            const active = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                title={isCollapsed ? item.label : undefined}
+                className={`flex items-center ${isCollapsed ? "justify-center px-0 py-3" : "gap-3 px-3.5 py-2.5"} rounded-xl text-sm transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50 hover:bg-[var(--glass-hover)] hover:text-[var(--text-primary)] ${
+                  active
+                    ? "bg-primary/20 text-primary font-semibold"
+                    : "text-[var(--text-tertiary)]"
+                }`}
+              >
+                <Icon0 size={18} className="shrink-0" />
+                {!isCollapsed && item.label}
+              </Link>
+            );
+          }
+
+          /* Multi-item group → toggleable header + indented children */
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              title={isCollapsed ? item.label : undefined}
-              className={`flex items-center ${isCollapsed ? "justify-center px-0 py-3" : "gap-3 px-3.5 py-2.5"} rounded-xl text-sm transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50 ${
-                active
-                  ? "text-white bg-primary/15 font-medium"
-                  : "text-zinc-400 hover:text-white hover:bg-white/6"
-              }`}
-            >
-              <Icon size={18} className="shrink-0" />
-              {!isCollapsed && item.label}
-            </Link>
+            <div key={group.label}>
+              {!isCollapsed && (
+                <button
+                  onClick={() => toggleGroup(group.label)}
+                  title={isCollapsed ? group.label : undefined}
+                  className={`w-full flex items-center text-left gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-widest transition-all cursor-pointer outline-none hover:bg-[var(--glass-hover)] ${
+                    hasActiveChild ? "text-primary" : "text-[var(--text-dim)]"
+                  }`}
+                >
+                  <span>{group.label}</span>
+                  <ChevronRight
+                    size={12}
+                    className="ml-auto transition-transform duration-200"
+                    style={{ transform: isExpanded ? "rotate(90deg)" : "rotate(0deg)" }}
+                  />
+                </button>
+              )}
+              {(isExpanded || isCollapsed) && (
+                <div className={isCollapsed ? "" : "mt-0.5"}>
+                  {group.items.map((item) => {
+                    const Icon = item.icon;
+                    const active = pathname === item.href;
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        title={isCollapsed ? item.label : undefined}
+                        className={`flex items-center ${isCollapsed ? "justify-center px-0 py-3" : "gap-3 pl-9 pr-3.5 py-2"} rounded-xl text-sm transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50 hover:bg-[var(--glass-hover)] hover:text-[var(--text-primary)] ${
+                          active
+                            ? "bg-primary/20 text-primary font-semibold"
+                            : "text-[var(--text-tertiary)]"
+                        }`}
+                      >
+                        <Icon size={16} className="shrink-0 opacity-70" />
+                        {!isCollapsed && (
+                          <span className="flex-1 truncate">{item.label}</span>
+                        )}
+                        {item.href === "/admin/pending-members" && pendingCount > 0 && (
+                          <span
+                            className={`flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[9px] font-bold shrink-0 ${
+                              isCollapsed ? "" : "ml-auto"
+                            }`}
+                            style={{ background: "var(--color-warning)", color: "#fff" }}
+                          >
+                            {pendingCount > 99 ? "99+" : pendingCount}
+                          </span>
+                        )}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           );
         })}
       </nav>
 
-      <div className="border-t border-white/6 mx-4" />
+      <div className="border-t mx-4" style={{ borderColor: "var(--border-base)" }} />
 
       <div className={`${isCollapsed ? "px-2" : "px-4"} py-4 space-y-2`}>
         {/* Collapse toggle */}
         <button
           onClick={() => setCollapsed(!isCollapsed)}
-          className="hidden lg:flex w-full items-center justify-center py-2.5 rounded-xl bg-white/4 text-primary hover:text-white hover:bg-primary/15 transition-all cursor-pointer group"
+          className="hidden lg:flex w-full items-center justify-center py-2.5 rounded-xl transition-all cursor-pointer group"
+          style={{ background: "color-mix(in srgb, var(--text-primary) 4%, transparent)", color: "var(--primary)" }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = "var(--text-primary)";
+            e.currentTarget.style.background = "color-mix(in srgb, var(--primary) 15%, transparent)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = "var(--primary)";
+            e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 4%, transparent)";
+          }}
           title={isCollapsed ? "Mở rộng thanh bên" : "Thu gọn thanh bên"}
         >
           {isCollapsed ? (
@@ -214,7 +316,16 @@ export default function AdminLayout({
         <Link
           href="/home"
           title={isCollapsed ? "Quay lại trang chính" : undefined}
-          className={`w-full flex items-center ${isCollapsed ? "justify-center px-0 py-3" : "gap-2 px-3.5 py-2.5"} rounded-xl text-sm text-zinc-400 hover:text-white hover:bg-white/6 transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50`}
+          className={`w-full flex items-center ${isCollapsed ? "justify-center px-0 py-3" : "gap-2 px-3.5 py-2.5"} rounded-xl text-sm transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50`}
+          style={{ color: "var(--text-tertiary)" }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = "var(--text-primary)";
+            e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 6%, transparent)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = "var(--text-tertiary)";
+            e.currentTarget.style.background = "transparent";
+          }}
         >
           <ChevronLeft size={16} className="shrink-0" />
           {!isCollapsed && "Quay lại trang chính"}
@@ -223,7 +334,10 @@ export default function AdminLayout({
           onClick={logout}
           title={isCollapsed ? "Đăng xuất" : undefined}
           aria-label="Đăng xuất"
-          className={`w-full flex items-center ${isCollapsed ? "justify-center px-0 py-3" : "gap-2 px-3.5 py-2.5"} rounded-xl text-sm text-zinc-400 hover:text-danger hover:bg-danger/10 transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50`}
+          className={`w-full flex items-center ${isCollapsed ? "justify-center px-0 py-3" : "gap-2 px-3.5 py-2.5"} rounded-xl text-sm transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50`}
+          style={{ color: "var(--text-tertiary)" }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = "var(--danger)"; e.currentTarget.style.background = "color-mix(in srgb, var(--danger) 10%, transparent)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-tertiary)"; e.currentTarget.style.background = "transparent"; }}
         >
           <LogOut size={16} className="shrink-0" />
           {!isCollapsed && "Đăng xuất"}
@@ -233,21 +347,26 @@ export default function AdminLayout({
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ background: "var(--surface-base)" }}>
       {/* Desktop sidebar */}
       <aside
-        className={`hidden lg:flex fixed left-0 top-0 bottom-0 z-30 flex-col bg-primary-dark/80 backdrop-blur-xl border-r border-white/6 transition-all duration-300 ${
+        className={`hidden lg:flex fixed left-0 top-0 bottom-0 z-30 flex-col glass-ios border-r-0 transition-all duration-300 ${
           collapsed ? "w-16" : "w-64"
         }`}
+        style={{ background: "var(--surface-strong)", borderColor: "var(--border-base)" }}
       >
         {sidebarContent(collapsed)}
       </aside>
 
       {/* Mobile header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 h-14 bg-primary-dark/95 backdrop-blur-xl border-b border-white/6">
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 h-14 backdrop-blur-xl border-b"
+        style={{ background: "var(--surface-strong)", borderColor: "var(--border-base)" }}>
         <button
           onClick={() => setMobileOpen(true)}
-          className="p-2 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+          className="p-2 transition-colors cursor-pointer"
+          style={{ color: "var(--text-tertiary)" }}
+          onMouseEnter={(e) => { e.currentTarget.style.color = "var(--text-primary)"; }}
+          onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-tertiary)"; }}
         >
           <Menu size={22} />
         </button>
@@ -262,11 +381,9 @@ export default function AdminLayout({
             height={24}
             unoptimized
           />
-          <span className="text-xs font-bold tracking-tight bg-linear-to-r from-white via-cyan to-primary bg-clip-text text-transparent">
-            {SITE_NAME}
-          </span>
+          <span className="sr-only">{SITE_NAME}</span>
         </span>
-        <div className="size-8" />
+        <ThemeToggleButton variant="header" />
       </header>
 
       {/* Mobile overlay */}
@@ -281,9 +398,10 @@ export default function AdminLayout({
 
       {/* Mobile drawer */}
       <div
-        className={`lg:hidden fixed top-0 left-0 z-50 w-72 h-dvh max-h-dvh bg-primary-dark border-r border-white/6 shadow-2xl transition-transform duration-300 ${
+        className={`lg:hidden fixed top-0 left-0 z-50 w-72 h-dvh max-h-dvh border-r shadow-2xl transition-transform duration-300 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
+        style={{ background: "var(--surface-strong)", borderColor: "var(--border-base)" }}
         onClick={(e) => e.stopPropagation()}
       >
         {sidebarContent(false)}
@@ -294,6 +412,8 @@ export default function AdminLayout({
       >
         {children}
       </main>
+
+      <ThemeToggleButton />
     </div>
   );
 }

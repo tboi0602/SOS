@@ -43,7 +43,7 @@ export default function DateFilter({
         <button
           type="button"
           onClick={openFrom}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[11px] text-zinc-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer min-h-8"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[color-mix(in_srgb,_var(--text-primary)_5%,_transparent)] border border-[var(--border-base)] text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[color-mix(in_srgb,_var(--text-primary)_10%,_transparent)] transition-all cursor-pointer min-h-8"
         >
           <Calendar size={12} />
           <span>{from ? formatDate(from) : "Từ ngày"}</span>
@@ -53,7 +53,7 @@ export default function DateFilter({
                 e.stopPropagation();
                 onFromChange("");
               }}
-              className="ml-0.5 p-0.5 rounded hover:bg-white/10 text-zinc-600 hover:text-white"
+              className="ml-0.5 p-0.5 rounded hover:bg-[color-mix(in_srgb,_var(--text-primary)_10%,_transparent)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
             >
               <X size={10} />
             </span>
@@ -68,12 +68,12 @@ export default function DateFilter({
           aria-label="Chọn ngày bắt đầu"
         />
       </div>
-      <span className="text-[10px] text-zinc-600">–</span>
+      <span className="text-[10px] text-[var(--text-tertiary)]">–</span>
       <div className="relative flex items-center">
         <button
           type="button"
           onClick={openTo}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[11px] text-zinc-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer min-h-8"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[color-mix(in_srgb,_var(--text-primary)_5%,_transparent)] border border-[var(--border-base)] text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[color-mix(in_srgb,_var(--text-primary)_10%,_transparent)] transition-all cursor-pointer min-h-8"
         >
           <Calendar size={12} />
           <span>{to ? formatDate(to) : "Đến ngày"}</span>
@@ -83,7 +83,7 @@ export default function DateFilter({
                 e.stopPropagation();
                 onToChange("");
               }}
-              className="ml-0.5 p-0.5 rounded hover:bg-white/10 text-zinc-600 hover:text-white"
+              className="ml-0.5 p-0.5 rounded hover:bg-[color-mix(in_srgb,_var(--text-primary)_10%,_transparent)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)]"
             >
               <X size={10} />
             </span>

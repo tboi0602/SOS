@@ -41,17 +41,17 @@ export default function JournalCreateModal({
       aria-label="Viết nhật ký mới"
     >
       <div
-        className="bg-[#0c1e3a] rounded-2xl p-6 w-full max-w-lg border border-white/10 shadow-2xl max-h-[90vh] overflow-y-auto"
+        className="bg-[var(--surface-elevated)] border border-[var(--border-base)] rounded-2xl p-6 w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-semibold flex items-center gap-2">
+          <h2 className="text-base font-semibold text-[var(--text-primary)] flex items-center gap-2">
             <Clock size={16} className="text-emerald-400" /> Việc tốt hôm nay
           </h2>
           <button
             onClick={onClose}
             aria-label="Đóng"
-            className="p-2 rounded-lg text-zinc-500 hover:text-white hover:bg-white/10 transition-all duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50"
+            className="p-2 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-hover)] transition-all duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50"
           >
             <X size={18} />
           </button>
@@ -66,7 +66,7 @@ export default function JournalCreateModal({
               onChange={(e) => onTitleChange(e.target.value)}
               placeholder="Tiêu đề việc tốt..."
               required
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-emerald-400/40 focus:ring-1 focus:ring-emerald-400/20 transition-all duration-200"
+              className="w-full bg-[var(--surface-strong)] border border-[var(--border-base)] rounded-xl px-4 py-3 text-sm text-[var(--text-primary)] placeholder-[var(--text-dim)] outline-none focus:border-[color-mix(in_srgb,var(--color-success)_40%,transparent)] focus:ring-1 focus:ring-emerald-400/20 transition-all duration-200"
             />
           </div>
           <div>
@@ -78,16 +78,16 @@ export default function JournalCreateModal({
               placeholder="Mô tả chi tiết việc tốt bạn đã làm..."
               rows={4}
               required
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-emerald-400/40 focus:ring-1 focus:ring-emerald-400/20 transition-all duration-200 resize-none"
+              className="w-full bg-[var(--surface-strong)] border border-[var(--border-base)] rounded-xl px-4 py-3 text-sm text-[var(--text-primary)] placeholder-[var(--text-dim)] outline-none focus:border-[color-mix(in_srgb,var(--color-success)_40%,transparent)] focus:ring-1 focus:ring-[color-mix(in_srgb,var(--color-success)_20%,transparent)] transition-all duration-200 resize-none"
             />
           </div>
 
           <div>
-            <p className="text-xs text-zinc-500 mb-2">Hình ảnh (tuỳ chọn)</p>
+            <p className="text-xs text-[var(--text-secondary)] mb-2">Hình ảnh (tuỳ chọn)</p>
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              className="w-full flex items-center justify-center gap-2 py-8 rounded-xl border-2 border-dashed border-white/10 hover:border-emerald-400/30 text-zinc-500 hover:text-emerald-400 transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-400/50 outline-none"
+              className="w-full flex items-center justify-center gap-2 py-8 rounded-xl border-2 border-dashed border-[var(--border-base)] hover:border-[color-mix(in_srgb,var(--color-success)_30%,transparent)] text-[var(--text-tertiary)] hover:text-emerald-400 transition-all duration-200 cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-400/50 outline-none"
             >
               <ImageUp size={20} /> Thêm ảnh
             </button>
@@ -105,7 +105,7 @@ export default function JournalCreateModal({
           {previews.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {previews.map((p, i) => (
-                <div key={i} className="relative size-20 rounded-xl overflow-hidden border border-white/10 group">
+                <div key={i} className="relative size-20 rounded-xl overflow-hidden border border-[var(--border-base)] group">
                   <img src={p} alt="" className="size-full object-cover" />
                   <button
                     type="button"
@@ -120,9 +120,9 @@ export default function JournalCreateModal({
             </div>
           )}
 
-          <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-400/5 border border-emerald-400/10">
+          <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-400/5 border" style={{ borderColor: "color-mix(in srgb, var(--color-success) 10%, transparent)" }}>
             <Clock size={14} className="text-emerald-400 shrink-0" />
-            <p className="text-xs text-zinc-400">
+            <p className="text-xs text-[var(--text-secondary)]">
               Bài viết sẽ được <span className="text-emerald-400 font-semibold">quản trị viên duyệt</span> trước khi cộng{" "}
               <span className="text-emerald-400 font-semibold">+1 điểm Đạo đức</span>
             </p>
@@ -131,7 +131,7 @@ export default function JournalCreateModal({
           <button
             type="submit"
             disabled={!title.trim() || !content.trim() || creating}
-            className="w-full py-3 min-h-12 rounded-xl bg-emerald-400 hover:bg-emerald-500 text-[#071224] text-sm font-semibold transition-all duration-200 shadow-lg shadow-emerald-400/25 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-400/50 outline-none"
+            className="w-full py-3 min-h-12 rounded-xl bg-emerald-400 hover:bg-emerald-500 text-[var(--text-primary)] text-sm font-semibold transition-all duration-200 shadow-lg shadow-emerald-400/25 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-400/50 outline-none"
           >
             {creating
               ? uploading

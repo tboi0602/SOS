@@ -119,7 +119,7 @@ export default function PostCard({
   const displayImages = post.images.slice(0, MAX_DISPLAY_IMAGES);
 
   return (
-    <div className="glass-strong rounded-2xl overflow-hidden">
+    <div className="post-card glass-strong rounded-2xl overflow-hidden" style={{ boxShadow: "0 1px 3px color-mix(in srgb, var(--clr-primary) 6%, transparent)" }}>
       <div className="p-5">
         {/* Header Post */}
         <div className="flex items-center justify-between mb-3">
@@ -141,10 +141,10 @@ export default function PostCard({
               </div>
             )}
             <div>
-              <p className="text-sm font-semibold text-white hover:text-cyan transition-colors">
+              <p className="text-sm font-semibold hover:text-accent transition-colors" style={{ color: "var(--text-primary)" }}>
                 {post.user.name}
               </p>
-              <p className="text-[11px] text-zinc-500">
+              <p className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
                 {new Date(post.createdAt).toLocaleDateString("vi-VN", {
                   hour: "2-digit",
                   minute: "2-digit",
@@ -161,20 +161,23 @@ export default function PostCard({
             <div className="relative" ref={menuRef}>
               <button
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
+                className="p-1.5 rounded-lg transition-all cursor-pointer"
+                style={{ color: "var(--text-tertiary)" }}
                 aria-label="Tùy chọn bài viết"
+                onMouseEnter={(e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 5%, transparent)"; e.currentTarget.style.color = "var(--text-primary)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text-tertiary)"; }}
               >
                 <MoreVertical size={16} />
               </button>
               {menuOpen && (
-                <div className="absolute right-0 top-full mt-1 min-w-36 rounded-xl bg-primary-dark border border-white/10 shadow-2xl py-1 z-40">
+                <div className="absolute right-0 top-full mt-1 min-w-36 rounded-xl py-1 z-40" style={{ background: "var(--surface-elevated)", border: "1px solid var(--border-base)" }}>
                   {onEditPost && (
                     <button
                       onClick={() => {
                         setMenuOpen(false);
                         onEditPost(post.id);
                       }}
-                      className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-xs text-zinc-300 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
+                      className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-xs transition-all cursor-pointer" style={{ color: "var(--text-secondary)" }} onMouseEnter={(e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 5%, transparent)"; e.currentTarget.style.color = "var(--text-primary)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text-secondary)"; }}
                     >
                       <Pencil size={14} /> Sửa bài
                     </button>
@@ -197,7 +200,7 @@ export default function PostCard({
         </div>
 
         {/* Content Post */}
-        <p className="text-sm text-zinc-200 whitespace-pre-line leading-relaxed">
+        <p className="text-sm whitespace-pre-line leading-relaxed" style={{ color: "var(--text-secondary)" }}>
           {post.content}
         </p>
 
@@ -207,11 +210,11 @@ export default function PostCard({
             href={post.productLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/10 border border-primary/20 text-sm text-cyan hover:bg-primary/20 transition-all group cursor-pointer"
+            className="mt-3 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/10 border border-primary/20 text-sm text-accent hover:bg-primary/20 transition-all group cursor-pointer"
           >
             <ExternalLink size={14} />
             <span className="flex-1 truncate">{post.productLink}</span>
-            <span className="text-xs text-zinc-500 group-hover:text-cyan transition-colors">
+            <span className="text-xs group-hover:text-accent transition-colors" style={{ color: "var(--text-tertiary)" }}>
               Mở link
             </span>
           </a>
@@ -227,7 +230,7 @@ export default function PostCard({
               return (
                 <div
                   key={i}
-                  className="relative overflow-hidden rounded-xl border border-white/6 aspect-square max-h-75 cursor-pointer group"
+                  className="relative overflow-hidden rounded-xl aspect-square max-h-75 cursor-pointer group" style={{ border: "1px solid var(--border-base)" }}
                   onClick={() => setActiveImageIndex(i)}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -237,7 +240,7 @@ export default function PostCard({
                     className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
                   />
                   {isLastDisplay && hasMoreImages && (
-                    <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center text-white font-bold text-xl select-none">
+                    <div className="absolute inset-0 backdrop-blur-[2px] flex items-center justify-center font-bold text-xl select-none" style={{ background: "color-mix(in srgb, var(--text-primary) 60%, transparent)", color: "var(--text-primary)" }}>
                       +{post.images.length - MAX_DISPLAY_IMAGES}
                     </div>
                   )}
@@ -248,12 +251,12 @@ export default function PostCard({
         )}
 
         {/* Post Stats */}
-        <div className="flex items-center gap-1 mt-4 pt-3 border-t border-white/6 text-xs text-zinc-500">
+        <div className="flex items-center gap-1 mt-4 pt-3 text-xs" style={{ borderTop: "1px solid var(--border-base)", color: "var(--text-tertiary)" }}>
           <span>{post.likeCount} lượt thích</span>
           <span className="mx-2">·</span>
           <button
             onClick={() => setShowComments(!showComments)}
-            className="hover:text-white transition-colors cursor-pointer"
+            className="transition-colors cursor-pointer" style={{ color: "var(--text-tertiary)" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--text-primary)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text-tertiary)"}
           >
             {post.commentCount} bình luận
           </button>
@@ -264,7 +267,7 @@ export default function PostCard({
           <button
             onClick={() => user ? onLike(post.id) : setShowLoginModal(true)}
             aria-label={post.liked ? "Bỏ thích" : "Thích"}
-            className={`flex items-center justify-center gap-1.5 flex-1 py-2 rounded-lg text-sm transition-all cursor-pointer ${post.liked ? "text-cyan bg-cyan/10" : "text-zinc-400 hover:text-cyan hover:bg-white/5"}`}
+            className={`flex items-center justify-center gap-1.5 flex-1 py-2 rounded-lg text-sm transition-all cursor-pointer ${post.liked ? "text-accent bg-accent/10" : "hover:text-accent"}`} style={post.liked ? {} : { color: "var(--text-tertiary)" }} onMouseEnter={(e) => { if (!post.liked) { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 5%, transparent)"; } }} onMouseLeave={(e) => { if (!post.liked) { e.currentTarget.style.background = "transparent"; } }}
           >
             <ThumbsUp size={16} fill={post.liked ? "currentColor" : "none"} />
             Like
@@ -272,7 +275,7 @@ export default function PostCard({
           <button
             onClick={() => setShowComments(!showComments)}
             aria-label="Bình luận"
-            className="flex items-center justify-center gap-1.5 flex-1 py-2 rounded-lg text-sm text-zinc-400 hover:text-cyan hover:bg-white/5 transition-all cursor-pointer"
+            className="flex items-center justify-center gap-1.5 flex-1 py-2 rounded-lg text-sm hover:text-accent transition-all cursor-pointer" style={{ color: "var(--text-tertiary)" }} onMouseEnter={(e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 5%, transparent)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
           >
             <MessageCircle size={16} />
             Bình luận
@@ -283,18 +286,18 @@ export default function PostCard({
 
       {/* Comments Section */}
       {showComments && (
-        <div className="border-t border-white/6">
+        <div style={{ borderTop: "1px solid var(--border-base)" }}>
           {user ? (
             <form
               onSubmit={handleComment}
-              className="flex items-center gap-2 px-5 py-3 border-b border-white/6"
+              className="flex items-center gap-2 px-5 py-3" style={{ borderBottom: "1px solid var(--border-base)" }}
             >
               <input
                 type="text"
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
                 placeholder="Viết bình luận..."
-                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-primary/30 transition-colors"
+                className="flex-1 rounded-lg px-3 py-2 text-sm outline-none focus:border-primary/30 transition-colors" style={{ background: "var(--surface-elevated)", border: "1px solid var(--border-base)", color: "var(--text-primary)" }}
               />
               <button
                 type="submit"
@@ -305,7 +308,7 @@ export default function PostCard({
               </button>
             </form>
           ) : (
-            <div className="px-5 py-3 border-b border-white/6 text-center">
+            <div className="px-5 py-3 text-center" style={{ borderBottom: "1px solid var(--border-base)" }}>
               <button
                 onClick={() => setShowLoginModal(true)}
                 className="text-xs text-primary hover:text-primary-light transition-colors cursor-pointer"
@@ -316,7 +319,7 @@ export default function PostCard({
           )}
           <div className="px-5 py-2 space-y-3 max-h-64 overflow-y-auto">
             {post.comments.length === 0 && (
-              <p className="text-xs text-zinc-600 text-center py-3">
+              <p className="text-xs text-center py-3" style={{ color: "var(--text-tertiary)" }}>
                 Chưa có bình luận nào
               </p>
             )}
@@ -326,14 +329,14 @@ export default function PostCard({
                   {(c.user?.name || "U").charAt(0).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="bg-white/5 rounded-xl px-3 py-2">
-                    <p className="text-xs font-semibold text-white">
+                  <div className="rounded-xl px-3 py-2" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", border: "0.5px solid var(--border-base)" }}>
+                    <p className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>
                       {c.user?.name || "Người dùng"}
                     </p>
-                    <p className="text-sm text-zinc-300">{c.content}</p>
+                    <p className="text-sm" style={{ color: "var(--text-secondary)" }}>{c.content}</p>
                   </div>
                   <div className="flex items-center gap-2 mt-1 px-1">
-                    <span className="text-[10px] text-zinc-600">
+                      <span className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>
                       {new Date(c.createdAt).toLocaleDateString("vi-VN", {
                         hour: "2-digit",
                         minute: "2-digit",
@@ -342,7 +345,7 @@ export default function PostCard({
                     {c.isOwner && (
                       <button
                         onClick={() => onDeleteComment(post.id, c.id)}
-                        className="text-[10px] text-zinc-600 hover:text-danger transition-colors cursor-pointer"
+                        className="text-[10px] hover:text-danger transition-colors cursor-pointer" style={{ color: "var(--text-tertiary)" }}
                       >
                         Xoá
                       </button>
@@ -359,16 +362,16 @@ export default function PostCard({
       {typeof window === "object" && activeImageIndex !== null && createPortal(
         <div
           className="fixed inset-0 z-[100] flex flex-col items-center justify-center select-none"
-          style={{ background: "rgba(19,34,61,0.65)", backdropFilter: "blur(6px)" }}
+          style={{ background: "color-mix(in srgb, var(--surface-base) 80%, transparent)", backdropFilter: "blur(6px)" }}
           onClick={() => setActiveImageIndex(null)}
         >
-          <div className="absolute top-0 inset-x-0 p-4 flex items-center justify-between text-white/80 z-10">
-            <span className="text-sm text-cyan font-bold">
+          <div className="absolute top-0 inset-x-0 p-4 flex items-center justify-between z-10" style={{ color: "var(--text-primary)" }}>
+            <span className="text-sm text-accent font-bold">
               Ảnh {activeImageIndex + 1} trên {post.images.length}
             </span>
             <button
               onClick={() => setActiveImageIndex(null)}
-              className="p-2 hover:bg-white/10 rounded-full transition-colors cursor-pointer text-white"
+              className="p-2 rounded-full transition-colors cursor-pointer" style={{ color: "var(--text-primary)" }} onMouseEnter={(e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 10%, transparent)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
               aria-label="Đóng"
             >
               <X size={24} />
@@ -389,14 +392,14 @@ export default function PostCard({
             <>
               <button
                 onClick={(e) => { e.stopPropagation(); handlePrevImage(); }}
-                className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/5 hover:bg-white/15 active:scale-95 border border-white/10 rounded-full text-white transition-all cursor-pointer z-10"
+                className="absolute left-4 top-1/2 -translate-y-1/2 p-3 active:scale-95 rounded-full transition-all cursor-pointer z-10" style={{ border: "1px solid var(--border-base)", background: "var(--surface-elevated)", color: "var(--text-primary)" }} onMouseEnter={(e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 15%, transparent)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "var(--surface-elevated)"; }}
                 aria-label="Ảnh trước"
               >
                 <ChevronLeft size={24} />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); handleNextImage(); }}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/5 hover:bg-white/15 active:scale-95 border border-white/10 rounded-full text-white transition-all cursor-pointer z-10"
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-3 active:scale-95 rounded-full transition-all cursor-pointer z-10" style={{ border: "1px solid var(--border-base)", background: "var(--surface-elevated)", color: "var(--text-primary)" }} onMouseEnter={(e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 15%, transparent)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "var(--surface-elevated)"; }}
                 aria-label="Ảnh tiếp"
               >
                 <ChevronRight size={24} />

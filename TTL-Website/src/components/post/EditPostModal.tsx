@@ -101,12 +101,12 @@ export default function EditPostModal({ post, onClose, onUpdated }: EditPostModa
         onClick={onClose}
       />
 
-      <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-[#0c1e3a]/95 backdrop-blur-xl border border-white/10 shadow-2xl shadow-primary/10 animate-[slideUp_0.3s_ease-out]">
-        <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b border-white/8 bg-[#0c1e3a]/95 backdrop-blur-xl rounded-t-2xl">
-          <h2 className="text-base font-bold text-white">Chỉnh sửa bài viết</h2>
+      <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-[var(--surface-elevated)] border border-[var(--border-base)] shadow-2xl shadow-primary/10 animate-[slideUp_0.3s_ease-out]">
+        <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b border-[var(--border-base)] bg-[var(--surface-elevated)]/95 backdrop-blur-xl rounded-t-2xl">
+          <h2 className="text-base font-bold text-[var(--text-primary)]">Chỉnh sửa bài viết</h2>
           <button
             onClick={onClose}
-            className="size-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+            className="size-8 rounded-lg flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-hover)] transition-all cursor-pointer"
           >
             <X size={18} />
           </button>
@@ -114,7 +114,7 @@ export default function EditPostModal({ post, onClose, onUpdated }: EditPostModa
 
         <div className="p-6 space-y-5">
           <div>
-            <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 block">
+            <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-2 block">
               Nội dung
             </label>
             <div className="relative">
@@ -122,10 +122,10 @@ export default function EditPostModal({ post, onClose, onUpdated }: EditPostModa
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 rows={4}
-                className="w-full resize-none bg-white/5 border border-white/10 rounded-xl px-4 py-3 pr-16 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-primary/40 transition-colors"
+                className="w-full resize-none bg-[var(--surface-strong)] border border-[var(--border-base)] rounded-xl px-4 py-3 pr-16 text-sm text-[var(--text-primary)] placeholder-[var(--text-dim)] outline-none focus:border-primary/40 transition-colors"
                 placeholder="Nội dung bài viết..."
               />
-              <span className="absolute bottom-2 right-3 text-[10px] text-zinc-600 font-mono">
+              <span className="absolute bottom-2 right-3 text-[10px] text-[var(--text-tertiary)] font-mono">
                 {content.length}/5000
               </span>
             </div>
@@ -133,12 +133,12 @@ export default function EditPostModal({ post, onClose, onUpdated }: EditPostModa
 
           {existingImages.length > 0 && (
             <div>
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 block">
+              <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-2 block">
                 Ảnh hiện tại ({existingImages.length})
               </label>
               <div className="grid grid-cols-4 gap-2">
                 {existingImages.map((url, i) => (
-                  <div key={`existing-${i}`} className="relative group aspect-square rounded-lg overflow-hidden border border-white/8 cursor-pointer">
+                  <div key={`existing-${i}`} className="relative group aspect-square rounded-lg overflow-hidden border border-[var(--border-base)] cursor-pointer">
                     <Image src={resolveUrl(url)} alt="" fill className="object-cover" />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button
@@ -157,12 +157,12 @@ export default function EditPostModal({ post, onClose, onUpdated }: EditPostModa
 
           {newMedia.length > 0 && (
             <div>
-              <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 block">
+              <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-2 block">
                 Ảnh mới ({newMedia.length})
               </label>
               <div className="grid grid-cols-4 gap-2">
                 {newMedia.map((m, i) => (
-                  <div key={`new-${i}`} className="relative group aspect-square rounded-lg overflow-hidden border border-cyan/20 cursor-pointer">
+                  <div key={`new-${i}`} className="relative group aspect-square rounded-lg overflow-hidden border border-accent/20 cursor-pointer">
                     <Image src={m.preview} alt="" fill unoptimized className="object-cover" />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button
@@ -173,7 +173,7 @@ export default function EditPostModal({ post, onClose, onUpdated }: EditPostModa
                         <X size={13} />
                       </button>
                     </div>
-                    <span className="absolute top-1 left-1 px-1.5 py-0.5 bg-cyan/20 text-cyan rounded text-[9px] font-medium">
+                    <span className="absolute top-1 left-1 px-1.5 py-0.5 bg-accent/20 text-accent rounded text-[9px] font-medium">
                       Mới
                     </span>
                   </div>
@@ -194,7 +194,7 @@ export default function EditPostModal({ post, onClose, onUpdated }: EditPostModa
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-cyan/10 border border-cyan/20 text-cyan text-sm font-medium hover:bg-cyan/20 transition-all w-full justify-center cursor-pointer"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent/10 border border-accent/20 text-accent text-sm font-medium hover:bg-accent/20 transition-all w-full justify-center cursor-pointer"
             >
               <ImagePlus size={16} />
               Thêm ảnh / video
@@ -202,7 +202,7 @@ export default function EditPostModal({ post, onClose, onUpdated }: EditPostModa
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-2 flex items-center gap-1.5">
               <Link2 size={12} /> Link sản phẩm
             </label>
             <input
@@ -210,12 +210,12 @@ export default function EditPostModal({ post, onClose, onUpdated }: EditPostModa
               value={productLink}
               onChange={(e) => setProductLink(e.target.value)}
               placeholder="https://..."
-              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-primary/40 transition-colors"
+              className="w-full bg-[var(--surface-strong)] border border-[var(--border-base)] rounded-xl px-4 py-2.5 text-sm text-[var(--text-primary)] placeholder-[var(--text-dim)] outline-none focus:border-primary/40 transition-colors"
             />
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-2 flex items-center gap-1.5">
               <Hash size={12} /> Hashtag
             </label>
             <div className="flex items-center gap-2">
@@ -226,7 +226,7 @@ export default function EditPostModal({ post, onClose, onUpdated }: EditPostModa
                 onKeyDown={handleHashtagKey}
                 onBlur={addHashtag}
                 placeholder="Nhập hashtag, nhấn Space/Enter"
-                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-primary/30 transition-colors"
+                className="flex-1 bg-[var(--surface-strong)] border border-[var(--border-base)] rounded-lg px-3 py-2 text-sm text-[var(--text-primary)] placeholder-[var(--text-dim)] outline-none focus:border-primary/30 transition-colors"
               />
             </div>
             {hashtags.length > 0 && (
@@ -251,18 +251,18 @@ export default function EditPostModal({ post, onClose, onUpdated }: EditPostModa
           </div>
         </div>
 
-        <div className="sticky bottom-0 flex items-center justify-end gap-3 px-6 py-4 border-t border-white/8 bg-[#0c1e3a]/95 backdrop-blur-xl rounded-b-2xl">
+        <div className="sticky bottom-0 flex items-center justify-end gap-3 px-6 py-4 border-t border-[var(--border-base)] bg-[var(--surface-elevated)]/95 backdrop-blur-xl rounded-b-2xl">
           <button
             onClick={onClose}
             disabled={saving}
-            className="px-5 py-2 rounded-xl text-sm text-zinc-400 hover:text-white hover:bg-white/8 transition-all cursor-pointer"
+            className="px-5 py-2 rounded-xl text-sm text-[var(--text-secondary)] bg-[var(--surface-strong)] border border-[var(--border-base)] hover:bg-[var(--glass-hover)] transition-all cursor-pointer"
           >
             Huỷ
           </button>
           <button
             onClick={handleSave}
             disabled={!content.trim() || saving}
-            className="px-5 py-2 rounded-xl bg-primary hover:bg-primary-light disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all flex items-center gap-1.5 shadow-lg shadow-primary/25 cursor-pointer"
+            className="px-5 py-2 rounded-xl bg-primary hover:bg-primary-light disabled:opacity-40 disabled:cursor-not-allowed text-[var(--text-primary)] text-sm font-semibold transition-all flex items-center gap-1.5 shadow-lg shadow-primary/25 cursor-pointer"
           >
             {saving && <Loader2 size={15} className="animate-spin" />}
             {saving ? "Đang lưu..." : "Lưu thay đổi"}

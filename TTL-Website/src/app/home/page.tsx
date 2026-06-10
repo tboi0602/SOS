@@ -1,5 +1,8 @@
 "use client";
 
+import { useRef, useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { usePosts } from "@/hook/post";
 import PostCard from "@/components/feed/PostCard";
 import { useAuth } from "@/lib/auth-context";
@@ -16,7 +19,10 @@ import {
 import { Skeleton } from "@/components/ui/Skeleton";
 import EditPostModal from "@/components/post/EditPostModal";
 
+gsap.registerPlugin(ScrollTrigger);
+
 export default function FeedPage() {
+  const feedRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   const router = useRouter();
   const {
@@ -42,43 +48,78 @@ export default function FeedPage() {
     handleSearch,
   } = usePosts();
 
+  useEffect(() => {
+    const el = feedRef.current;
+    if (!el) return;
+    const ctx = gsap.context(() => {
+      const q = gsap.utils.selector(el);
+      const cards = q(".post-card");
+      if (!cards.length) return;
+
+      gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
+        const tl = gsap.timeline({
+          defaults: { force3D: true },
+          scrollTrigger: { trigger: el, start: "top 82%", toggleActions: "play none none none" },
+        });
+
+        tl.fromTo(cards, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, stagger: 0.06, ease: "power3.out" })
+          .to(cards, { scale: 1.02, duration: 0.15, ease: "power1.out", stagger: 0.05 }, "-=0.05")
+          .to(cards, { scale: 1, duration: 0.3, ease: "back.out(1.7)", stagger: 0.05 });
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <div className="min-h-screen flex justify-center p-4 ">
-      <div className="max-w-2xl w-full px-2 sm:px-0 relative z-10 s">
+    <div className="min-h-screen flex justify-center p-4 animate-fade-up">
+      <div className="max-w-2xl w-full px-2 sm:px-0 relative z-10">
         <div
           ref={searchRef}
-          className="relative mb-6 group animate-[fadeIn_0.4s_ease-out]"
+          className="relative mb-6 animate-[fadeIn_0.4s_ease-out]"
         >
           <div className="relative">
             <Search
               size={15}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 group-focus-within:text-cyan transition-colors"
+              className="absolute left-4 top-1/2 -translate-y-1/2 transition-colors"
+              style={{ color: "var(--text-dim)" }}
             />
             <input
               value={searchQ}
               onChange={(e) => handleSearch(e.target.value)}
               placeholder="Khám phá các luồng bài viết mới..."
-              className="w-full rounded-2xl bg-white/2 border border-white/5 pl-11 pr-10 py-3 text-xs sm:text-sm text-white placeholder:text-zinc-600 focus:border-cyan/30 focus:bg-white/4 focus:ring-4 focus:ring-cyan/5 outline-none transition-all duration-300 shadow-inner"
+              className="w-full rounded-2xl pl-11 pr-10 py-3 text-xs sm:text-sm outline-none transition-all duration-300"
+              style={{
+                background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)",
+                boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)",
+                border: "0.5px solid var(--border-base)",
+                color: "var(--text-primary)",
+              }}
               onFocus={() => searchResults.length > 0 && setShowResults(true)}
             />
             {searching && (
               <Loader2
                 size={14}
-                className="absolute right-4 top-1/2 -translate-y-1/2 animate-spin text-cyan"
+                className="absolute right-4 top-1/2 -translate-y-1/2 animate-spin text-accent"
               />
             )}
           </div>
 
-          {/* DROPDOWN KẾT QUẢ TÌM KIẾM (GLASSMORPHISM) */}
           {showResults && searchResults.length > 0 && (
-            <div className="absolute top-full left-0 right-0 mt-2 rounded-2xl bg-[#070b14]/90 backdrop-blur-xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)] overflow-hidden z-50 animate-[fadeIn_0.2s_ease-out]">
-              <div className="px-4 py-2 bg-white/2 border-b border-white/5 flex items-center gap-1.5">
-                <Sparkles size={11} className="text-cyan animate-pulse" />
-                <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase">
+            <div
+              className="absolute top-full left-0 right-0 mt-2 rounded-2xl overflow-hidden z-50 animate-[fadeIn_0.2s_ease-out]"
+              style={{
+                background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)",
+                border: "0.5px solid var(--border-base)",
+                boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)",
+              }}
+            >
+              <div className="px-4 py-2 flex items-center gap-1.5" style={{ borderBottom: "0.5px solid var(--border-base)" }}>
+                <Sparkles size={11} className="text-accent animate-pulse" />
+                <span className="text-[10px] font-bold tracking-widest uppercase" style={{ color: "var(--text-dim)" }}>
                   Kết quả khớp lệnh
                 </span>
               </div>
-              <div className="divide-y divide-white/2">
+              <div>
                 {searchResults.slice(0, 5).map((post) => (
                   <button
                     key={post.id}
@@ -87,19 +128,21 @@ export default function FeedPage() {
                       setShowResults(false);
                       setSearchQ("");
                     }}
-                    className="w-full flex items-center justify-between gap-4 px-4 py-3.5 text-left hover:bg-cyan/3transition-colors cursor-pointer group"
+                    className="w-full flex items-center justify-between gap-4 px-4 py-3.5 text-left transition-colors cursor-pointer group"
+                    style={{ borderBottom: "0.5px solid var(--border-base)" }}
                   >
                     <div className="flex-1 min-w-0 space-y-1">
-                      <p className="text-xs sm:text-sm text-zinc-300 group-hover:text-white transition-colors truncate font-medium">
+                      <p className="text-xs sm:text-sm transition-colors truncate font-medium" style={{ color: "var(--text-secondary)" }}>
                         {post.content}
                       </p>
-                      <p className="text-[10px] font-mono text-zinc-500 flex items-center gap-1">
+                      <p className="text-[10px] font-mono flex items-center gap-1" style={{ color: "var(--text-dim)" }}>
                         <span>•</span> {post.user?.name || "Ẩn danh"}
                       </p>
                     </div>
                     <ArrowRight
                       size={13}
-                      className="text-zinc-600 group-hover:text-cyan group-hover:translate-x-1 transition-all shrink-0"
+                      className="transition-all shrink-0"
+                      style={{ color: "var(--text-dim)" }}
                     />
                   </button>
                 ))}
@@ -108,30 +151,36 @@ export default function FeedPage() {
           )}
         </div>
 
-        {/*  KHU VỰC THÂN TRANG (FEED CONTENT)  */}
         <Skeleton name="home-feed" loading={loading} rows={posts.length || 1}>
           {posts.length === 0 ? (
-            /* EMPTY STATE */
-            <div className="text-center py-20 rounded-3xl border border-white/5 bg-linear-to-b from-white/2 to-transparent animate-[fadeIn_0.5s_ease-out]">
-              <div className="size-16 rounded-2xl bg-white/2 border border-white/5 flex items-center justify-center mx-auto mb-4 text-zinc-600 shadow-inner">
-                <LayoutGrid size={24} className="text-zinc-600" />
+            <div
+              className="text-center py-20 rounded-3xl animate-[fadeIn_0.5s_ease-out]"
+              style={{
+                background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)",
+                boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)",
+              }}
+            >
+              <div
+                className="size-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                style={{ background: "color-mix(in srgb, var(--text-primary) 3%, transparent)", boxShadow: "inset 0 0 0 0.5px var(--border-base)" }}
+              >
+                <LayoutGrid size={24} style={{ color: "var(--text-dim)" }} />
               </div>
-              <p className="text-zinc-400 text-sm font-medium">
+              <p className="text-sm font-medium" style={{ color: "var(--text-tertiary)" }}>
                 Chưa ghi nhận bài viết nào
               </p>
               {user ? (
-                <p className="text-zinc-600 text-xs mt-1.5 font-light">
+                <p className="text-xs mt-1.5 font-light" style={{ color: "var(--text-dim)" }}>
                   Khởi tạo kết nối bằng cách đăng bài viết đầu tiên của bạn!
                 </p>
               ) : (
-                <p className="text-zinc-600 text-xs mt-1.5 font-light">
+                <p className="text-xs mt-1.5 font-light" style={{ color: "var(--text-dim)" }}>
                   Vui lòng đăng nhập hệ thống để tham gia tương tác.
                 </p>
               )}
             </div>
           ) : (
-            /* DANH SÁCH BÀI VIẾT */
-            <div className="space-y-4 animate-[fadeIn_0.5s_ease-out]">
+            <div ref={feedRef} className="space-y-4 animate-[fadeIn_0.5s_ease-out]">
               {posts.map((post) => (
                 <PostCard
                   key={post.id}
@@ -149,28 +198,42 @@ export default function FeedPage() {
           )}
         </Skeleton>
 
-        {/* ================= KHỐI PHÂN TRANG (PAGINATION) ================= */}
         {totalPages > 1 && !loading && (
           <div className="flex items-center justify-center gap-4 mt-8 pb-12 animate-[fadeIn_0.5s_ease-out]">
-            {/* Nút Trước */}
             <button
               onClick={() => goToPage(page - 1)}
               disabled={page <= 1}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-zinc-400 border border-white/5 bg-white/2 hover:text-white hover:bg-white/4 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-zinc-400 disabled:cursor-not-allowed transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer"
+              style={{
+                color: "var(--text-tertiary)",
+                border: "0.5px solid var(--border-base)",
+                background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)",
+              }}
             >
               <ChevronLeft size={14} /> Trước
             </button>
 
-            {/* Vị trí trang hiện tại */}
-            <div className="px-3 py-1.5 rounded-xl bg-black/40 border border-white/5 font-mono text-xs font-black tracking-wider text-zinc-500">
-              <span className="text-cyan">{page}</span> / {totalPages}
+            <div
+              className="px-3 py-1.5 rounded-xl font-mono text-xs font-black tracking-wider"
+              style={{
+                background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)",
+                border: "0.5px solid var(--border-base)",
+                boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)",
+                color: "var(--text-dim)",
+              }}
+            >
+              <span className="text-accent">{page}</span> / {totalPages}
             </div>
 
-            {/* Nút Sau */}
             <button
               onClick={() => goToPage(page + 1)}
               disabled={page >= totalPages}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-zinc-400 border border-white/5 bg-white/2 hover:text-white hover:bg-white/4 disabled:opacity-20 disabled:hover:bg-transparent disabled:hover:text-zinc-400 disabled:cursor-not-allowed transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer"
+              style={{
+                color: "var(--text-tertiary)",
+                border: "0.5px solid var(--border-base)",
+                background: "color-mix(in srgb, var(--text-primary) 2%, transparent)",
+              }}
             >
               Sau <ChevronRight size={14} />
             </button>

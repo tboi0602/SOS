@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Link2, X, ExternalLink } from "lucide-react";
 
 interface ProductLinkInputProps {
@@ -8,6 +9,7 @@ interface ProductLinkInputProps {
 }
 
 export function ProductLinkInput({ value, onChange }: ProductLinkInputProps) {
+  const [hovered, setHovered] = useState(false);
   const isValidUrl = (url: string) => {
     try {
       new URL(url);
@@ -19,26 +21,29 @@ export function ProductLinkInput({ value, onChange }: ProductLinkInputProps) {
 
   return (
     <div className="glass-strong rounded-2xl p-5 space-y-3">
-      <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider flex items-center gap-1.5">
+      <h3 className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5" style={{ color: "var(--text-tertiary)" }}>
         <ExternalLink size={12} /> Liên kết sản phẩm
-        <span className="text-zinc-600 font-normal normal-case tracking-normal">
+        <span className="font-normal normal-case tracking-normal" style={{ color: "var(--text-dim)" }}>
           (tùy chọn)
         </span>
       </h3>
       <div className="relative">
-        <Link2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-600" />
+        <Link2 size={14} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--text-dim)" }} />
         <input
           type="url"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="https://example.com/san-pham"
-          className="w-full bg-white/5 border border-white/10 rounded-lg pl-8 pr-9 py-2.5 text-sm text-white placeholder:text-zinc-600 outline-none focus:border-primary/30 transition-colors"
+          className="w-full rounded-lg pl-8 pr-9 py-2.5 text-sm outline-none focus:border-primary/30 transition-colors placeholder:text-[var(--placeholder)]" style={{ background: "color-mix(in srgb, var(--text-primary) 5%, transparent)", borderColor: "var(--border-base)", color: "var(--text-primary)", "--placeholder": "var(--text-dim)" } as React.CSSProperties}
         />
         {value && (
           <button
             type="button"
             onClick={() => onChange("")}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors cursor-pointer"
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 transition-colors cursor-pointer"
+            style={{ color: hovered ? "var(--text-primary)" : "var(--text-tertiary)" }}
           >
             <X size={15} />
           </button>

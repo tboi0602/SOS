@@ -3,6 +3,7 @@ import { Be_Vietnam_Pro, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import { AuthProvider } from "@/lib/auth-context";
 import { ToastProvider } from "@/components/ui/Toast";
+import ThemeProvider from "@/components/ui/ThemeProvider";
 import "./globals.css";
 import ChatBoxGate from "@/components/ui/ChatBoxGate";
 
@@ -25,14 +26,15 @@ export const metadata: Metadata = {
   title: "SOS — Sales Omni System",
   description:
     "Đánh thức tiềm năng — Kiến tạo tương lai. Trang bị hành trang Sales & Marketing thực chiến cho thế hệ trẻ Việt Nam.",
-  icons: [{ url: "/images/logo.png", type: "image/png" }],
   openGraph: {
     title: "SOS — Sales Omni System",
     description:
       "Đánh thức tiềm năng — Kiến tạo tương lai. Trang bị hành trang Sales & Marketing thực chiến cho thế hệ trẻ Việt Nam.",
     url: siteUrl,
     siteName: "SOS",
-    images: [{ url: `${siteUrl}/images/hero-visual.png`, width: 1200, height: 630 }],
+    images: [
+      { url: `${siteUrl}/images/hero-visual.png`, width: 1200, height: 630 },
+    ],
     locale: "vi_VN",
     type: "website",
   },
@@ -55,10 +57,12 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <AuthProvider>
-          <ToastProvider>
-            <ChatBoxGate />
-            {children}
-          </ToastProvider>
+          <ThemeProvider>
+            <ToastProvider>
+              <ChatBoxGate />
+              {children}
+            </ToastProvider>
+          </ThemeProvider>
         </AuthProvider>
         <Script
           src="https://accounts.google.com/gsi/client"

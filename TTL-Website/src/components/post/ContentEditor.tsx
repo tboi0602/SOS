@@ -26,7 +26,7 @@ export function ContentEditor({
 
   return (
     <div className="glass-strong rounded-2xl p-5">
-      <label className="text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+      <label className="text-xs font-semibold uppercase tracking-wider mb-3 flex items-center gap-2" style={{ color: "var(--text-tertiary)" }}>
         Nội dung bài viết
       </label>
       <div className="relative">
@@ -41,11 +41,11 @@ export function ContentEditor({
           onChange={(e) => onChange(e.target.value)}
           placeholder="Bạn đang nghĩ gì, chia sẻ với cộng đồng..."
           rows={5}
-          className="absolute inset-0 w-full rounded-md p-1 resize-none bg-transparent text-white placeholder:text-zinc-500 outline-none text-sm leading-relaxed"
+          className="absolute inset-0 w-full rounded-md p-1 resize-none bg-transparent outline-none text-sm leading-relaxed placeholder:text-[var(--placeholder)]" style={{ color: "var(--text-primary)", "--placeholder": "var(--text-dim)" } as React.CSSProperties}
         />
       </div>
       <div className="flex items-center justify-between mt-2">
-        <p className="text-[10px] text-zinc-600">
+        <p className="text-[10px]" style={{ color: "var(--text-dim)" }}>
           {value.length > 4500 ? (
             <span className="text-danger font-medium">
               {5000 - value.length} ký tự còn lại

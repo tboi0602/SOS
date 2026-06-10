@@ -54,14 +54,14 @@ export default function StatusFilterBar({
               className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-medium transition-all duration-200 whitespace-nowrap cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50 min-h-9 ${
                 active
                   ? "bg-primary/15 text-primary border border-primary/25"
-                  : "bg-white/5 text-zinc-400 hover:text-white hover:bg-white/10 border border-transparent"
+                  : "bg-[color-mix(in_srgb,_var(--text-primary)_5%,_transparent)] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[color-mix(in_srgb,_var(--text-primary)_10%,_transparent)] border border-transparent"
               }`}
             >
               <Icon size={14} />
               {f.label}
               <span
                 className={`ml-0.5 text-[10px] px-1.5 py-0.5 rounded-full ${
-                  active ? "bg-primary/20" : "bg-white/10"
+                  active ? "bg-primary/20" : "bg-[color-mix(in_srgb,_var(--text-primary)_10%,_transparent)]"
                 }`}
               >
                 {counts[f.key] ?? 0}

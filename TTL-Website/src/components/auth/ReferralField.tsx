@@ -21,16 +21,16 @@ export default function ReferralField({
   status: string;
   name: string;
 }) {
-  const borderColor =
+  const borderColorStyle =
     status === "valid"
-      ? "border-emerald-500/50"
+      ? "color-mix(in srgb, var(--color-success) 50%, transparent)"
       : status === "invalid"
-        ? "border-danger/50"
-        : "border-white/10";
+        ? "color-mix(in srgb, var(--color-danger) 50%, transparent)"
+        : "var(--border-base)";
 
   return (
     <div className="space-y-1.5">
-      <label htmlFor={id} className="text-sm text-zinc-400 font-medium">
+      <label htmlFor={id} className="text-sm font-medium" style={{ color: "var(--text-tertiary)" }}>
         {label}
       </label>
       <div className="relative">
@@ -40,11 +40,12 @@ export default function ReferralField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className={`w-full rounded-xl bg-white/5 border px-4 py-3 pr-10 text-sm text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary/30 outline-none transition-all uppercase ${borderColor} ${className}`}
+          className={`w-full rounded-xl border px-4 py-3 pr-10 text-sm focus:border-primary focus:ring-1 focus:ring-primary/30 outline-none transition-all uppercase ${className}`}
+          style={{ background: "color-mix(in srgb, var(--text-primary) 5%, transparent)", color: "var(--text-primary)", borderColor: borderColorStyle }}
         />
         <div className="absolute right-3 top-1/2 -translate-y-1/2">
           {status === "checking" && (
-            <Loader2 size={16} className="animate-spin text-zinc-500" />
+            <Loader2 size={16} className="animate-spin" style={{ color: "var(--text-tertiary)" }} />
           )}
           {status === "valid" && (
             <CheckCircle2 size={16} className="text-emerald-400" />

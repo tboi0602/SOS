@@ -20,9 +20,6 @@ export default function TriangleChart({
     150 * (Math.PI / 180),
   ];
   const scores = [kyLuat, daoDuc, truyenCamHung];
-  const darkBlue = "#2891d8";
-  const brightBlue = "#2dade8";
-
   const vertices = angles.map((a) => ({
     x: cx + r * Math.cos(a),
     y: cy + r * Math.sin(a),
@@ -52,8 +49,8 @@ export default function TriangleChart({
           </feMerge>
         </filter>
         <linearGradient id="polyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#00b7ff" stopOpacity="0.35" />
-          <stop offset="100%" stopColor="#0066ff" stopOpacity="0.05" />
+          <stop offset="0%" style={{ stopColor: "var(--clr-accent)", stopOpacity: "0.35" }} />
+          <stop offset="100%" style={{ stopColor: "var(--clr-accent-dark)", stopOpacity: "0.05" }} />
         </linearGradient>
       </defs>
 
@@ -64,7 +61,7 @@ export default function TriangleChart({
             .map((v) => `${cx + (v.x - cx) * scale},${cy + (v.y - cy) * scale}`)
             .join(" ")}
           fill="none"
-          stroke="rgba(0, 183, 255, 0.521)"
+          style={{ stroke: "color-mix(in srgb, var(--clr-accent) 52.1%, transparent)" }}
           strokeWidth={1}
           strokeDasharray={si === 3 ? "none" : "3,3"}
         />
@@ -76,7 +73,7 @@ export default function TriangleChart({
           y1={cy}
           x2={v.x}
           y2={v.y}
-          stroke="rgba(0, 174, 243, 0.2)"
+          style={{ stroke: "color-mix(in srgb, var(--clr-accent) 20%, transparent)" }}
           strokeWidth={1}
         />
       ))}
@@ -84,7 +81,7 @@ export default function TriangleChart({
       <polygon
         points={dataPath}
         fill="url(#polyGrad)"
-        stroke="#00b7ff"
+        style={{ stroke: "var(--clr-accent)" }}
         strokeWidth="2.5"
         filter="url(#glow)"
         strokeLinejoin="round"
@@ -106,12 +103,12 @@ export default function TriangleChart({
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  background: `${darkBlue}30`,
+                  background: "color-mix(in srgb, var(--clr-accent) 19%, transparent)",
                   borderRadius: "50%",
-                  border: `2px solid ${darkBlue}50`,
+                  border: "2px solid color-mix(in srgb, var(--clr-accent) 31%, transparent)",
                 }}
               >
-                <Icon size={20} color={darkBlue} />
+                <Icon size={20} style={{ color: "var(--clr-accent)" }} />
               </div>
             </foreignObject>
             <text
@@ -120,7 +117,7 @@ export default function TriangleChart({
               textAnchor={isTop ? "middle" : dx > 0 ? "start" : "end"}
               fontSize="10"
               fontWeight="700"
-              fill="white"
+              style={{ fill: "var(--text-primary)" }}
               letterSpacing="1.5"
             >
               {labels[i]}
@@ -131,9 +128,8 @@ export default function TriangleChart({
               textAnchor={isTop ? "middle" : dx > 0 ? "start" : "end"}
               fontSize="16"
               fontWeight="900"
-              fill={brightBlue}
               fontFamily="monospace"
-              style={{ filter: `drop-shadow(0 0 8px ${brightBlue})` }}
+              style={{ fill: "var(--clr-accent)", filter: "drop-shadow(0 0 8px var(--clr-accent))" }}
             >
               {scores[i]}
             </text>
@@ -147,9 +143,8 @@ export default function TriangleChart({
         textAnchor="middle"
         fontSize="36"
         fontWeight="900"
-        fill={brightBlue}
+        style={{ fill: "var(--clr-accent)", filter: "drop-shadow(0 0 12px var(--clr-accent))" }}
         letterSpacing="-1"
-        style={{ filter: `drop-shadow(0 0 12px ${brightBlue})` }}
       >
         {Math.round(scores.reduce((a, b) => a + b, 0) / 3)}
       </text>
@@ -158,7 +153,7 @@ export default function TriangleChart({
         y={cy + 24}
         textAnchor="middle"
         fontSize="10"
-        fill="white"
+        style={{ fill: "var(--text-primary)" }}
         fontWeight="bold"
         letterSpacing="2.5"
       >

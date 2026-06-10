@@ -12,13 +12,13 @@ export default function ConfirmDeleteModal({ onConfirm, onCancel, deleting }: Co
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onCancel} />
-      <div className="relative w-full max-w-sm rounded-2xl bg-[#0c1e3a]/95 backdrop-blur-xl border border-white/10 shadow-2xl shadow-danger/10 p-6 text-center space-y-4">
+      <div className="relative w-full max-w-sm rounded-2xl bg-[var(--surface-elevated)] border border-[var(--border-base)] shadow-2xl p-6 text-center space-y-4">
         <div className="size-14 rounded-full bg-danger/15 flex items-center justify-center mx-auto">
           <AlertTriangle size={26} className="text-danger" />
         </div>
         <div>
-          <h3 className="text-base font-bold text-white">Xác nhận xoá bài viết</h3>
-          <p className="text-sm text-zinc-400 mt-1">
+          <h3 className="text-base font-bold text-[var(--text-primary)]">Xác nhận xoá bài viết</h3>
+          <p className="text-sm text-[var(--text-secondary)] mt-1">
             Bài viết sẽ bị xoá vĩnh viễn và không thể khôi phục.
           </p>
         </div>
@@ -26,7 +26,7 @@ export default function ConfirmDeleteModal({ onConfirm, onCancel, deleting }: Co
           <button
             onClick={onCancel}
             disabled={deleting}
-            className="flex-1 px-4 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white hover:bg-white/8 transition-all border border-white/8"
+            className="flex-1 px-4 py-2.5 rounded-xl text-sm text-[var(--text-secondary)] bg-[var(--surface-strong)] border border-[var(--border-base)] hover:bg-[var(--glass-hover)] transition-all"
           >
             Huỷ
           </button>

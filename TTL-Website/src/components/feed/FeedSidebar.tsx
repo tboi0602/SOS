@@ -27,32 +27,34 @@ import {
   Bell,
   Newspaper,
   BookOpen,
+  Camera,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import LoginRequiredModal from "@/components/ui/LoginRequiredModal";
 
-const MEMBER_PATHS = ["/home/members", "/home/members/referred"];
-
 const PERSONAL_PATHS = [
   "/home/profile",
   "/home/referral",
+  "/home/members/referred",
   "/home/content",
   "/home/settings",
 ];
 
 const NAV_ITEMS = [
-  { href: "/home", label: "Bảng tin", icon: LayoutGrid },
-  { href: "/home/news", label: "Tin tức", icon: Newspaper },
+  { href: "/home/members", label: "Thành viên", icon: Users },
+  { href: "/home", label: "Bảng tin cộng đồng", icon: LayoutGrid },
+  { href: "/home/news", label: "Thông Báo Ban Quản trị", icon: Newspaper },
   { href: "/home/top-sales", label: "Top doanh số", icon: TrendingUp },
 ];
 
 const BOTTOM_NAV_ITEMS = [
-  { href: "/home/elearning", label: "E-learning", icon: BookOpen },
+  { href: "/home/membership", label: "Đăng ký thành viên", icon: BookOpen },
 ];
 
 const PERSONAL_SUB_ITEMS = [
   { href: "/home/profile", label: "Hồ sơ", icon: User },
   { href: "/home/referral", label: "Mã giới thiệu", icon: Gift },
+  { href: "/home/members/referred", label: "Đã giới thiệu", icon: Gift },
   { href: "/home/content", label: "Quản lý nội dung", icon: LayoutList },
   { href: "/home/settings", label: "Cài đặt", icon: Settings },
 ];
@@ -61,9 +63,7 @@ export default function FeedSidebar() {
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
-  const isMembersActive = MEMBER_PATHS.includes(pathname);
   const isPersonalActive = PERSONAL_PATHS.includes(pathname);
-  const [membersOpen, setMembersOpen] = useState(isMembersActive);
   const [personalOpen, setPersonalOpen] = useState(isPersonalActive);
   const [mounted, setMounted] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -128,20 +128,20 @@ export default function FeedSidebar() {
             className="shrink-0"
           />
           {!isCollapsed && (
-            <span className="text-sm font-bold tracking-tight bg-linear-to-r from-white via-cyan to-primary bg-clip-text text-transparent truncate">
+            <span className="text-sm font-bold tracking-tight bg-linear-to-r from-[var(--text-primary)] via-accent to-primary bg-clip-text text-transparent truncate">
               {SITE_NAME}
             </span>
           )}
         </span>
         <button
           onClick={() => setMobileOpen(false)}
-          className="lg:hidden p-1 text-zinc-500 hover:text-white transition-colors cursor-pointer"
+          className="lg:hidden p-1 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
         >
           <X size={20} />
         </button>
       </div>
 
-      <div className="border-t border-white/6 mx-4" />
+      <div className="border-t border-[var(--border-base)] mx-4" />
 
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {NAV_ITEMS.map((item) => {
@@ -153,8 +153,8 @@ export default function FeedSidebar() {
               onClick={() => router.push(item.href)}
               className={`w-full flex items-center gap-3 ${isCollapsed ? "justify-center px-0 py-3" : "px-3.5 py-2.5"} rounded-xl text-sm transition-all cursor-pointer ${
                 active
-                  ? "text-white bg-primary/15 font-medium"
-                  : "text-zinc-400 hover:text-white hover:bg-white/6"
+                  ? "text-primary bg-primary/20 font-semibold"
+                  : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-hover)]"
               }`}
               title={isCollapsed ? item.label : undefined}
             >
@@ -173,8 +173,8 @@ export default function FeedSidebar() {
               onClick={() => router.push(item.href)}
               className={`w-full flex items-center gap-3 ${isCollapsed ? "justify-center px-0 py-3" : "px-3.5 py-2.5"} rounded-xl text-sm transition-all cursor-pointer ${
                 active
-                  ? "text-white bg-primary/15 font-medium"
-                  : "text-zinc-400 hover:text-white hover:bg-white/6"
+                  ? "text-primary bg-primary/20 font-semibold"
+                  : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-hover)]"
               }`}
               title={isCollapsed ? item.label : undefined}
             >
@@ -190,8 +190,8 @@ export default function FeedSidebar() {
             onClick={() => user ? router.push("/home/create") : setShowLoginModal(true)}
             className={`flex items-center justify-center ${
               isCollapsed
-                ? "size-9 rounded-xl bg-primary text-white hover:bg-primary-light shadow-lg shadow-primary/25"
-                : "w-full gap-2 px-4 py-3 rounded-2xl bg-primary hover:bg-primary-light text-white shadow-lg shadow-primary/25"
+                ? "size-9 rounded-xl bg-primary text-[var(--text-primary)] hover:bg-primary-light shadow-lg shadow-primary/25"
+                : "w-full gap-2 px-4 py-3 rounded-2xl bg-primary hover:bg-primary-light text-[var(--text-primary)] shadow-lg shadow-primary/25"
             } text-sm font-semibold transition-all shadow-lg shadow-primary/25 cursor-pointer`}
             title={isCollapsed ? "Đăng bài" : undefined}
           >
@@ -205,7 +205,7 @@ export default function FeedSidebar() {
             user.permissions.length > 0)) && (
           <button
             onClick={() => router.push("/admin")}
-            className={`w-full flex items-center gap-3 ${isCollapsed ? "justify-center px-0 py-3" : "px-3.5 py-2.5"} rounded-xl text-sm transition-all cursor-pointer text-zinc-400 hover:text-white hover:bg-white/6`}
+            className={`w-full flex items-center gap-3 ${isCollapsed ? "justify-center px-0 py-3" : "px-3.5 py-2.5"} rounded-xl text-sm transition-all cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-hover)]`}
             title={isCollapsed ? "Quản trị" : undefined}
           >
             <Shield size={18} className="shrink-0" />
@@ -213,76 +213,15 @@ export default function FeedSidebar() {
           </button>
         )}
 
-        {/* Members section */}
-        <div className="border-t border-white/6 pt-3">
-          {isCollapsed ? (
-            <button
-              onClick={() => router.push("/home/members")}
-              className={`w-full flex justify-center py-3 rounded-xl text-sm transition-all cursor-pointer ${
-                isMembersActive
-                  ? "text-white bg-primary/15"
-                  : "text-zinc-400 hover:text-white hover:bg-white/6"
-              }`}
-              title="Danh sách thành viên"
-            >
-              <Users size={18} />
-            </button>
-          ) : (
-            <>
-              <button
-                onClick={() => setMembersOpen(!membersOpen)}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-all cursor-pointer ${
-                  isMembersActive
-                    ? "text-white bg-primary/15 font-medium"
-                    : "text-zinc-400 hover:text-white hover:bg-white/6"
-                }`}
-              >
-                <Users size={18} />
-                <span className="flex-1 text-left">Danh sách thành viên</span>
-                <ChevronDown
-                  size={15}
-                  className={`transition-transform duration-200 ${membersOpen ? "rotate-180" : ""}`}
-                />
-              </button>
-              <div
-                className={`overflow-hidden transition-all duration-200 ${membersOpen ? "max-h-60 opacity-100 mt-1" : "max-h-0 opacity-0"}`}
-              >
-                <button
-                  onClick={() => router.push("/home/members")}
-                  className={`w-full flex items-center gap-3 pl-9 pr-3.5 py-2 rounded-lg text-sm transition-all cursor-pointer ${
-                    pathname === "/home/members"
-                      ? "text-primary font-medium"
-                      : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"
-                  }`}
-                >
-                  <Users size={15} />
-                  Cộng đồng
-                </button>
-                <button
-                  onClick={() => user ? router.push("/home/members/referred") : setShowLoginModal(true)}
-                  className={`w-full flex items-center gap-3 pl-9 pr-3.5 py-2 rounded-lg text-sm transition-all cursor-pointer ${
-                    pathname === "/home/members/referred"
-                      ? "text-primary font-medium"
-                      : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"
-                  }`}
-                >
-                  <Gift size={15} />
-                  Đã giới thiệu
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-
         {/* Personal section */}
-        <div className="border-t border-white/6 pt-3">
+        <div className="border-t border-[var(--border-base)] pt-3">
           {isCollapsed ? (
             <button
               onClick={() => user ? router.push("/home/profile") : setShowLoginModal(true)}
               className={`w-full flex justify-center py-3 rounded-xl text-sm transition-all cursor-pointer ${
                 isPersonalActive
-                  ? "text-white bg-primary/15"
-                  : "text-zinc-400 hover:text-white hover:bg-white/6"
+                  ? "text-primary bg-primary/20 font-semibold"
+                  : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-hover)]"
               }`}
               title="Cá nhân"
             >
@@ -294,8 +233,8 @@ export default function FeedSidebar() {
                 onClick={() => user ? setPersonalOpen(!personalOpen) : setShowLoginModal(true)}
                 className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-all cursor-pointer ${
                   isPersonalActive
-                    ? "text-white bg-primary/15 font-medium"
-                    : "text-zinc-400 hover:text-white hover:bg-white/6"
+                    ? "text-primary bg-primary/20 font-semibold"
+                    : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-hover)]"
                 }`}
               >
                 <User size={18} />
@@ -318,7 +257,7 @@ export default function FeedSidebar() {
                       className={`w-full flex items-center gap-3 pl-9 pr-3.5 py-2 rounded-lg text-sm transition-all cursor-pointer ${
                         active
                           ? "text-primary font-medium"
-                          : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"
+                          : "text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-hover)]"
                       }`}
                     >
                       <Icon size={15} />
@@ -332,14 +271,14 @@ export default function FeedSidebar() {
         </div>
       </nav>
 
-      <div className="border-t border-white/6 mx-4" />
+      <div className="border-t border-[var(--border-base)] mx-4" />
 
       <div className="px-4 py-4 space-y-3">
         {/* Notification bell */}
         {user && (
           <button
             onClick={() => router.push("/home/notifications")}
-            className={`w-full flex items-center gap-3 ${isCollapsed ? "justify-center px-0 py-3" : "px-3.5 py-2.5"} rounded-xl text-sm transition-all cursor-pointer text-zinc-400 hover:text-white hover:bg-white/6 relative`}
+            className={`w-full flex items-center gap-3 ${isCollapsed ? "justify-center px-0 py-3" : "px-3.5 py-2.5"} rounded-xl text-sm transition-all cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-hover)] relative`}
             title={isCollapsed ? "Thông báo" : undefined}
           >
             <Bell size={18} className="shrink-0" />
@@ -355,7 +294,7 @@ export default function FeedSidebar() {
         {/* Collapse toggle - prominent button */}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="hidden lg:flex w-full items-center justify-center py-2.5 rounded-xl bg-white/4border border-white/8 text-primary hover:text-white hover:bg-primary/15 hover:border-primary/30 transition-all cursor-pointer group"
+          className="hidden lg:flex w-full items-center justify-center py-2.5 rounded-xl bg-[color-mix(in_srgb,_var(--text-primary)_4%,_transparent)] border-[var(--border-base)] text-primary hover:text-[var(--text-primary)] hover:bg-primary/15 hover:border-primary/30 transition-all cursor-pointer group"
           title={collapsed ? "Mở rộng thanh bên" : "Thu gọn thanh bên"}
         >
           {collapsed ? (
@@ -398,7 +337,13 @@ export default function FeedSidebar() {
                             ? "Quản lý user"
                             : p === "manage_permissions"
                               ? "Phân quyền"
-                              : p}
+                              : p === "manage_notifications"
+                                ? "Thông báo"
+                                : p === "manage_lessons"
+                                  ? "Bài học"
+                                  : p === "manage_posts"
+                                    ? "Bài đăng"
+                                    : p}
                   </span>
                 ))}
               </div>
@@ -427,16 +372,16 @@ export default function FeedSidebar() {
             {!isCollapsed && (
               <>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">
+                  <p className="text-sm font-medium text-[var(--text-primary)] truncate">
                     {user.name}
                   </p>
-                  <p className="text-[11px] text-zinc-500 truncate">
+                  <p className="text-[11px] text-[var(--text-tertiary)] truncate">
                     {user.email}
                   </p>
                 </div>
                 <button
                   onClick={logout}
-                  className="text-zinc-500 hover:text-danger transition-colors cursor-pointer p-1 shrink-0"
+                  className="text-[var(--text-tertiary)] hover:text-danger transition-colors cursor-pointer p-1 shrink-0"
                   title="Đăng xuất"
                 >
                   <LogOut size={15} />
@@ -445,19 +390,40 @@ export default function FeedSidebar() {
             )}
           </div>
         ) : (
-          <div className="space-y-2">
-            <button
-              onClick={() => router.push("/auth/login")}
-              className="w-full flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm text-zinc-300 border border-white/10 hover:bg-white/6 transition-all cursor-pointer"
-            >
-              <LogIn size={15} /> Đăng nhập
-            </button>
-            <button
-              onClick={() => router.push("/auth/register")}
-              className="w-full flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-primary hover:bg-primary-light transition-all shadow-lg shadow-primary/25 cursor-pointer"
-            >
-              <UserPlus size={15} /> Đăng ký
-            </button>
+          <div className={isCollapsed ? "flex flex-col items-center gap-3" : "space-y-2"}>
+            {isCollapsed ? (
+              <>
+                <button
+                  onClick={() => router.push("/auth/login")}
+                  className="size-10 flex items-center justify-center rounded-xl text-[var(--text-secondary)] border border-[var(--border-base)] hover:bg-[var(--glass-hover)] transition-all cursor-pointer"
+                  title="Đăng nhập"
+                >
+                  <LogIn size={18} />
+                </button>
+                <button
+                  onClick={() => router.push("/auth/register")}
+                  className="size-10 flex items-center justify-center rounded-xl bg-primary text-[var(--text-primary)] hover:bg-primary-light transition-all shadow-lg shadow-primary/25 cursor-pointer"
+                  title="Đăng ký"
+                >
+                  <UserPlus size={18} />
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => router.push("/auth/login")}
+                  className="w-full flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm text-[var(--text-secondary)] border border-[var(--border-base)] hover:bg-[var(--glass-hover)] transition-all cursor-pointer"
+                >
+                  <LogIn size={15} /> Đăng nhập
+                </button>
+                <button
+                  onClick={() => router.push("/auth/register")}
+                  className="w-full flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold text-[var(--text-primary)] bg-primary hover:bg-primary-light transition-all shadow-lg shadow-primary/25 cursor-pointer"
+                >
+                  <UserPlus size={15} /> Đăng ký
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>
@@ -468,16 +434,16 @@ export default function FeedSidebar() {
     <>
       {/* Desktop sidebar */}
       <aside
-        className={`hidden lg:flex fixed left-0 top-0 bottom-0 ${desktopW} z-30 flex-col bg-[#0c1e3a]/80 backdrop-blur-xl border-r border-white/6 transition-all duration-300`}
+        className={`hidden lg:flex fixed left-0 top-0 bottom-0 ${desktopW} z-30 flex-col glass-ios border-r-0 transition-all duration-300`}
       >
         {sidebarContent(collapsed)}
       </aside>
 
       {/* Mobile header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 h-14 bg-[#0c1e3a]/95 backdrop-blur-xl border-b border-white/6">
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 h-14 bg-[var(--surface-elevated)]/95 backdrop-blur-xl border-b border-[var(--border-base)]">
         <button
           onClick={() => setMobileOpen(true)}
-          className="p-2 text-zinc-400 hover:text-white transition-colors cursor-pointer"
+          className="p-2 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
         >
           <Menu size={22} />
         </button>
@@ -492,13 +458,13 @@ export default function FeedSidebar() {
             height={24}
             unoptimized
           />
-          <span className="text-xs font-bold tracking-tight bg-linear-to-r from-white via-cyan to-primary bg-clip-text text-transparent">
+          <span className="text-xs font-bold tracking-tight bg-linear-to-r from-[var(--text-primary)] via-accent to-primary bg-clip-text text-transparent">
             {SITE_NAME}
           </span>
         </span>
         <button
           onClick={() => router.push("/home/notifications")}
-          className="p-2 text-zinc-400 hover:text-white transition-colors cursor-pointer relative"
+          className="p-2 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer relative"
         >
           <Bell size={20} />
           {unreadCount > 0 && (
@@ -521,7 +487,7 @@ export default function FeedSidebar() {
 
       {/* Mobile drawer */}
       <div
-        className={`lg:hidden fixed top-0 left-0 z-50 w-72 h-dvh max-h-dvh bg-[#0c1e3a] border-r border-white/6 shadow-2xl transition-transform duration-300 ${
+        className={`lg:hidden fixed top-0 left-0 z-50 w-72 h-dvh max-h-dvh glass-ios-thick border-r-0 shadow-2xl transition-transform duration-300 ${
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -530,7 +496,7 @@ export default function FeedSidebar() {
       </div>
 
       {/* Mobile bottom nav */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-[#0c1e3a]/95 backdrop-blur-xl border-t border-white/6 px-2 pb-2">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 glass-ios-thick border-t-0 px-2 pb-2 rounded-t-2xl">
         <div className="flex items-center justify-around py-1.5">
           {NAV_ITEMS.slice(0, 2).map((item) => {
             const Icon = item.icon;
@@ -539,7 +505,7 @@ export default function FeedSidebar() {
               <button
                 key={item.href}
                 onClick={() => router.push(item.href)}
-                className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${active ? "text-primary" : "text-zinc-500"}`}
+                className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${active ? "text-primary bg-primary/15" : "text-[var(--text-tertiary)] hover:bg-[var(--glass-hover)]"}`}
               >
                 <Icon size={20} />
                 <span className="text-[10px]">{item.label}</span>
@@ -549,22 +515,14 @@ export default function FeedSidebar() {
 
           <button
             onClick={() => router.push("/home/create")}
-            className="flex items-center justify-center size-11 rounded-full bg-primary text-white shadow-lg shadow-primary/30 transition-transform hover:scale-105 active:scale-95 cursor-pointer -mt-3"
+            className="flex items-center justify-center size-11 rounded-full bg-primary text-[var(--text-primary)] shadow-lg shadow-primary/30 transition-transform hover:scale-105 active:scale-95 cursor-pointer -mt-3"
           >
             <Plus size={22} />
           </button>
 
           <button
-            onClick={() => router.push("/home/members")}
-            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${isMembersActive ? "text-primary" : "text-zinc-500"}`}
-          >
-            <Users size={20} />
-            <span className="text-[10px]">Cộng đồng</span>
-          </button>
-
-          <button
             onClick={() => user ? router.push("/home/profile") : setShowLoginModal(true)}
-            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${isPersonalActive ? "text-primary" : "text-zinc-500"}`}
+            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${isPersonalActive ? "text-primary bg-primary/15" : "text-[var(--text-tertiary)] hover:bg-[var(--glass-hover)]"}`}
           >
             <User size={20} />
             <span className="text-[10px]">Cá nhân</span>

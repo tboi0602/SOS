@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { FileText, Plus, Send, Trash2, X, Image as ImageIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/Skeleton";
 import Pagination from "@/components/admin/Pagination";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { useAdminPostManage } from "@/hook/admin/useAdminPostManage";
+gsap.registerPlugin(ScrollTrigger);
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
@@ -19,19 +22,42 @@ export default function AdminPostManagePage() {
     submitting, editId, deleteId, setDeleteId,
     openEdit, resetForm, handleSubmit, handleDelete,
   } = useAdminPostManage();
+  const listRef = useRef<HTMLDivElement>(null);
   const [showForm, setShowForm] = useState(true);
 
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    const items = el.querySelectorAll(".admin-card");
+    if (!items.length) return;
+    const ctx = gsap.context(() => {
+      gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.fromTo(items, { y: 20, opacity: 0 }, { y: 0, opacity: 1, force3D: true, duration: 0.4, stagger: 0.06, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 82%", toggleActions: "play none none none" } });
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <div className="min-h-screen px-4 sm:px-6 py-8 text-white select-none relative z-10">
+    <div className="min-h-screen px-4 sm:px-6 py-8 select-none relative z-10 animate-fade-up" style={{ color: "var(--text-primary)" }}>
       <div className="max-w-3xl mx-auto space-y-8">
-        <div className="flex items-center justify-between border-b border-white/5 pb-6">
+        <div className="flex items-center justify-between pb-6 border-b" style={{ borderColor: "var(--border-base)" }}>
           <div className="flex items-center gap-3">
             <FileText size={20} className="text-primary" />
             <h1 className="text-lg font-bold">Quản lý bài đăng</h1>
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[11px] text-zinc-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] transition-all cursor-pointer"
+            style={{ background: "var(--surface-elevated)", border: "1px solid var(--border-base)", color: "var(--text-tertiary)" }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 10%, transparent)";
+              e.currentTarget.style.color = "var(--text-primary)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "var(--surface-elevated)";
+              e.currentTarget.style.color = "var(--text-tertiary)";
+            }}
           >
             <Plus size={12} />
             {showForm ? "Đóng" : "Tạo bài viết"}
@@ -39,13 +65,14 @@ export default function AdminPostManagePage() {
         </div>
 
         {showForm && (
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5 space-y-4">
+          <div className="rounded-2xl p-5 space-y-4" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", border: "0.5px solid var(--border-base)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)" }}>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder={editId ? "Sửa nội dung..." : "Viết bài đăng mới..."}
               rows={4}
-              className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-primary/40 transition-all resize-none"
+              className="w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:border-primary/40 transition-all resize-none"
+              style={{ background: "var(--surface-elevated)", border: "1px solid var(--border-base)", color: "var(--text-primary)" }}
             />
 
             {mediaPreviews.length > 0 && (
@@ -55,7 +82,7 @@ export default function AdminPostManagePage() {
                     <img
                       src={url.startsWith("blob:") || url.startsWith("http") ? url : `${API_URL}${url}`}
                       alt=""
-                      className="size-20 rounded-xl object-cover border border-white/10"
+                      className="size-20 rounded-xl object-cover border" style={{ borderColor: "var(--border-base)" }}
                     />
                     <button
                       onClick={() => removeMedia(i)}
@@ -71,7 +98,16 @@ export default function AdminPostManagePage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={() => fileRef.current?.click()}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[11px] text-zinc-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] transition-all cursor-pointer"
+                style={{ background: "var(--surface-elevated)", border: "1px solid var(--border-base)", color: "var(--text-tertiary)" }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 10%, transparent)";
+                  e.currentTarget.style.color = "var(--text-primary)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "var(--surface-elevated)";
+                  e.currentTarget.style.color = "var(--text-tertiary)";
+                }}
               >
                 <ImageIcon size={12} /> Hình ảnh
               </button>
@@ -91,7 +127,8 @@ export default function AdminPostManagePage() {
                 onChange={(e) => setHashtagInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addHashtag(); } }}
                 placeholder="Thêm hashtag..."
-                className="flex-1 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[11px] text-white placeholder-zinc-500 focus:outline-none focus:border-primary/40 transition-all"
+                className="flex-1 px-3 py-1.5 rounded-lg text-[11px] focus:outline-none focus:border-primary/40 transition-all"
+                style={{ background: "var(--surface-elevated)", border: "1px solid var(--border-base)", color: "var(--text-primary)" }}
               />
               <button
                 onClick={addHashtag}
@@ -118,10 +155,10 @@ export default function AdminPostManagePage() {
               <button
                 onClick={handleSubmit}
                 disabled={submitting || !content.trim()}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-light disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-[var(--text-primary)] text-sm font-semibold hover:bg-primary-light disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer"
               >
                 {submitting ? (
-                  <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="size-4 border-2 border-[var(--text-primary)] border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <Send size={14} />
                 )}
@@ -130,7 +167,16 @@ export default function AdminPostManagePage() {
               {editId && (
                 <button
                   onClick={resetForm}
-                  className="px-3 py-1.5 rounded-lg text-[11px] text-zinc-500 hover:text-white hover:bg-white/5 transition-all cursor-pointer"
+                  className="px-3 py-1.5 rounded-lg text-[11px] transition-all cursor-pointer"
+                  style={{ color: "var(--text-tertiary)" }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = "var(--text-primary)";
+                    e.currentTarget.style.background = "var(--surface-elevated)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = "var(--text-tertiary)";
+                    e.currentTarget.style.background = "transparent";
+                  }}
                 >
                   Huỷ chỉnh sửa
                 </button>
@@ -141,15 +187,15 @@ export default function AdminPostManagePage() {
 
         <Skeleton name="admin-table" loading={loading} rows={posts.length || 3}>
           {posts.length === 0 ? (
-            <div className="text-center py-16 rounded-3xl bg-white/3 border border-white/5">
-              <FileText size={32} className="text-zinc-600 mx-auto mb-3" />
-              <p className="text-zinc-500 text-sm">Chưa có bài đăng nào</p>
+            <div className="text-center py-16 rounded-3xl" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", border: "0.5px solid var(--border-base)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)" }}>
+              <FileText size={32} className="mx-auto mb-3" style={{ color: "var(--text-tertiary)" }} />
+              <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>Chưa có bài đăng nào</p>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div ref={listRef} className="space-y-3">
               {posts.map((post) => (
-                <div key={post.id} className="rounded-2xl bg-white/3 border border-white/6 p-4 hover:border-white/20 transition-all">
-                  <p className="text-sm text-zinc-200 leading-relaxed whitespace-pre-wrap line-clamp-3 mb-2">{post.content}</p>
+                <div key={post.id} className="admin-card rounded-2xl border p-4 card-hover transition-all" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", border: "0.5px solid var(--border-base)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)" }}>
+                  <p className="text-sm leading-relaxed whitespace-pre-wrap line-clamp-3 mb-2" style={{ color: "var(--text-secondary)" }}>{post.content}</p>
                   {post.images && (post.images as string[]).length > 0 && (
                     <div className="flex gap-2 mb-2">
                       {(post.images as string[]).slice(0, 4).map((img, i) => (
@@ -158,7 +204,7 @@ export default function AdminPostManagePage() {
                     </div>
                   )}
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 text-[11px] text-zinc-500">
+                    <div className="flex items-center gap-3 text-[11px]" style={{ color: "var(--text-tertiary)" }}>
                       <span>{post.likeCount} lượt thích</span>
                       <span>{post.commentCount} bình luận</span>
                       <span>{new Date(post.createdAt).toLocaleDateString("vi-VN")}</span>
@@ -166,15 +212,21 @@ export default function AdminPostManagePage() {
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => openEdit(post)}
-                        className="p-1.5 rounded-lg text-zinc-500 hover:text-primary hover:bg-primary/10 transition-all cursor-pointer"
+                        className="p-1.5 rounded-lg transition-all cursor-pointer"
+                        style={{ color: "var(--text-tertiary)" }}
                         title="Sửa"
+                        onMouseEnter={(e) => { e.currentTarget.style.color = "var(--primary)"; e.currentTarget.style.background = "color-mix(in srgb, var(--primary) 10%, transparent)"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-tertiary)"; e.currentTarget.style.background = "transparent"; }}
                       >
                         <FileText size={13} />
                       </button>
                       <button
                         onClick={() => setDeleteId(post.id)}
-                        className="p-1.5 rounded-lg text-zinc-500 hover:text-danger hover:bg-danger/10 transition-all cursor-pointer"
+                        className="p-1.5 rounded-lg transition-all cursor-pointer"
+                        style={{ color: "var(--text-tertiary)" }}
                         title="Xoá"
+                        onMouseEnter={(e) => { e.currentTarget.style.color = "var(--danger)"; e.currentTarget.style.background = "color-mix(in srgb, var(--danger) 10%, transparent)"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-tertiary)"; e.currentTarget.style.background = "transparent"; }}
                       >
                         <Trash2 size={13} />
                       </button>

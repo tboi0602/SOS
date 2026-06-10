@@ -6,6 +6,7 @@ export const profileService = {
   async getPublicProfile(targetUserId: string, currentUserId: string | null) {
     const user = await getDb().user.findUnique({ where: { id: targetUserId } });
     if (!user) throw new NotFoundError("Người dùng không tồn tại");
+    if (user.role !== "user") throw new NotFoundError("Người dùng không tồn tại");
 
     const [postCount, referredCount, posts, journals] = await Promise.all([
       getDb().post.count({ where: { userId: targetUserId } }),
@@ -31,8 +32,9 @@ export const profileService = {
     ]);
 
     const safe = toSafeUser(user);
-    const score = Math.round((safe.kyLuat + safe.daoDuc + safe.truyenCamHung) / 3);
-    const rank = score >= 85 ? "Xuất sắc" : score >= 70 ? "Tốt" : score >= 50 ? "Khá" : "Cơ bản";
+    const total = safe.kyLuat + safe.daoDuc + safe.truyenCamHung + safe.postScore + safe.referredScore;
+    const score = Math.round(total / 5);
+    const rank = total >= 1000 ? "R5" : total >= 500 ? "R4" : total >= 300 ? "R3" : total >= 100 ? "R2" : "R1";
 
     const formattedPosts = posts.map((p: any) => ({
       id: p.id,
@@ -104,26 +106,29 @@ export const profileService = {
     const kyLuat = safe.kyLuat;
     const daoDuc = safe.daoDuc;
     const truyenCamHung = safe.truyenCamHung;
-    const score = Math.round((kyLuat + daoDuc + truyenCamHung) / 3);
+    const postScore = safe.postScore;
+    const referredScore = safe.referredScore;
+    const total = kyLuat + daoDuc + truyenCamHung + postScore + referredScore;
+    const score = Math.round(total / 5);
 
-    const rank = score >= 85 ? "Xuất sắc" : score >= 75 ? "Tốt" : score >= 50 ? "Khá" : "Cơ bản";
+    const rank = total >= 1000 ? "R5" : total >= 500 ? "R4" : total >= 300 ? "R3" : total >= 100 ? "R2" : "R1";
 
     // Compute real percentile rank
     const allUsers = await getDb().user.findMany({
       where: { role: { not: "admin" }, isActive: true },
-      select: { kyLuat: true, daoDuc: true, truyenCamHung: true },
+      select: { kyLuat: true, daoDuc: true, truyenCamHung: true, postScore: true, referredScore: true },
     });
-    const allScores = allUsers
-      .map((u) => Math.round((u.kyLuat + u.daoDuc + u.truyenCamHung) / 3))
-      .filter((s) => s > 0)
+    const allTotals = allUsers
+      .map((u) => u.kyLuat + u.daoDuc + u.truyenCamHung + u.postScore + u.referredScore)
+      .filter((t) => t > 0)
       .sort((a, b) => b - a);
-    const rankIndex = allScores.findIndex((s) => s <= score);
+    const rankIndex = allTotals.findIndex((t) => t <= total);
     const topPercent =
-      allScores.length === 0
+      allTotals.length === 0
         ? "Chưa có dữ liệu"
         : rankIndex === -1
-          ? `Top ${Math.round((1 / allScores.length) * 100)}%`
-          : `Top ${Math.round(((rankIndex + 1) / allScores.length) * 100)}%`;
+          ? `Top ${Math.round((1 / allTotals.length) * 100)}%`
+          : `Top ${Math.round(((rankIndex + 1) / allTotals.length) * 100)}%`;
 
     const activities = [
       ...recentPosts.map((p) => ({
@@ -172,6 +177,8 @@ export const profileService = {
       kyLuat: computeTrend(kyLuat, postData),
       daoDuc: computeTrend(daoDuc, postData),
       truyenCamHung: computeTrend(truyenCamHung, postData),
+      postScore: computeTrend(postScore, postData),
+      referredScore: computeTrend(referredScore, postData),
     };
 
     const safeUser = toSafeUser(user);
@@ -189,10 +196,10 @@ export const profileService = {
         score,
         rank,
         topPercent,
-        level: score >= 85 ? "Chuyên gia" : score >= 75 ? "Nâng cao" : score >= 50 ? "Trung bình" : "Cơ bản",
-        strength: kyLuat >= Math.max(daoDuc, truyenCamHung) ? "Kỷ luật" : daoDuc >= truyenCamHung ? "Đạo đức" : "Truyền cảm hứng",
+        level: total >= 1000 ? "Chuyên gia" : total >= 500 ? "Nâng cao" : total >= 300 ? "Trung bình" : "Cơ bản",
+        strength: kyLuat >= Math.max(daoDuc, truyenCamHung, postScore, referredScore) ? "Kỷ luật" : daoDuc >= Math.max(truyenCamHung, postScore, referredScore) ? "Đạo đức" : truyenCamHung >= Math.max(postScore, referredScore) ? "Truyền cảm hứng" : postScore >= referredScore ? "Bài viết" : "Giới thiệu",
       },
-      core: { kyLuat, daoDuc, truyenCamHung },
+      core: { kyLuat, daoDuc, truyenCamHung, postScore, referredScore },
       activities,
       chartData,
     };
@@ -221,11 +228,14 @@ export const profileService = {
           job: u.job,
           avatar: u.avatar,
           referralCode: u.referralCode,
+          memberId: safe.memberId,
           isActive: u.isActive,
           createdAt: u.createdAt.toISOString(),
           kyLuat: safe.kyLuat,
           daoDuc: safe.daoDuc,
           truyenCamHung: safe.truyenCamHung,
+          postScore: safe.postScore,
+          referredScore: safe.referredScore,
         };
       }),
       total,
@@ -241,7 +251,7 @@ export const profileService = {
 
     const scored = users.map((u) => {
       const safe = toSafeUser(u);
-      const score = Math.round((safe.kyLuat + safe.daoDuc + safe.truyenCamHung) / 3);
+      const score = Math.round((safe.kyLuat + safe.daoDuc + safe.truyenCamHung + safe.postScore + safe.referredScore) / 5);
       return {
         id: u.id,
         name: u.name,
@@ -250,10 +260,13 @@ export const profileService = {
         job: u.job,
         avatar: u.avatar,
         referralCode: u.referralCode,
+        memberId: safe.memberId,
         isActive: u.isActive,
         kyLuat: safe.kyLuat,
         daoDuc: safe.daoDuc,
         truyenCamHung: safe.truyenCamHung,
+        postScore: safe.postScore,
+        referredScore: safe.referredScore,
         score,
         createdAt: u.createdAt.toISOString(),
       };
@@ -271,18 +284,22 @@ export const profileService = {
     });
     return members.map((m) => {
       const safe = toSafeUser(m);
-      const score = Math.round((safe.kyLuat + safe.daoDuc + safe.truyenCamHung) / 3);
-      const rank = score >= 85 ? "Xuất sắc" : score >= 70 ? "Tốt" : score >= 50 ? "Khá" : "Cơ bản";
+      const total = safe.kyLuat + safe.daoDuc + safe.truyenCamHung + safe.postScore + safe.referredScore;
+      const score = Math.round(total / 5);
+      const rank = total >= 1000 ? "R5" : total >= 500 ? "R4" : total >= 300 ? "R3" : total >= 100 ? "R2" : "R1";
       return {
         id: m.id,
         name: m.name,
         referralCode: m.referralCode,
+        memberId: safe.memberId,
         avatar: m.avatar,
         isActive: m.isActive,
         createdAt: m.createdAt.toISOString(),
         kyLuat: safe.kyLuat,
         daoDuc: safe.daoDuc,
         truyenCamHung: safe.truyenCamHung,
+        postScore: safe.postScore,
+        referredScore: safe.referredScore,
         score,
         rank,
       };

@@ -17,9 +17,9 @@ export default function CompetencyBars({
     {
       label: "Kỷ luật",
       value: kLuat,
-      color: "from-cyan to-primary",
+      color: "from-accent to-accent-dark",
       icon: Shield,
-      textColor: "text-cyan bg-cyan/10",
+      textColor: "text-accent bg-accent/10",
     },
     {
       label: "Đạo đức",
@@ -38,8 +38,8 @@ export default function CompetencyBars({
   ];
 
   return (
-    <div className="rounded-2xl bg-linear-to-b from-white/3 to-transparent border border-white/5 p-5">
-      <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-200 flex items-center gap-2 mb-4">
+    <div className="rounded-2xl p-5" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", border: "0.5px solid var(--border-base)" }}>
+      <h2 className="text-xs font-bold uppercase tracking-wider flex items-center gap-2 mb-4" style={{ color: "var(--text-secondary)" }}>
         <Target size={15} className="text-amber-400" /> Năng Lực Bản Thân
       </h2>
 
@@ -50,7 +50,7 @@ export default function CompetencyBars({
             return (
               <div
                 key={p.label}
-                className="p-2 rounded-xl bg-black/25 border border-white/5 flex items-center justify-between"
+                className="p-2 rounded-xl flex items-center justify-between" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", border: "0.5px solid var(--border-base)" }}
               >
                 <div className="flex items-center gap-2">
                   <div
@@ -58,7 +58,7 @@ export default function CompetencyBars({
                   >
                     <Icon size={13} />
                   </div>
-                  <span className="text-xs text-zinc-300 font-medium">
+                  <span className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
                     {p.label}
                   </span>
                 </div>
@@ -66,7 +66,7 @@ export default function CompetencyBars({
                   className={`text-sm font-black bg-linear-to-r ${p.color} bg-clip-text text-transparent`}
                 >
                   {p.value}{" "}
-                  <span className="text-[9px] text-zinc-600 font-bold">
+                  <span className="text-[9px] font-bold" style={{ color: "var(--text-tertiary)" }}>
                     /100
                   </span>
                 </span>

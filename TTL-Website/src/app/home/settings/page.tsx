@@ -8,7 +8,8 @@ import PasswordForm from "@/components/profile/PasswordForm";
 import Loading from "@/components/ui/Loading";
 import { Settings } from "lucide-react";
 
-const BG = "linear-gradient(145deg, #09132e, #070d22)";
+const BG = "color-mix(in srgb, var(--surface-elevated) 18%, transparent)";
+const SHADOW = "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)";
 
 export default function SettingsPage() {
   const {
@@ -63,14 +64,14 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-dvh px-4 sm:px-6 py-6 text-white select-none">
+    <div className="min-h-dvh px-4 sm:px-6 py-6 select-none animate-fade-up" style={{ color: "var(--text-primary)" }}>
       <div className="max-w-5xl mx-auto space-y-5">
         <div className="flex items-center gap-2.5 mb-2">
-          <Settings size={18} className="text-cyan" />
-          <h1 className="text-lg font-bold text-white">Cài đặt tài khoản</h1>
+          <Settings size={18} className="text-accent" />
+          <h1 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>Cài đặt tài khoản</h1>
         </div>
 
-        <AnimatedBorder style={{ background: BG }}>
+        <AnimatedBorder style={{ background: BG, boxShadow: SHADOW }}>
           <ProfileBanner
             name={name}
             email={user?.email || ""}
@@ -84,7 +85,7 @@ export default function SettingsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
           <div className="lg:col-span-3">
-            <AnimatedBorder style={{ background: BG }}>
+            <AnimatedBorder style={{ background: BG, boxShadow: SHADOW }}>
               <ProfileForm
                 name={name}
                 job={job}
@@ -107,7 +108,7 @@ export default function SettingsPage() {
           </div>
 
           <div className="lg:col-span-2">
-            <AnimatedBorder style={{ background: BG }}>
+            <AnimatedBorder style={{ background: BG, boxShadow: SHADOW }}>
               <PasswordForm
                 currentPassword={currentPassword}
                 newPassword={newPassword}

@@ -1,6 +1,8 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { GraduationCap, Plus, Trash2, Edit, Upload } from 'lucide-react';
 import { Skeleton } from '@/components/ui/Skeleton';
 import Pagination from '@/components/admin/Pagination';
@@ -9,6 +11,7 @@ import { lessonService } from '@/service/lesson.service';
 import { uploadFiles } from '@/service/client';
 import { useAdminElearning } from '@/hook/admin/useAdminElearning';
 import type { Lesson } from '@/types/content';
+gsap.registerPlugin(ScrollTrigger);
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
@@ -24,6 +27,20 @@ export default function AdminELearningPage() {
   const [videoUrl, setVideoUrl] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    const items = el.querySelectorAll(".admin-card");
+    if (!items.length) return;
+    const ctx = gsap.context(() => {
+      gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.fromTo(items, { y: 20, opacity: 0 }, { y: 0, opacity: 1, force3D: true, duration: 0.4, stagger: 0.06, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 82%", toggleActions: "play none none none" } });
+      });
+    });
+    return () => ctx.revert();
+  }, []);
 
   const resetForm = () => { setTitle(''); setContent(''); setVideoUrl(''); setImages([]); setEditId(null); };
 
@@ -77,7 +94,7 @@ export default function AdminELearningPage() {
   };
 
   return (
-    <div className="min-h-screen px-4 sm:px-6 py-8 text-white select-none relative z-10">
+    <div className="min-h-screen px-4 sm:px-6 py-8 select-none relative z-10 animate-fade-up" style={{ color: "var(--text-primary)" }}>
       <div className="max-w-6xl mx-auto space-y-8">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -86,44 +103,47 @@ export default function AdminELearningPage() {
           </div>
           <button
             onClick={() => { resetForm(); setShowCreate(!showCreate); }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-[11px] font-semibold hover:bg-primary-light transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-[var(--text-primary)] text-[11px] font-semibold hover:bg-primary-light transition-all cursor-pointer"
           >
             <Plus size={12} /> Thêm bài học
           </button>
         </div>
 
         {showCreate && (
-          <div className="rounded-2xl bg-white/5 border border-white/10 p-5 space-y-4">
+          <div className="rounded-2xl p-5 space-y-4" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", border: "0.5px solid var(--border-base)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)" }}>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Tiêu đề bài học"
-              className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-primary/40 transition-all"
+              className="w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:border-primary/40 transition-all"
+              style={{ background: "var(--surface-elevated)", border: "1px solid var(--border-base)", color: "var(--text-primary)" }}
             />
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Mô tả"
               rows={3}
-              className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-primary/40 transition-all resize-none"
+              className="w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:border-primary/40 transition-all resize-none"
+              style={{ background: "var(--surface-elevated)", border: "1px solid var(--border-base)", color: "var(--text-primary)" }}
             />
             <input
               value={videoUrl}
               onChange={(e) => setVideoUrl(e.target.value)}
               placeholder="Link video (YouTube URL) — không bắt buộc"
-              className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-primary/40 transition-all"
+              className="w-full px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:border-primary/40 transition-all"
+              style={{ background: "var(--surface-elevated)", border: "1px solid var(--border-base)", color: "var(--text-primary)" }}
             />
 
             {/* Image upload */}
             <div>
-              <p className="text-[11px] text-zinc-500 mb-2">Hình ảnh — không bắt buộc</p>
+              <p className="text-[11px] mb-2" style={{ color: "var(--text-tertiary)" }}>Hình ảnh — không bắt buộc</p>
               <div className="flex flex-wrap gap-3 mb-3">
                 {images.map((img, i) => (
                   <div key={i} className="relative group">
                     <img
                       src={img.startsWith('http') ? img : `${API_URL}${img}`}
                       alt=""
-                      className="size-20 rounded-xl object-cover border border-white/10"
+                      className="size-20 rounded-xl object-cover border" style={{ borderColor: "var(--border-base)" }}
                     />
                     <button
                       onClick={() => removeImage(i)}
@@ -136,7 +156,10 @@ export default function AdminELearningPage() {
                 <button
                   onClick={() => fileRef.current?.click()}
                   disabled={uploading}
-                  className="size-20 rounded-xl border-2 border-dashed border-white/10 flex items-center justify-center text-zinc-500 hover:text-white hover:border-primary/40 transition-all cursor-pointer"
+                  className="size-20 rounded-xl border-2 border-dashed flex items-center justify-center transition-all cursor-pointer"
+                  style={{ borderColor: "var(--border-base)", color: "var(--text-tertiary)" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = "var(--text-primary)"; e.currentTarget.style.borderColor = "color-mix(in srgb, var(--primary) 40%, transparent)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-tertiary)"; e.currentTarget.style.borderColor = "var(--border-base)"; }}
                 >
                   {uploading ? (
                     <div className="size-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -158,13 +181,16 @@ export default function AdminELearningPage() {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleSave}
-                className="px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary-light transition-all cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-primary text-[var(--text-primary)] text-sm font-semibold hover:bg-primary-light transition-all cursor-pointer"
               >
                 {editId ? 'Cập nhật' : 'Tạo bài học'}
               </button>
               <button
                 onClick={() => { setShowCreate(false); resetForm(); }}
-                className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-sm text-zinc-400 hover:text-white transition-all cursor-pointer"
+                className="px-4 py-2 rounded-xl text-sm transition-all cursor-pointer"
+                style={{ background: "var(--surface-elevated)", border: "1px solid var(--border-base)", color: "var(--text-tertiary)" }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = "var(--text-primary)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-tertiary)"; }}
               >
                 Huỷ
               </button>
@@ -174,14 +200,18 @@ export default function AdminELearningPage() {
 
         <Skeleton name="admin-table" loading={loading} rows={lessons.length || 3}>
           {lessons.length === 0 ? (
-            <div className="text-center py-12 text-zinc-500 text-sm">Chưa có bài học nào</div>
+            <div className="text-center py-16 rounded-3xl" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", border: "0.5px solid var(--border-base)" }}>
+              <GraduationCap size={40} className="mx-auto mb-4" style={{ color: "var(--text-tertiary)" }} />
+              <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Chưa có bài học</h3>
+              <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>Chưa có bài học nào.</p>
+            </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div ref={listRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {lessons.map((lesson) => (
-                <div key={lesson.id} className="rounded-2xl border border-white/6 bg-white/3 p-4 hover:border-white/20 transition-all">
+                <div key={lesson.id} className="admin-card rounded-2xl border p-4 transition-all" style={{ border: "0.5px solid var(--border-base)", background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)" }}>
                   <div className="flex items-center gap-2 mb-3">
-                    <GraduationCap size={16} className="text-cyan shrink-0" />
-                    <h3 className="text-sm font-bold text-white truncate flex-1">{lesson.title}</h3>
+                    <GraduationCap size={16} className="text-accent shrink-0" />
+                    <h3 className="text-sm font-bold truncate flex-1" style={{ color: "var(--text-primary)" }}>{lesson.title}</h3>
                   </div>
                   {lesson.images && (lesson.images as string[]).length > 0 && (
                     <img
@@ -191,15 +221,19 @@ export default function AdminELearningPage() {
                     />
                   )}
                   {lesson.videoUrl && (
-                    <p className="text-[11px] text-zinc-500 mb-2">🎬 Có video bài giảng</p>
+                    <p className="text-[11px] mb-2" style={{ color: "var(--text-tertiary)" }}>🎬 Có video bài giảng</p>
                   )}
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] text-zinc-600">{new Date(lesson.createdAt).toLocaleDateString('vi-VN')}</span>
+                    <span className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>{new Date(lesson.createdAt).toLocaleDateString('vi-VN')}</span>
                     <div className="flex items-center gap-1">
-                      <button onClick={() => openEdit(lesson)} className="p-1.5 rounded-lg text-zinc-500 hover:text-primary hover:bg-primary/10 transition-all cursor-pointer">
+                      <button onClick={() => openEdit(lesson)} className="p-1.5 rounded-lg transition-all cursor-pointer" style={{ color: "var(--text-tertiary)" }}
+                        onMouseEnter={(e) => { e.currentTarget.style.color = "var(--primary)"; e.currentTarget.style.background = "color-mix(in srgb, var(--primary) 10%, transparent)"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-tertiary)"; e.currentTarget.style.background = "transparent"; }}>
                         <Edit size={13} />
                       </button>
-                      <button onClick={() => setDeleteId(lesson.id)} className="p-1.5 rounded-lg text-zinc-500 hover:text-danger hover:bg-danger/10 transition-all cursor-pointer">
+                      <button onClick={() => setDeleteId(lesson.id)} className="p-1.5 rounded-lg transition-all cursor-pointer" style={{ color: "var(--text-tertiary)" }}
+                        onMouseEnter={(e) => { e.currentTarget.style.color = "var(--danger)"; e.currentTarget.style.background = "color-mix(in srgb, var(--danger) 10%, transparent)"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-tertiary)"; e.currentTarget.style.background = "transparent"; }}>
                         <Trash2 size={13} />
                       </button>
                     </div>

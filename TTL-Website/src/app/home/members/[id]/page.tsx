@@ -30,7 +30,7 @@ export default function PublicProfilePage() {
 
   if (!data)
     return (
-      <div className="min-h-screen flex items-center justify-center text-zinc-500 font-medium">
+      <div className="min-h-screen flex items-center justify-center font-medium" style={{ color: "var(--text-tertiary)" }}>
         Không tìm thấy hồ sơ người dùng này
       </div>
     );
@@ -38,7 +38,7 @@ export default function PublicProfilePage() {
   const { user: u, stats, score, rank, posts, journals } = data;
 
   return (
-    <div className="min-h-screen px-4 sm:px-6 py-10 text-white select-none relative overflow-hidden">
+    <div className="min-h-screen px-4 sm:px-6 py-10 select-none relative overflow-hidden animate-fade-up" style={{ color: "var(--text-primary)" }}>
       <div className="max-w-5xl mx-auto space-y-8 relative z-10 animate-[fadeIn_0.6s_ease-out]">
         <ProfileHero
           user={u}
@@ -58,6 +58,8 @@ export default function PublicProfilePage() {
                   kyLuat={u.kyLuat ?? 0}
                   daoDuc={u.daoDuc ?? 0}
                   truyenCamHung={u.truyenCamHung ?? 0}
+                  postScore={u.postScore ?? 0}
+                  referredScore={u.referredScore ?? 0}
                   totalCompetency={totalCompetency}
                 />
                 <StatsBlock
@@ -94,11 +96,11 @@ export default function PublicProfilePage() {
                 ))}
 
                 {posts.length === 0 && journals.length === 0 && (
-                  <div className="text-center py-20 rounded-3xl bg-linear-to-b from-[#08102b] to-[#04081c] border border-white/5">
-                    <div className="size-16 rounded-full bg-white/2 border border-white/5 flex items-center justify-center mx-auto mb-4 text-zinc-600 shadow-inner">
+                  <div className="text-center py-20 rounded-3xl" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", border: "0.5px solid var(--border-base)" }}>
+                    <div className="size-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", border: "0.5px solid var(--border-base)", color: "var(--text-tertiary)" }}>
                       <FileText size={28} />
                     </div>
-                    <p className="text-zinc-500 text-xs font-semibold uppercase tracking-wider">
+                    <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>
                       Chưa có thông tin dòng thời gian
                     </p>
                   </div>

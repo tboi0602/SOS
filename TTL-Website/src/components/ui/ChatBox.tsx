@@ -29,7 +29,7 @@ function ChatMessage({ msg }: { msg: Message }) {
       className={`flex items-start gap-2.5 ${isAI ? "" : "flex-row-reverse"}`}
     >
       <div
-        className={`shrink-0 flex items-center justify-center ${isAI ? "" : "w-8 h-8 rounded-xl bg-cyan/20 border border-cyan/30"}`}
+        className={`shrink-0 flex items-center justify-center ${isAI ? "" : "w-8 h-8 rounded-xl bg-accent/20 border border-accent/30"}`}
       >
         {isAI ? (
           <Image
@@ -40,17 +40,17 @@ function ChatMessage({ msg }: { msg: Message }) {
             unoptimized
           />
         ) : (
-          <User size={15} className="text-cyan" />
+          <User size={15} className="text-accent" />
         )}
       </div>
 
       <div
         className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${isAI ? "glass rounded-tl-sm" : "bg-primary/20 border border-primary/20 rounded-tr-sm"}`}
       >
-        <div className="text-zinc-200 [&_strong]:text-white whitespace-pre-line">
+        <div className="whitespace-pre-line" style={{ color: "var(--text-secondary)" }}>
           {msg.text.split(/(\*\*[^*]+\*\*)/).map((part, i) =>
             part.startsWith("**") && part.endsWith("**") ? (
-              <strong key={i} className="text-white">
+              <strong key={i} style={{ color: "var(--text-primary)" }}>
                 {part.slice(2, -2)}
               </strong>
             ) : (
@@ -135,9 +135,9 @@ export default function ChatBox() {
             animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             exit={{ opacity: 0, y: 24, scale: 0.92, filter: "blur(4px)" }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="w-90 sm:w-100 rounded-2xl bg-[#0c1e3a]/95 backdrop-blur-xl border border-white/8 shadow-2xl shadow-black/30 overflow-hidden origin-bottom-right"
+            className="w-90 sm:w-100 rounded-2xl bg-[var(--surface-elevated)]/95 backdrop-blur-xl shadow-2xl overflow-hidden origin-bottom-right" style={{ border: "1px solid var(--border-base)" }}
           >
-            <div className="flex items-center justify-between  px-5 py-4 border-b border-white/6">
+            <div className="flex items-center justify-between  px-5 py-4" style={{ borderBottom: "1px solid var(--border-base)" }}>
               <div className="flex items-center gap-2">
                 <Image
                   src="/images/logo.png"
@@ -147,21 +147,23 @@ export default function ChatBox() {
                   unoptimized
                 />
                 <div>
-                  <p className="text-sm font-semibold text-white flex items-center gap-1.5">
+                  <p className="text-sm font-semibold flex items-center gap-1.5" style={{ color: "var(--text-primary)" }}>
                     SOS AI
-                    <Sparkles size={12} className="text-cyan" />
+                    <Sparkles size={12} className="text-accent" />
                   </p>
-                  <p className="text-[10px] text-zinc-500">
+                  <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>
                     Trợ lý ảo — Hệ thống bán hàng toàn diện
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-white/10 transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary"
+                className="p-1.5 rounded-lg transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary"
                 aria-label="Đóng chat"
+                onMouseEnter={(e) => e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 10%, transparent)"}
+                onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
               >
-                <X size={16} className="text-zinc-400" />
+                <X size={16} style={{ color: "var(--text-tertiary)" }} />
               </button>
             </div>
 
@@ -188,16 +190,16 @@ export default function ChatBox() {
                   <div className="glass rounded-2xl rounded-tl-sm px-4 py-3">
                     <span className="flex gap-1">
                       <span
-                        className="w-2 h-2 rounded-full bg-zinc-500 animate-bounce"
-                        style={{ animationDelay: "0ms" }}
+                        className="w-2 h-2 rounded-full animate-bounce"
+                        style={{ animationDelay: "0ms", background: "var(--text-tertiary)" }}
                       />
                       <span
-                        className="w-2 h-2 rounded-full bg-zinc-500 animate-bounce"
-                        style={{ animationDelay: "150ms" }}
+                        className="w-2 h-2 rounded-full animate-bounce"
+                        style={{ animationDelay: "150ms", background: "var(--text-tertiary)" }}
                       />
                       <span
-                        className="w-2 h-2 rounded-full bg-zinc-500 animate-bounce"
-                        style={{ animationDelay: "300ms" }}
+                        className="w-2 h-2 rounded-full animate-bounce"
+                        style={{ animationDelay: "300ms", background: "var(--text-tertiary)" }}
                       />
                     </span>
                   </div>
@@ -205,7 +207,7 @@ export default function ChatBox() {
               )}
             </div>
 
-            <div className="border-t border-white/6 p-4 flex items-center gap-2">
+            <div className="p-4 flex items-center gap-2" style={{ borderTop: "1px solid var(--border-base)" }}>
               <input
                 ref={inputRef}
                 type="text"
@@ -214,12 +216,12 @@ export default function ChatBox() {
                 onKeyDown={handleKeyDown}
                 placeholder="Nhập tin nhắn..."
                 disabled={loading}
-                className="flex-1 rounded-xl bg-white/5 border border-white/10 px-4 py-2.5 text-sm text-white placeholder:text-zinc-500 focus:border-primary focus:ring-1 focus:ring-primary/30 outline-none transition-all disabled:opacity-50"
+                className="flex-1 rounded-xl px-4 py-2.5 text-sm placeholder:text-[var(--text-tertiary)] focus:border-primary focus:ring-1 focus:ring-primary/30 outline-none transition-all disabled:opacity-50" style={{ background: "var(--surface-elevated)", border: "1px solid var(--border-base)", color: "var(--text-primary)" }}
               />
               <button
                 onClick={handleSend}
                 disabled={!input.trim() || loading}
-                className="shrink-0 w-10 h-10 rounded-xl bg-primary hover:bg-primary-light text-white flex items-center justify-center transition-all disabled:opacity-40 cursor-pointer focus-visible:ring-2 focus-visible:ring-white"
+                className="shrink-0 w-10 h-10 rounded-xl bg-primary hover:bg-primary-light text-[var(--text-primary)] flex items-center justify-center transition-all disabled:opacity-40 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary/50"
                 aria-label="Gửi"
               >
                 <Send size={16} />
@@ -231,15 +233,15 @@ export default function ChatBox() {
 
       <button
         onClick={() => setOpen(!open)}
-        className=" group relative w-14 h-14 rounded-full flex items-center justify-center cursor-pointer focus-visible:ring-2 focus-visible:ring-white transition-all duration-300 hover:scale-110 active:scale-95"
+        className=" group relative w-14 h-14 rounded-full flex items-center justify-center cursor-pointer focus-visible:ring-2 focus-visible:ring-primary/50 transition-all duration-300 hover:scale-110 active:scale-95"
         aria-label={open ? "Đóng chat" : "Mở chat"}
       >
-        <div className="absolute inset-0 rounded-full bg-primary/20 backdrop-blur-xl border border-white/20 shadow-xl shadow-primary/30 group-hover:shadow-primary/50 transition-shadow duration-300" />
+        <div className="absolute inset-0 rounded-full bg-primary/20 backdrop-blur-xl shadow-xl shadow-primary/30 group-hover:shadow-primary/50 transition-shadow duration-300" style={{ border: "1px solid var(--border-base)" }} />
         <div className="absolute inset-0 rounded-full bg-linear-to-br from-primary/40 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <div className="absolute -inset-1 rounded-full bg-primary/20 blur-xl opacity-0 group-hover:opacity-60 transition-opacity duration-300" />
         <span className="relative z-10 flex items-center justify-center">
           {open ? (
-            <X size={22} className="text-white" />
+            <X size={22} className="text-[var(--text-primary)]" />
           ) : (
             <Image
               src="/images/logo.png"
@@ -253,8 +255,8 @@ export default function ChatBox() {
         </span>
         {!open && (
           <>
-            <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-success border-2 border-[#0c1e3a] z-20" />
-            <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5  rounded-full bg-success animate-ping border-2 border-[#0c1e3a] z-19" />
+            <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-success border-2 border-[var(--surface-elevated)] z-20" />
+            <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5  rounded-full bg-success animate-ping border-2 border-[var(--surface-elevated)] z-19" />
           </>
         )}
       </button>

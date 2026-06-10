@@ -9,8 +9,8 @@ interface StatsBlockProps {
 
 export default function StatsBlock({ postCount, memberDays }: StatsBlockProps) {
   return (
-    <div className="rounded-3xl bg-linear-to-b from-[#08102b] to-[#04081c] p-6 border border-white/5 shadow-xl">
-      <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-400 flex items-center gap-2 mb-4">
+    <div className="rounded-3xl p-6 animate-fade-up" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", border: "0.5px solid var(--border-base)" }}>
+      <h3 className="text-xs font-bold uppercase tracking-widest flex items-center gap-2 mb-4" style={{ color: "var(--text-tertiary)" }}>
         <Zap size={14} className="text-emerald-400" /> Tiến Trình Hệ
         Thống
       </h3>
@@ -21,7 +21,7 @@ export default function StatsBlock({ postCount, memberDays }: StatsBlockProps) {
             value: postCount,
             sub: "Nội dung chất lượng",
             icon: FileText,
-            color: "text-blue-400",
+            color: "text-accent",
           },
           {
             label: "Thời gian đồng hành",
@@ -31,29 +31,33 @@ export default function StatsBlock({ postCount, memberDays }: StatsBlockProps) {
             icon: Calendar,
             color: "text-emerald-400",
           },
-        ].map((s) => {
+        ].map((s, index) => {
           const Icon = s.icon;
           return (
             <div
               key={s.label}
-              className="bg-black/30 rounded-2xl p-5 border border-white/5 flex items-center gap-4 hover:border-white/10 transition-colors"
+              className="rounded-2xl p-5 flex items-center gap-4 transition-all duration-200 hover:-translate-y-0.5 animate-fade-up"
+              style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", border: "0.5px solid var(--border-base)", animationDelay: `${index * 80}ms`, boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)" }}
+              onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 30px color-mix(in srgb, var(--clr-primary) 18%, transparent)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)"; }}
             >
               <div
-                className={`size-12 rounded-xl bg-white/2 border border-white/5 flex items-center justify-center ${s.color}`}
+                className={`size-12 rounded-xl flex items-center justify-center ${s.color}`}
+                style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", border: "0.5px solid var(--border-base)" }}
               >
                 <Icon size={20} />
               </div>
               <div>
-                <div className="text-2xl font-black text-white">
+                <div className="text-2xl font-black" style={{ color: "var(--text-primary)" }}>
                   {s.value}
-                  <span className="text-xs font-medium text-zinc-400">
+                  <span className="text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>
                     {s.suffix || ""}
                   </span>
                 </div>
-                <p className="text-[11px] font-semibold text-zinc-300 mt-0.5">
+                <p className="text-[11px] font-semibold mt-0.5" style={{ color: "var(--text-secondary)" }}>
                   {s.label}
                 </p>
-                <p className="text-[9px] text-zinc-500 font-light">
+                <p className="text-[9px] font-light" style={{ color: "var(--text-tertiary)" }}>
                   {s.sub}
                 </p>
               </div>

@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuthLogin as useLogin } from "@/hook/auth";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
+import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
 import { useEffect } from "react";
 import { useToast } from "@/components/ui/Toast";
 import { Eye, EyeOff, Loader2, LogIn } from "lucide-react";
@@ -31,11 +32,11 @@ export default function LoginPage() {
   }, [error]);
 
   return (
-    <div className="relative min-h-screen flex bg-[#0c1e3a] overflow-hidden">
+    <div className="relative min-h-screen flex overflow-hidden animate-fade-up" style={{ background: "var(--surface-base)" }}>
       <div className="absolute inset-0 gradient-mesh" />
       <div className="relative z-10 flex w-full">
         <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 bg-linear-to-br from-primary/20 via-transparent to-cyan/10" />
+          <div className="absolute inset-0 bg-linear-to-br from-primary/20 via-transparent to-accent/10" />
           <Image
             src="/images/auth-visual.svg"
             alt="auth-visual"
@@ -54,17 +55,17 @@ export default function LoginPage() {
                 unoptimized
               />
             </Link>
-            <h1 className="text-4xl font-bold text-white mb-4 leading-tight">
+            <h1 className="text-4xl font-bold mb-4 leading-tight" style={{ color: "var(--text-primary)" }}>
               Đánh thức <span className="text-gradient">tiềm năng</span>
             </h1>
-            <p className="text-zinc-400 leading-relaxed">
+            <p className="leading-relaxed" style={{ color: "var(--text-tertiary)" }}>
               SOS — Hệ thống bán hàng toàn diện. Trang bị hành trang Sales &amp;
               Marketing thực chiến cho thế hệ trẻ Việt Nam.
             </p>
             <div className="mt-10 flex gap-4 justify-center">
               <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               <div
-                className="w-2 h-2 rounded-full bg-cyan animate-pulse"
+                className="w-2 h-2 rounded-full bg-accent animate-pulse"
                 style={{ animationDelay: "0.3s" }}
               />
               <div
@@ -88,15 +89,13 @@ export default function LoginPage() {
                 height={40}
                 unoptimized
               />
-              <span className="text-xl font-bold bg-linear-to-r from-white via-cyan to-primary bg-clip-text text-transparent">
-                SOS — Sales Omni System
-              </span>
+            <span className="sr-only">SOS — Sales Omni System</span>
             </Link>
 
-            <div className="glass-strong rounded-2xl p-8">
+            <div className="card p-8">
               <div className="text-center mb-8">
-                <h1 className="text-2xl font-bold text-white">Đăng nhập</h1>
-                <p className="text-sm text-zinc-400 mt-1">
+                <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Đăng nhập</h1>
+                <p className="text-sm mt-1" style={{ color: "var(--text-tertiary)" }}>
                   Chào mừng bạn trở lại
                 </p>
               </div>
@@ -105,7 +104,8 @@ export default function LoginPage() {
                 <div className="space-y-2">
                   <label
                     htmlFor="email"
-                    className="text-sm text-zinc-400 font-medium"
+                    className="text-sm font-medium"
+                    style={{ color: "var(--text-tertiary)" }}
                   >
                     Email
                   </label>
@@ -116,14 +116,20 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
                     required
-                    className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-sm text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary/30 outline-none transition-all"
+                    className="w-full rounded-xl px-4 py-3 text-sm outline-none transition-all"
+                    style={{
+                      background: "color-mix(in srgb, var(--text-primary) 5%, transparent)",
+                      border: "0.5px solid var(--border-base)",
+                      color: "var(--text-primary)",
+                    }}
                   />
                 </div>
 
                 <div className="space-y-2">
                   <label
                     htmlFor="password"
-                    className="text-sm text-zinc-400 font-medium"
+                    className="text-sm font-medium"
+                    style={{ color: "var(--text-tertiary)" }}
                   >
                     Mật khẩu
                   </label>
@@ -135,12 +141,18 @@ export default function LoginPage() {
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="••••••••"
                       required
-                      className="w-full rounded-xl bg-white/5 border border-white/10 pl-4 pr-11 py-3 text-sm text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary/30 outline-none transition-all"
+                      className="w-full rounded-xl pl-4 pr-11 py-3 text-sm outline-none transition-all"
+                      style={{
+                        background: "color-mix(in srgb, var(--text-primary) 5%, transparent)",
+                        border: "0.5px solid var(--border-base)",
+                        color: "var(--text-primary)",
+                      }}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors cursor-pointer"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors cursor-pointer"
+                      style={{ color: "var(--text-dim)" }}
                       tabIndex={-1}
                       aria-label={
                         showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"
@@ -152,7 +164,7 @@ export default function LoginPage() {
                 </div>
 
                 {needsActivation && (
-                  <div className="rounded-xl bg-amber-500/15 border border-amber-500/30 px-4 py-3 text-sm text-amber-400">
+                  <div className="rounded-xl bg-amber-500/15 border px-4 py-3 text-sm text-amber-400" style={{ borderColor: "color-mix(in srgb, var(--color-warning) 30%, transparent)" }}>
                     Tài khoản chưa được kích hoạt.
                     <button
                       type="button"
@@ -167,7 +179,8 @@ export default function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full rounded-xl bg-primary hover:bg-primary-light text-white font-semibold py-3 text-sm transition-all shadow-lg shadow-primary/25 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full rounded-xl bg-accent hover:bg-accent-dark font-semibold py-3 text-sm transition-all shadow-lg shadow-accent/25 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+                  style={{ color: "var(--text-primary)" }}
                 >
                   {loading ? (
                     <Loader2 size={16} className="animate-spin" />
@@ -180,7 +193,8 @@ export default function LoginPage() {
                 <div className="text-center">
                   <Link
                     href="/auth/forgot-password"
-                    className="text-sm text-zinc-500 hover:text-primary transition-colors"
+                    className="text-sm transition-colors"
+                    style={{ color: "var(--text-dim)" }}
                   >
                     Quên mật khẩu?
                   </Link>
@@ -188,9 +202,9 @@ export default function LoginPage() {
               </form>
 
               <div className="relative flex items-center gap-3 mt-6">
-                <div className="flex-1 h-px bg-white/8" />
-                <span className="text-xs text-zinc-600">hoặc</span>
-                <div className="flex-1 h-px bg-white/8" />
+                <div className="flex-1 h-px" style={{ background: "var(--border-base)" }} />
+                <span className="text-xs" style={{ color: "var(--text-dim)" }}>hoặc</span>
+                <div className="flex-1 h-px" style={{ background: "var(--border-base)" }} />
               </div>
 
               <div className="mt-5">
@@ -200,11 +214,11 @@ export default function LoginPage() {
                 />
               </div>
 
-              <p className="text-center text-sm text-zinc-500 mt-6">
+              <p className="text-center text-sm mt-6" style={{ color: "var(--text-dim)" }}>
                 Chưa có tài khoản?{" "}
                 <Link
                   href="/auth/register"
-                  className="text-primary hover:underline"
+                  className="text-accent hover:underline"
                 >
                   Đăng ký ngay
                 </Link>
@@ -213,6 +227,7 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+      <ThemeToggleButton />
     </div>
   );
 }

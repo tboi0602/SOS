@@ -2,42 +2,82 @@
 
 import { useEffect } from "react";
 import { useToast } from "@/components/ui/Toast";
-import { useContact } from "@/hook/landing/useContact"
-import { useScrollAnimation } from "@/hook/landing/useScrollAnimation"
+import { useContact } from "@/hook/landing/useContact";
+import { useScrollAnimation } from "@/hook/landing/useScrollAnimation";
 import { cn } from "@/utils/cn";
-import { CONTACT, CTA } from "@/utils/constants";
-import { Send, Mail, MapPin, Phone, ArrowRight } from "lucide-react";
+import { CONTACT } from "@/utils/constants";
+import { Send, Mail, MapPin, Phone, ArrowRight, Sparkles } from "lucide-react";
 import { SectionGlow } from "@/components/landing/Effects";
 
 function CTABanner() {
   return (
     <section className="relative py-24 overflow-hidden">
       <div className="absolute inset-0 gradient-mesh" />
-      <SectionGlow position="center" color="rgba(24,86,255,0.05)" size="ellipse_60%_40%" />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 40% at 50% 50%, rgba(212,175,55,0.03) 0%, transparent 60%)",
+        }}
+      />
+      <SectionGlow
+        position="center"
+        color="rgba(139,101,8,0.04)"
+        size="ellipse_60%_40%"
+      />
 
-      <div className="absolute inset-0">
-        <div className="glass absolute inset-0 rounded-none opacity-20" />
-        <div className="absolute inset-0 bg-linear-to-r from-[#0c1e3a] via-[#0c1e3a]/60 to-[#0c1e3a]" />
-      </div>
+      <div
+        className="absolute inset-0"
+        style={{ backgroundColor: "var(--surface-base)" }}
+      />
 
-      <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
-        <h2 className="heading-lg font-bold text-white">{CTA.title}</h2>
-        <p className="mt-4 text-zinc-400 max-w-lg mx-auto">{CTA.subtitle}</p>
+      <div className="relative z-10 mx-auto max-w-4xl px-8 text-center">
+        <div
+          className="inline-flex items-center gap-2 glass rounded-full px-5 py-2 mb-6"
+        >
+          <Sparkles size={14} className="text-accent" />
+          <span
+            className="text-[10px] font-semibold tracking-[0.18em] uppercase"
+            style={{ color: "var(--text-tertiary)" }}
+          >
+            TINH HOA VIỆT
+          </span>
+        </div>
 
-        <div className="divider-gradient mx-auto mt-8 max-w-xs" />
+        <h2
+          className="text-2xl sm:text-3xl font-bold tracking-tight"
+          style={{ color: "var(--text-primary)" }}
+        >
+          Khắc tên vào lịch sử
+        </h2>
+        <p
+          className="mt-3 max-w-lg mx-auto text-sm leading-relaxed"
+          style={{ color: "var(--text-tertiary)" }}
+        >
+          Đã đến lúc bước ra ánh sáng. Hãy để Tổ chức Tinh Hoa Việt bảo chứng
+          cho sự vĩ đại của Quý vị.
+        </p>
+
+        <div className="h-px mx-auto mt-8 max-w-xs" style={{ background: "linear-gradient(90deg, transparent, var(--glass-border), transparent)" }} />
 
         <a
           href="#contact"
-          className="mt-8 inline-flex items-center gap-2 btn-glow px-8 py-4 rounded-2xl text-base font-semibold text-white bg-primary z-10 transition-all"
+          className="mt-8 inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl text-sm font-semibold text-[var(--text-primary)] bg-accent hover:bg-accent-dark shadow-lg shadow-accent/25 transition-all duration-300"
         >
           <span className="relative z-10 flex items-center gap-2">
-            {CTA.button}
-            <ArrowRight size={18} />
+            Đề cử ngay
+            <ArrowRight size={16} />
           </span>
         </a>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-[#0c1e3a] to-transparent" />
+      <div
+        className="absolute bottom-0 left-0 right-0 h-32"
+        style={{
+          background:
+            "linear-gradient(to top, var(--surface-base), transparent)",
+        }}
+      />
     </section>
   );
 }
@@ -48,53 +88,84 @@ function ContactForm() {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (status === "success") toast("Tin nhắn đã được gửi thành công!", "success");
+    if (status === "success")
+      toast("Tin nhắn đã được gửi thành công!", "success");
     if (status === "error") toast("Có lỗi xảy ra, vui lòng thử lại.", "error");
   }, [status]);
 
+  const fieldStyles =
+    "w-full rounded-xl px-4 py-3 text-sm outline-none transition-all duration-300";
+  const labelStyles = "text-[10px] font-medium tracking-wide uppercase";
+  const valueStyles = "text-sm font-medium mt-0.5";
+
   return (
     <section id="contact" className="relative py-24 overflow-hidden">
-      <div className="absolute inset-0 gradient-mesh-cyan" />
+      <div className="absolute inset-0 gradient-mesh" />
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 50% at 50% 100%, rgba(212,175,55,0.02) 0%, transparent 60%)",
+        }}
+      />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
-        <div className="text-center mb-4">
-          <span className="text-[11px] font-semibold text-primary tracking-[0.2em] uppercase">
+      <div className="relative z-10 mx-auto max-w-7xl px-8">
+        <div className="text-center mb-14">
+          <span className="text-[10px] font-semibold text-primary tracking-[0.2em] uppercase bg-primary/10 rounded-full px-4 py-1.5">
             {CONTACT.badge}
           </span>
+          <h2
+            className="mt-5 text-2xl sm:text-3xl font-bold tracking-tight"
+            style={{ color: "var(--text-primary)" }}
+          >
+            {CONTACT.title.split(" ")[0]}{" "}
+            <span className="bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
+              {CONTACT.title.split(" ").slice(1).join(" ")}
+            </span>
+          </h2>
+          <p
+            className="mt-3 text-sm max-w-lg mx-auto"
+            style={{ color: "var(--text-tertiary)" }}
+          >
+            {CONTACT.subtitle}
+          </p>
         </div>
-        <h2 className="heading-lg font-bold text-white text-center">
-          {CONTACT.title.split(" ")[0]}{" "}
-          <span className="text-gradient">
-            {CONTACT.title.split(" ").slice(1).join(" ")}
-          </span>
-        </h2>
-        <p className="text-center mt-4 text-zinc-400 max-w-lg mx-auto">
-          {CONTACT.subtitle}
-        </p>
 
         <div
           ref={ref}
           className={cn(
-            "mt-16 grid lg:grid-cols-5 gap-8 items-start transition-all duration-800",
+            "mt-14 grid lg:grid-cols-5 gap-8 items-start transition-all duration-800",
             visible ? "translate-y-0 opacity-100" : "translate-y-12 opacity-0",
           )}
         >
           <div className="lg:col-span-3">
-            <div className="glass rounded-3xl p-8 space-y-5">
-              <div className="grid sm:grid-cols-2 gap-4">
+            <div
+              className="rounded-2xl p-7 space-y-4 glass"
+            >
+              <div className="grid sm:grid-cols-2 gap-3">
                 <input
                   type="text"
                   placeholder="Họ và tên"
                   value={form.name}
                   onChange={(e) => updateField("name", e.target.value)}
-                  className="w-full rounded-xl bg-white/5 border border-white/10 px-5 py-3.5 text-sm text-white placeholder:text-zinc-500 focus:border-primary focus:ring-1 focus:ring-primary/30 outline-none transition-all"
+                  className={`${fieldStyles} focus:ring-1 focus:ring-accent/20`}
+                  style={{
+                    backgroundColor: "var(--surface-elevated)",
+                    border: "0.5px solid var(--border-strong)",
+                    color: "var(--text-primary)",
+                  }}
                 />
                 <input
                   type="email"
                   placeholder="Email"
                   value={form.email}
                   onChange={(e) => updateField("email", e.target.value)}
-                  className="w-full rounded-xl bg-white/5 border border-white/10 px-5 py-3.5 text-sm text-white placeholder:text-zinc-500 focus:border-primary focus:ring-1 focus:ring-primary/30 outline-none transition-all"
+                  className={`${fieldStyles} focus:ring-1 focus:ring-accent/20`}
+                  style={{
+                    backgroundColor: "var(--surface-elevated)",
+                    border: "0.5px solid var(--border-strong)",
+                    color: "var(--text-primary)",
+                  }}
                 />
               </div>
               <input
@@ -102,19 +173,29 @@ function ContactForm() {
                 placeholder="Số điện thoại"
                 value={form.phone}
                 onChange={(e) => updateField("phone", e.target.value)}
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-5 py-3.5 text-sm text-white placeholder:text-zinc-500 focus:border-primary focus:ring-1 focus:ring-primary/30 outline-none transition-all"
+                className={`${fieldStyles} focus:ring-1 focus:ring-accent/20`}
+                style={{
+                  backgroundColor: "var(--surface-elevated)",
+                  border: "0.5px solid var(--border-strong)",
+                  color: "var(--text-primary)",
+                }}
               />
               <textarea
                 placeholder="Nội dung tin nhắn"
                 value={form.message}
                 onChange={(e) => updateField("message", e.target.value)}
                 rows={4}
-                className="w-full rounded-xl bg-white/5 border border-white/10 px-5 py-3.5 text-sm text-white placeholder:text-zinc-500 focus:border-primary focus:ring-1 focus:ring-primary/30 outline-none resize-none transition-all"
+                className={`${fieldStyles} resize-none focus:ring-1 focus:ring-accent/20`}
+                style={{
+                  backgroundColor: "var(--surface-elevated)",
+                  border: "0.5px solid var(--border-strong)",
+                  color: "var(--text-primary)",
+                }}
               />
               <button
                 onClick={handleSubmit}
                 disabled={status === "loading"}
-                className="group relative w-full rounded-2xl bg-primary py-3.5 text-sm font-semibold text-white hover:bg-primary/80 disabled:opacity-50 transition-all shadow-lg shadow-primary/25 overflow-hidden cursor-pointer"
+                className="group relative w-full rounded-xl bg-accent py-3 text-sm font-semibold text-[var(--text-primary)] hover:bg-accent-dark disabled:opacity-50 transition-all duration-300 shadow-lg shadow-accent/25 overflow-hidden cursor-pointer"
               >
                 <span className="relative z-10 flex items-center justify-center gap-2">
                   {status === "loading"
@@ -124,39 +205,104 @@ function ContactForm() {
                       : status === "error"
                         ? "Gửi lại"
                         : "Gửi tin nhắn"}
-                  <Send size={15} />
+                  <Send size={14} />
                 </span>
                 <div className="absolute inset-0 bg-linear-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
               </button>
             </div>
           </div>
 
-          <div className="lg:col-span-2 space-y-4">
-            <div className="glass rounded-2xl p-6 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
-                <Mail size={20} className="text-primary" />
+          <div className="lg:col-span-2 space-y-3">
+            <div
+              className="rounded-xl p-5 flex items-center gap-4 glass transition-all duration-300"
+            >
+              <div
+                className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0"
+              >
+                <Mail size={16} className="text-primary" />
               </div>
               <div>
-                <p className="text-xs text-zinc-500">Email</p>
-                <p className="text-sm text-white">partner@hita.vn</p>
+                <p
+                  className={labelStyles}
+                  style={{ color: "var(--text-tertiary)" }}
+                >
+                  Email
+                </p>
+                <p
+                  className={valueStyles}
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  {CONTACT.email}
+                </p>
               </div>
             </div>
-            <div className="glass rounded-2xl p-6 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-cyan/15 border border-cyan/30 flex items-center justify-center shrink-0">
-                <Phone size={20} className="text-cyan" />
+            <div
+              className="rounded-xl p-5 flex items-center gap-4 glass transition-all duration-300"
+            >
+              <div
+                className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0"
+              >
+                <Phone size={16} className="text-accent" />
               </div>
               <div>
-                <p className="text-xs text-zinc-500">Hotline</p>
-                <p className="text-sm text-white">0904 373 123</p>
+                <p
+                  className={labelStyles}
+                  style={{ color: "var(--text-tertiary)" }}
+                >
+                  Hotline
+                </p>
+                <p
+                  className={valueStyles}
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  {CONTACT.phone}
+                </p>
               </div>
             </div>
-            <div className="glass rounded-2xl p-6 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-accent/15 border border-accent/30 flex items-center justify-center shrink-0">
-                <MapPin size={20} className="text-accent" />
+            <div
+              className="rounded-xl p-5 flex items-center gap-4 glass transition-all duration-300"
+            >
+              <div
+                className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0"
+              >
+                <Phone size={16} className="text-accent" />
               </div>
               <div>
-                <p className="text-xs text-zinc-500">Địa chỉ</p>
-                <p className="text-sm text-white">Hồ Chí Minh, Việt Nam</p>
+                <p
+                  className={labelStyles}
+                  style={{ color: "var(--text-tertiary)" }}
+                >
+                  Tiếp nhận Đề cử
+                </p>
+                <p
+                  className={valueStyles}
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  {CONTACT.hotline}
+                </p>
+              </div>
+            </div>
+            <div
+              className="rounded-xl p-5 flex items-center gap-4 glass transition-all duration-300"
+            >
+              <div
+                className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center shrink-0"
+              >
+                <MapPin size={16} className="text-accent" />
+              </div>
+              <div>
+                <p
+                  className={labelStyles}
+                  style={{ color: "var(--text-tertiary)" }}
+                >
+                  Địa chỉ
+                </p>
+                <p
+                  className={valueStyles}
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  {CONTACT.address}
+                </p>
               </div>
             </div>
           </div>

@@ -31,7 +31,7 @@ export default function ImageViewer({ images, initialIndex = 0, onClose }: Props
 
   return (
     <div
-      className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+      className="fixed inset-0 z-100 flex items-center justify-center bg-[color-mix(in srgb, var(--text-primary) 80%, transparent)] backdrop-blur-sm"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -40,7 +40,7 @@ export default function ImageViewer({ images, initialIndex = 0, onClose }: Props
       <button
         onClick={onClose}
         aria-label="Đóng"
-        className="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/50 text-white hover:bg-white/20 transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+        className="absolute top-4 right-4 z-10 p-2 rounded-full bg-[color-mix(in srgb, var(--text-primary) 50%, transparent)] text-[var(--text-primary)] hover:bg-[color-mix(in srgb, var(--text-primary) 20%, transparent)] transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in srgb, var(--text-primary) 50%, transparent)]"
       >
         <X size={20} />
       </button>
@@ -50,7 +50,7 @@ export default function ImageViewer({ images, initialIndex = 0, onClose }: Props
           <button
             onClick={(e) => { e.stopPropagation(); setIndex((i) => Math.max(0, i - 1)) }}
             disabled={index === 0}
-            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-white/50 z-10"
+            className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-[color-mix(in srgb, var(--text-primary) 50%, transparent)] text-[var(--text-primary)] hover:bg-[color-mix(in srgb, var(--text-primary) 20%, transparent)] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in srgb, var(--text-primary) 50%, transparent)] z-10"
             aria-label="Ảnh trước"
           >
             <ChevronLeft size={24} />
@@ -58,7 +58,7 @@ export default function ImageViewer({ images, initialIndex = 0, onClose }: Props
           <button
             onClick={(e) => { e.stopPropagation(); setIndex((i) => Math.min(images.length - 1, i + 1)) }}
             disabled={index === images.length - 1}
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 text-white hover:bg-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-white/50 z-10"
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-[color-mix(in srgb, var(--text-primary) 50%, transparent)] text-[var(--text-primary)] hover:bg-[color-mix(in srgb, var(--text-primary) 20%, transparent)] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in srgb, var(--text-primary) 50%, transparent)] z-10"
             aria-label="Ảnh sau"
           >
             <ChevronRight size={24} />
@@ -69,8 +69,8 @@ export default function ImageViewer({ images, initialIndex = 0, onClose }: Props
               <button
                 key={i}
                 onClick={(e) => { e.stopPropagation(); setIndex(i) }}
-                className={`size-2 rounded-full transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
-                  i === index ? "bg-white w-4" : "bg-white/40 hover:bg-white/60"
+                className={`size-2 rounded-full transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in srgb, var(--text-primary) 50%, transparent)] ${
+                  i === index ? "bg-[var(--text-primary)] w-4" : "bg-[color-mix(in srgb, var(--text-primary) 40%, transparent)] hover:bg-[color-mix(in srgb, var(--text-primary) 60%, transparent)]"
                 }`}
                 aria-label={`Ảnh ${i + 1}`}
               />
@@ -88,7 +88,7 @@ export default function ImageViewer({ images, initialIndex = 0, onClose }: Props
       </div>
 
       {images.length > 1 && (
-        <p className="absolute bottom-14 left-1/2 -translate-x-1/2 text-xs text-white/60 z-10">
+        <p className="absolute bottom-14 left-1/2 -translate-x-1/2 text-xs text-[color-mix(in srgb, var(--text-primary) 60%, transparent)] z-10">
           {index + 1} / {images.length}
         </p>
       )}

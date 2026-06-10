@@ -24,11 +24,11 @@ export default function DeleteConfirmModal({ open, title, message, loading, onCo
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label={title}>
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onCancel} />
-      <div className="relative w-full max-w-sm rounded-2xl bg-[#0c1e3a] border border-white/10 p-6 shadow-2xl">
+      <div className="relative w-full max-w-sm rounded-2xl bg-[var(--surface-elevated)] border border-[var(--border-base)] p-6 shadow-2xl">
         <button
           onClick={onCancel}
           aria-label="Đóng"
-          className="absolute right-4 top-4 p-1 rounded-lg text-zinc-500 hover:text-white hover:bg-white/10 transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+          className="absolute right-4 top-4 p-1 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-hover)] transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
         >
           <X size={16} />
         </button>
@@ -37,13 +37,13 @@ export default function DeleteConfirmModal({ open, title, message, loading, onCo
           <AlertTriangle size={24} className="text-red-400" />
         </div>
 
-        <h2 className="text-base font-bold text-white text-center mb-2">{title}</h2>
-        <p className="text-sm text-zinc-400 text-center mb-6">{message}</p>
+        <h2 className="text-base font-bold text-[var(--text-primary)] text-center mb-2">{title}</h2>
+        <p className="text-sm text-[var(--text-secondary)] text-center mb-6">{message}</p>
 
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-white/5 text-zinc-300 text-sm font-medium hover:bg-white/10 transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+            className="flex-1 px-4 py-2.5 rounded-xl bg-[var(--surface-strong)] border border-[var(--border-base)] text-[var(--text-secondary)] text-sm font-medium hover:bg-[var(--glass-hover)] transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
           >
             Hủy
           </button>

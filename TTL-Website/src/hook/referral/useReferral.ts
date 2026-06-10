@@ -14,7 +14,7 @@ export function useReferral() {
 
   const code = user?.referralCode ?? "";
   const link = `${origin}${BASE_REFERRAL_PATH}${code}`;
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(link)}&color=001425&bgcolor=00c3ff`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(link)}&color=FFFFFF&bgcolor=1A1A1A`;
 
   const handleCopyCode = () => {
     navigator.clipboard?.writeText(code);

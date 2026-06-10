@@ -9,18 +9,18 @@ export default function NotificationsPage() {
   const { notifications, loading, page, total, totalPages, setPage, markRead, markAllRead } = useNotifications();
 
   return (
-    <div className="min-h-screen px-4 sm:px-6 py-8 text-white select-none relative z-10">
+    <div className="min-h-screen px-4 sm:px-6 py-8 select-none relative z-10 animate-fade-up" style={{ color: "var(--text-primary)" }}>
       <div className="max-w-3xl mx-auto space-y-8">
-        <div className="flex items-center justify-between border-b border-white/5 pb-6">
+        <div className="flex items-center justify-between pb-6" style={{ borderBottom: "1px solid var(--border-base)" }}>
           <div className="flex items-center gap-4">
-            <div className="size-12 rounded-2xl bg-linear-to-br from-primary/20 to-cyan/10 border border-primary/20 flex items-center justify-center">
+            <div className="size-12 rounded-2xl bg-linear-to-br from-primary/20 to-accent/10 border border-primary/20 flex items-center justify-center">
               <Bell size={22} className="text-primary" />
             </div>
             <div>
-              <h1 className="text-xl font-black tracking-tight bg-linear-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
+              <h1 className="text-xl font-black tracking-tight bg-linear-to-r from-[var(--text-primary)] via-[var(--text-secondary)] to-[var(--text-tertiary)] bg-clip-text text-transparent">
                 THÔNG BÁO
               </h1>
-              <p className="text-xs font-semibold text-zinc-500 uppercase tracking-widest mt-0.5">
+              <p className="text-xs font-semibold text-[var(--text-tertiary)] uppercase tracking-widest mt-0.5">
                 {total} thông báo
               </p>
             </div>
@@ -28,7 +28,12 @@ export default function NotificationsPage() {
           {notifications.some((n) => !n.isRead) && (
             <button
               onClick={markAllRead}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[11px] text-zinc-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-all cursor-pointer"
+              style={{
+                background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)",
+                boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)",
+                border: "0.5px solid var(--border-base)",
+              }}
             >
               <Check size={12} /> Đọc tất cả
             </button>
@@ -41,16 +46,25 @@ export default function NotificationsPage() {
           rows={notifications.length || 3}
         >
           {notifications.length === 0 ? (
-            <div className="text-center py-20 rounded-3xl bg-linear-to-b bg-white/2 border border-white/5">
-              <Bell size={32} className="text-zinc-600 mx-auto mb-3" />
-              <p className="text-zinc-500 text-sm">Chưa có thông báo nào</p>
+            <div className="text-center py-20 rounded-3xl"
+              style={{
+                background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)",
+                boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)",
+                border: "0.5px solid var(--border-base)",
+              }}>
+              <Bell size={32} className="text-[var(--text-tertiary)] mx-auto mb-3" />
+              <p className="text-[var(--text-tertiary)] text-sm">Chưa có thông báo nào</p>
             </div>
           ) : (
             <div className="space-y-3">
               {notifications.map((n) => (
                 <div
                   key={n.id}
-                  className={`rounded-2xl border p-4 transition-all duration-300 ${n.isRead ? "bg-white/2 border-white/5" : "bg-primary/5 border-primary/20"}`}
+                  className={`rounded-2xl border p-4 transition-all duration-300 ${n.isRead ? "border-[var(--border-base)]" : "border-primary/20"}`}
+                  style={{
+                    background: n.isRead ? "color-mix(in srgb, var(--surface-elevated) 18%, transparent)" : "color-mix(in srgb, var(--clr-primary) 12%, transparent)",
+                    boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)",
+                  }}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0 flex-1">
@@ -58,14 +72,14 @@ export default function NotificationsPage() {
                         {!n.isRead && (
                           <span className="size-2 rounded-full bg-primary shrink-0" />
                         )}
-                        <h3 className="text-sm font-bold text-white">
+                        <h3 className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>
                           {n.title}
                         </h3>
                       </div>
-                      <p className="text-xs text-zinc-400 leading-relaxed">
+                      <p className="text-xs text-[var(--text-tertiary)] leading-relaxed">
                         {n.content}
                       </p>
-                      <p className="text-[10px] text-zinc-600 mt-2">
+                      <p className="text-[10px] text-[var(--text-tertiary)] mt-2">
                         {new Date(n.createdAt).toLocaleString("vi-VN")}
                       </p>
                     </div>
@@ -73,7 +87,7 @@ export default function NotificationsPage() {
                       {!n.isRead && (
                         <button
                           onClick={() => markRead(n.id)}
-                          className="p-1.5 rounded-lg text-zinc-500 hover:text-primary hover:bg-primary/10 transition-all cursor-pointer"
+                          className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-primary hover:bg-primary/10 transition-all cursor-pointer"
                           title="Đánh dấu đã đọc"
                         >
                           <Check size={13} />

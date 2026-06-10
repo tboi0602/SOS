@@ -10,7 +10,7 @@ interface SectionGlowProps {
 }
 
 export function SectionGlow({
-  color = "rgba(24,86,255,0.04)",
+  color = "rgba(88,19,15,0.06)",
   position = "top",
   size = "ellipse_80%_50%",
 }: SectionGlowProps) {
@@ -45,7 +45,7 @@ interface ShineCardProps {
   lightColor?: string
 }
 
-export function ShineCard({ children, className = "", lightColor = "rgba(34,211,238,0.06)" }: ShineCardProps) {
+export function ShineCard({ children, className = "", lightColor = "rgba(240,204,26,0.08)" }: ShineCardProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [shine, setShine] = useState({ x: 50, y: 50, opacity: 0 })
 

@@ -22,17 +22,17 @@ export default function PostDetailPage() {
   const [editingPost, setEditingPost] = useState(false);
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="max-w-2xl mx-auto animate-fade-up">
       <button
         onClick={() => router.back()}
-        className="flex items-center gap-1.5 text-sm text-zinc-400 hover:text-white mb-5 transition-colors cursor-pointer"
+        className="flex items-center gap-1.5 text-sm mb-5 transition-colors cursor-pointer" style={{ color: "var(--text-tertiary)" }}
       >
         <ArrowLeft size={16} /> Quay lại
       </button>
 
       <Skeleton name="post-detail" loading={loading}>
         {!post ? (
-          <div className="text-center py-20 text-zinc-500">
+          <div className="text-center py-20" style={{ color: "var(--text-tertiary)" }}>
             Bài viết không tồn tại
           </div>
         ) : (

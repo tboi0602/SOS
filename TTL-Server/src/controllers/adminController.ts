@@ -121,4 +121,28 @@ export const adminController = {
       next(err)
     }
   },
+
+  async getPendingMembers(req: Request, res: Response, next: NextFunction) {
+    try {
+      const page = Math.max(1, parseInt(s(req.query.page, "1")) || 1)
+      const limit = Math.min(50, Math.max(1, parseInt(s(req.query.limit, "20")) || 20))
+      const result = await adminService.getPendingMembers(page, limit)
+      res.json(result)
+    } catch (err) {
+      next(err)
+    }
+  },
+
+  async getUserPendingItems(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = s(req.params.userId)
+      const filterType = s(req.query.type) || undefined
+      const page = Math.max(1, parseInt(s(req.query.page, "1")) || 1)
+      const limit = Math.min(50, Math.max(1, parseInt(s(req.query.limit, "20")) || 20))
+      const result = await adminService.getUserPendingItems(userId, filterType, page, limit)
+      res.json(result)
+    } catch (err) {
+      next(err)
+    }
+  },
 }

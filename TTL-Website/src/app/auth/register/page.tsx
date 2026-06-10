@@ -6,6 +6,7 @@ import { useAuthRegister as useRegister } from "@/hook/auth";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 import Field from "@/components/auth/Field";
 import ReferralField from "@/components/auth/ReferralField";
+import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
 import { useEffect } from "react";
 import { useToast } from "@/components/ui/Toast";
 import { Eye, EyeOff, Loader2, UserPlus } from "lucide-react";
@@ -32,11 +33,11 @@ export default function RegisterPage() {
   }, [error]);
 
   return (
-    <div className="relative min-h-screen flex bg-[#0c1e3a] overflow-hidden">
+    <div className="relative min-h-screen flex overflow-hidden animate-fade-up" style={{ background: "var(--surface-base)" }}>
       <div className="absolute inset-0 gradient-mesh" />
       <div className="relative z-10 flex w-full">
         <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 bg-linear-to-br from-cyan/20 via-transparent to-primary/10" />
+          <div className="absolute inset-0 bg-linear-to-br from-accent/20 via-transparent to-primary/10" />
           <Image
             src="/images/auth-visual.svg"
             alt=""
@@ -55,10 +56,10 @@ export default function RegisterPage() {
                 unoptimized
               />
             </Link>
-            <h1 className="text-4xl font-bold text-white mb-4 leading-tight">
-              Kiến tạo <span className="text-gradient-cyan">tương lai</span>
+            <h1 className="text-4xl font-bold mb-4 leading-tight" style={{ color: "var(--text-primary)" }}>
+              Kiến tạo <span className="text-gradient-gold">tương lai</span>
             </h1>
-            <p className="text-zinc-400 leading-relaxed">
+            <p className="leading-relaxed" style={{ color: "var(--text-tertiary)" }}>
               Tham gia SOS để trang bị kỹ năng Sales &amp; Marketing thực chiến,
               kết nối cộng đồng và phát triển bản thân.
             </p>
@@ -70,9 +71,10 @@ export default function RegisterPage() {
               ].map((item, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-3 text-sm text-zinc-300 justify-center"
+                  className="flex items-center gap-3 text-sm justify-center"
+                  style={{ color: "var(--text-secondary)" }}
                 >
-                  <div className="w-1.5 h-1.5 rounded-full bg-cyan" /> {item}
+                  <div className="w-1.5 h-1.5 rounded-full bg-accent" /> {item}
                 </div>
               ))}
             </div>
@@ -92,11 +94,9 @@ export default function RegisterPage() {
                 height={40}
                 unoptimized
               />
-              <span className="text-xl font-bold bg-linear-to-r from-white via-cyan to-primary bg-clip-text text-transparent">
-                SOS — Sales Omni System
-              </span>
+            <span className="sr-only">SOS — Sales Omni System</span>
             </Link>
-            <div className="glass-strong rounded-2xl p-8">
+            <div className="card p-8">
               {registered ? (
                 <div className="flex flex-col items-center text-center gap-3 py-4">
                   <div className="size-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
@@ -104,14 +104,15 @@ export default function RegisterPage() {
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
-                  <h2 className="text-xl font-bold text-white">Đăng ký thành công!</h2>
-                  <p className="text-sm text-zinc-400 leading-relaxed">
-                    Vui lòng kiểm tra email <strong className="text-white">{form.email}</strong> để kích hoạt tài khoản.
+                  <h2 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>Đăng ký thành công!</h2>
+                  <p className="text-sm leading-relaxed" style={{ color: "var(--text-tertiary)" }}>
+                    Vui lòng kiểm tra email <strong style={{ color: "var(--text-primary)" }}>{form.email}</strong> để kích hoạt tài khoản.
                     Nếu không thấy email, hãy kiểm tra thư mục Spam.
                   </p>
                   <Link
                     href="/auth/login"
-                    className="mt-3 rounded-xl bg-primary hover:bg-primary-light text-white font-semibold px-6 py-3 text-sm transition-all cursor-pointer"
+                    className="mt-3 rounded-xl bg-accent hover:bg-accent-dark font-semibold px-6 py-3 text-sm transition-all cursor-pointer"
+                    style={{ color: "var(--text-primary)" }}
                   >
                     Đăng nhập
                   </Link>
@@ -119,8 +120,8 @@ export default function RegisterPage() {
               ) : (
               <>
               <div className="text-center mb-6">
-                <h1 className="text-2xl font-bold text-white">Tạo tài khoản</h1>
-                <p className="text-sm text-zinc-400 mt-1">
+                <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Tạo tài khoản</h1>
+                <p className="text-sm mt-1" style={{ color: "var(--text-tertiary)" }}>
                   Tham gia cộng đồng SOS
                 </p>
               </div>
@@ -147,7 +148,8 @@ export default function RegisterPage() {
                 <div className="space-y-1.5">
                   <label
                     htmlFor="reg-password"
-                    className="text-sm text-zinc-400 font-medium"
+                    className="text-sm font-medium"
+                    style={{ color: "var(--text-tertiary)" }}
                   >
                     Mật khẩu
                   </label>
@@ -160,12 +162,18 @@ export default function RegisterPage() {
                       placeholder="Ít nhất 6 ký tự"
                       required
                       minLength={6}
-                      className="w-full rounded-xl bg-white/5 border border-white/10 pl-4 pr-11 py-3 text-sm text-white placeholder:text-zinc-600 focus:border-primary focus:ring-1 focus:ring-primary/30 outline-none transition-all"
+                      className="w-full rounded-xl pl-4 pr-11 py-3 text-sm outline-none transition-all"
+                      style={{
+                        background: "color-mix(in srgb, var(--text-primary) 5%, transparent)",
+                        border: "0.5px solid var(--border-base)",
+                        color: "var(--text-primary)",
+                      }}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-white transition-colors cursor-pointer"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors cursor-pointer"
+                      style={{ color: "var(--text-dim)" }}
                       tabIndex={-1}
                       aria-label={
                         showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"
@@ -207,7 +215,8 @@ export default function RegisterPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full rounded-xl bg-primary hover:bg-primary-light text-white font-semibold py-3 text-sm transition-all shadow-lg shadow-primary/25 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full rounded-xl bg-accent hover:bg-accent-dark font-semibold py-3 text-sm transition-all shadow-lg shadow-accent/25 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
+                  style={{ color: "var(--text-primary)" }}
                 >
                   {loading ? (
                     <Loader2 size={16} className="animate-spin" />
@@ -219,9 +228,9 @@ export default function RegisterPage() {
               </form>
 
               <div className="relative flex items-center gap-3 mt-5">
-                <div className="flex-1 h-px bg-white/8" />
-                <span className="text-xs text-zinc-600">hoặc</span>
-                <div className="flex-1 h-px bg-white/8" />
+                <div className="flex-1 h-px" style={{ background: "var(--border-base)" }} />
+                <span className="text-xs" style={{ color: "var(--text-dim)" }}>hoặc</span>
+                <div className="flex-1 h-px" style={{ background: "var(--border-base)" }} />
               </div>
 
               <div className="mt-4">
@@ -231,11 +240,11 @@ export default function RegisterPage() {
                 />
               </div>
 
-              <p className="text-center text-sm text-zinc-500 mt-5">
+              <p className="text-center text-sm mt-5" style={{ color: "var(--text-dim)" }}>
                 Đã có tài khoản?{" "}
                 <Link
                   href="/auth/login"
-                  className="text-primary hover:underline"
+                  className="text-accent hover:underline"
                 >
                   Đăng nhập
                 </Link>
@@ -246,6 +255,7 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
+      <ThemeToggleButton />
     </div>
   );
 }

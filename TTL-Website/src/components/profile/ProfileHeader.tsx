@@ -97,7 +97,7 @@ export default function ProfileHeader({
   return (
     <div className="p-4 space-y-4">
       {/* Title */}
-      <h3 className="text-[11px] font-bold tracking-[0.15em] text-[#00b7ff]">
+      <h3 className="text-[11px] font-bold tracking-[0.15em] text-[var(--clr-accent)]">
         HỒ SƠ NĂNG LỰC
       </h3>
 
@@ -107,8 +107,8 @@ export default function ProfileHeader({
           <div
             className="size-14 rounded-full p-0.5"
             style={{
-              background: "linear-gradient(135deg, #00b7ff, #0066ff)",
-              boxShadow: "0 0 15px rgba(0,183,255,0.4)",
+              background: "linear-gradient(135deg, var(--clr-accent), var(--clr-accent-dark))",
+              boxShadow: "0 0 15px color-mix(in srgb, var(--clr-accent) 40%, transparent)",
             }}
           >
             {avatarSrc ? (
@@ -120,20 +120,20 @@ export default function ProfileHeader({
                 height={56}
               />
             ) : (
-              <div className="w-full h-full rounded-full bg-[#0f2546] flex items-center justify-center text-lg font-bold">
+              <div className="w-full h-full rounded-full bg-[var(--surface-elevated)] flex items-center justify-center text-lg font-bold">
                 {name.charAt(0).toUpperCase() || "U"}
               </div>
             )}
           </div>
-          <div className="absolute -bottom-0.5 -right-0.5 size-4 rounded-full bg-emerald-500 border-2 border-[#070d22] flex items-center justify-center">
+          <div className="absolute -bottom-0.5 -right-0.5 size-4 rounded-full bg-emerald-500 border-2 border-[var(--border-base)] flex items-center justify-center">
             <svg viewBox="0 0 24 24" fill="white" className="size-2.5">
               <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
             </svg>
           </div>
         </div>
         <div className="min-w-0">
-          <h2 className="text-base font-bold text-white truncate">{name}</h2>
-          <p className="text-[10px] text-zinc-500 font-mono">
+          <h2 className="text-base font-bold truncate" style={{ color: "var(--text-primary)" }}>{name}</h2>
+          <p className="text-[10px] text-[var(--text-tertiary)] font-mono">
             ID: {referralCode}
           </p>
         </div>
@@ -143,7 +143,7 @@ export default function ProfileHeader({
       <div className="flex gap-2">
         <span
           title="Công việc "
-          className="flex-1 flex items-center justify-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+          className="flex-1 flex items-center justify-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border" style={{ borderColor: "color-mix(in srgb, var(--color-success) 20%, transparent)" }}
         >
           <svg viewBox="0 0 24 24" fill="currentColor" className="size-2.5">
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -152,7 +152,7 @@ export default function ProfileHeader({
         </span>
         <span
           title="Rank"
-          className="flex-1 flex items-center justify-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold bg-[#00b7ff]/10 text-[#00b7ff] border border-[#00b7ff]/20"
+          className="flex-1 flex items-center justify-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold bg-[var(--clr-accent)]/10 text-[var(--clr-accent)] border border-[var(--clr-accent)]/20"
         >
           <svg viewBox="0 0 24 24" fill="currentColor" className="size-2.5">
             <rect x="3" y="4" width="18" height="18" rx="2" />
@@ -165,8 +165,8 @@ export default function ProfileHeader({
       </div>
 
       {/* Bio */}
-      <div className="rounded-xl bg-white/3 border border-white/6 p-3">
-        <p className="text-[10px] font-semibold tracking-wider text-zinc-500 mb-1.5 flex items-center gap-1.5">
+      <div className="rounded-xl border p-3" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", borderColor: "var(--border-base)" }}>
+        <p className="text-[10px] font-semibold tracking-wider text-[var(--text-tertiary)] mb-1.5 flex items-center gap-1.5">
           <svg
             viewBox="0 0 24 24"
             fill="none"
@@ -180,17 +180,17 @@ export default function ProfileHeader({
           GIỚI THIỆU
         </p>
         {bio ? (
-          <p className="text-[11px] text-zinc-300 leading-relaxed whitespace-pre-wrap">
+          <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap">
             {bio}
           </p>
         ) : (
-          <p className="text-[11px] text-zinc-600 italic">Chưa có giới thiệu</p>
+          <p className="text-[11px] text-[var(--text-dim)] italic">Chưa có giới thiệu</p>
         )}
       </div>
 
       {/* Social Links */}
       <div>
-        <p className="text-[10px] font-semibold tracking-wider text-zinc-500 mb-2 flex items-center gap-1.5">
+        <p className="text-[10px] font-semibold tracking-wider text-[var(--text-tertiary)] mb-2 flex items-center gap-1.5">
           <svg
             viewBox="0 0 24 24"
             fill="none"
@@ -227,7 +227,7 @@ export default function ProfileHeader({
                   background: connected ? `${s.color}15` : "transparent",
                   border: connected
                     ? `1px solid ${s.color}25`
-                    : "1px solid rgba(255,255,255,0.04)",
+                    : "1px solid color-mix(in srgb, var(--text-primary) 4%, transparent)",
                 }}
                 title={
                   connected
@@ -240,7 +240,7 @@ export default function ProfileHeader({
                   style={{
                     background: connected
                       ? `${s.color}20`
-                      : "rgba(255,255,255,0.04)",
+                      : "color-mix(in srgb, var(--text-primary) 4%, transparent)",
                     color: connected ? s.color : "rgb(113,113,122)",
                   }}
                 >
@@ -262,10 +262,10 @@ export default function ProfileHeader({
                 {connected && (
                   <ExternalLink
                     size={8}
-                    className="text-zinc-600 absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="text-[var(--text-dim)] absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity"
                   />
                 )}
-                <span className="text-[8px] font-medium text-zinc-500 leading-none">
+                <span className="text-[8px] font-medium text-[var(--text-tertiary)] leading-none">
                   {connected ? s.label : "Kết nối"}
                 </span>
               </a>

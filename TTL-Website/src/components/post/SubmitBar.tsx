@@ -22,7 +22,7 @@ export function SubmitBar({
   return (
     <div className="glass-strong rounded-2xl p-4 flex items-center justify-between gap-3">
       <div className="flex items-center gap-3">
-        <div className="w-24 h-1.5 rounded-full bg-white/5 overflow-hidden">
+        <div className="w-24 h-1.5 rounded-full overflow-hidden" style={{ background: "color-mix(in srgb, var(--text-primary) 5%, transparent)" }}>
           <div
             className="h-full rounded-full transition-all duration-300"
             style={{
@@ -30,11 +30,11 @@ export function SubmitBar({
               background:
                 progress > 0.9
                   ? "linear-gradient(90deg, #ef4444, #dc2626)"
-                  : "linear-gradient(90deg, #00b7ff, #0066ff)",
+                  : "linear-gradient(90deg, var(--clr-accent), var(--clr-accent-dark))",
             }}
           />
         </div>
-        <p className="text-[11px] text-zinc-500 font-mono">
+        <p className="text-[11px] font-mono" style={{ color: "var(--text-tertiary)" }}>
           {contentLength}/5k
           {mediaCount > 0 && ` • ${mediaCount} file`}
         </p>
@@ -43,7 +43,7 @@ export function SubmitBar({
         type="submit"
         disabled={disabled || submitting}
         onClick={onSubmit}
-        className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-light disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold transition-all flex items-center gap-2 shadow-lg shadow-primary/20 cursor-pointer active:scale-98"
+        className="px-6 py-2.5 rounded-xl bg-primary hover:bg-primary-light disabled:opacity-40 disabled:cursor-not-allowed text-[var(--text-primary)] text-sm font-semibold transition-all flex items-center gap-2 shadow-lg shadow-primary/20 cursor-pointer active:scale-98"
       >
         {submitting ? (
           <>

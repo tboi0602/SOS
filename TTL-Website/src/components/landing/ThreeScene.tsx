@@ -1,15 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Points, PointMaterial } from "@react-three/drei";
 import * as THREE from "three";
-
-const _consoleWarn = console.warn;
-console.warn = (...args: unknown[]) => {
-  if (typeof args[0] === "string" && args[0].includes("THREE.Clock")) return;
-  _consoleWarn(...args);
-};
+import { useTheme } from "@/components/ui/ThemeProvider";
 
 function useProgress(duration = 3) {
   const ref = useRef(0);
@@ -24,52 +19,59 @@ function useProgress(duration = 3) {
   return { progress: ref, tick };
 }
 
-const PARTICLE_DATA = (() => {
-  const count = 2000;
-  const pos = new Float32Array(count * 3);
-  const col = new Float32Array(count * 3);
-  for (let i = 0; i < count; i++) {
-    const r = 2 + Math.random() * 9;
-    const theta = Math.random() * Math.PI * 2;
-    const phi = Math.acos(2 * Math.random() - 1);
-    pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-    pos[i * 3 + 1] = (Math.random() - 0.5) * 7;
-    pos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
-    const c = new THREE.Color().setHSL(
-      0.55 + Math.random() * 0.15,
-      0.5,
-      0.2 + Math.random() * 0.4,
-    );
-    col[i * 3] = c.r;
-    col[i * 3 + 1] = c.g;
-    col[i * 3 + 2] = c.b;
-  }
-  return { positions: pos, colors: col };
-})();
+function mulberry32(seed: number) {
+  return function () {
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    const t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    const t2 = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t2 ^ t2 >>> 14) >>> 0) / 4294967296;
+  };
+}
 
-function ParticleField() {
+function ParticleField({ isDark }: { isDark: boolean }) {
   const ref = useRef<THREE.Points>(null!);
   const { tick } = useProgress();
-  const { positions, colors } = PARTICLE_DATA;
+
+  const { pos, col } = useMemo(() => {
+    const rng = mulberry32(42);
+    const count = 800;
+    const pos = new Float32Array(count * 3);
+    const col = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      const r = 2 + rng() * 9;
+      const theta = rng() * Math.PI * 2;
+      const phi = Math.acos(2 * rng() - 1);
+      pos[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      pos[i * 3 + 1] = (rng() - 0.5) * 7;
+      pos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+      const c = new THREE.Color(
+        isDark ? "hsl(25, 30%, 40%)" : "hsl(40, 25%, 65%)",
+      );
+      col[i * 3] = c.r;
+      col[i * 3 + 1] = c.g;
+      col[i * 3 + 2] = c.b;
+    }
+    return { pos, col };
+  }, [isDark]);
 
   useFrame((_, delta) => {
     tick(delta);
-    ref.current.rotation.y += delta * 0.008;
+    ref.current.rotation.y += delta * 0.006;
   });
 
   return (
     <Points
       ref={ref}
-      positions={positions}
-      colors={colors}
+      positions={pos}
+      colors={col}
       stride={3}
       frustumCulled={false}
     >
       <PointMaterial
-        size={0.025}
+        size={0.018}
         vertexColors
         transparent
-        opacity={0.25}
+        opacity={0.08}
         sizeAttenuation
         depthWrite={false}
       />
@@ -78,7 +80,7 @@ function ParticleField() {
 }
 
 const NEURAL_GEOMETRY = (() => {
-  const nodes = 50;
+  const nodes = 30;
   const pos: number[] = [];
   for (let i = 0; i < nodes; i++) {
     const r = 1.8 + Math.random() * 3.5;
@@ -109,13 +111,14 @@ const NEURAL_GEOMETRY = (() => {
 
 const PULSE_SPEED = 0.5 + Math.random() * 0.3;
 
-function NeuralWeb() {
+function NeuralWeb({ isDark }: { isDark: boolean }) {
   const ref = useRef<THREE.LineSegments>(null!);
   const matRef = useRef<THREE.LineBasicMaterial>(null!);
   const { progress, tick } = useProgress();
   const elapsed = useRef(0);
   const geometry = NEURAL_GEOMETRY;
   const pulseSpeed = PULSE_SPEED;
+  const lineColor = isDark ? "#58130F" : "#A07235";
 
   useFrame((_, delta) => {
     tick(delta);
@@ -124,35 +127,40 @@ function NeuralWeb() {
     ref.current.rotation.x = Math.sin(t * 0.015) * 0.06;
     ref.current.rotation.y = t * 0.008;
     matRef.current.opacity =
-      (0.03 + Math.sin(t * pulseSpeed) * 0.015) * progress.current;
+      (0.015 + Math.sin(t * pulseSpeed) * 0.008) * progress.current;
   });
 
   return (
     <lineSegments ref={ref} geometry={geometry}>
-      <lineBasicMaterial ref={matRef} color="#1856ff" transparent opacity={0} />
+      <lineBasicMaterial
+        ref={matRef}
+        color={lineColor}
+        transparent
+        opacity={0}
+      />
     </lineSegments>
   );
 }
 
-const ORBIT_POSITIONS = (() => {
-  const count = 120;
-  const pos = new Float32Array(count * 3);
-  for (let i = 0; i < count; i++) {
-    const angle = (i / count) * Math.PI * 2;
-    const offset = Math.random() * 0.5;
-    const radius = 2.1 + offset;
-    pos[i * 3] = Math.cos(angle) * radius;
-    pos[i * 3 + 1] = (Math.random() - 0.5) * 0.6;
-    pos[i * 3 + 2] = Math.sin(angle) * radius;
-  }
-  return pos;
-})();
-
-function OrbitParticles() {
+function OrbitParticles({ isDark }: { isDark: boolean }) {
   const ref = useRef<THREE.Points>(null!);
   const { progress, tick } = useProgress();
   const elapsed = useRef(0);
-  const positions = ORBIT_POSITIONS;
+  const pos = useMemo(() => {
+    const rng = mulberry32(42);
+    const count = 80;
+    const pos = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      const angle = (i / count) * Math.PI * 2;
+      const offset = rng() * 0.5;
+      const radius = 2.1 + offset;
+      pos[i * 3] = Math.cos(angle) * radius;
+      pos[i * 3 + 1] = (rng() - 0.5) * 0.6;
+      pos[i * 3 + 2] = Math.sin(angle) * radius;
+    }
+    return pos;
+  }, []);
+  const particleColor = isDark ? "#F0CC1A" : "#A07235";
 
   useFrame((_, delta) => {
     tick(delta);
@@ -162,120 +170,34 @@ function OrbitParticles() {
   });
 
   return (
-    <Points ref={ref} positions={positions} stride={3} frustumCulled={false}>
+    <Points ref={ref} positions={pos} stride={3} frustumCulled={false}>
       <PointMaterial
-        size={0.03}
-        color="#22d3ee"
+        size={0.02}
+        color={particleColor}
         transparent
-        opacity={0.2}
+        opacity={0.08}
         sizeAttenuation
         depthWrite={false}
-        blending={THREE.AdditiveBlending}
       />
     </Points>
   );
 }
 
-type ShapeData = {
-  pos: [number, number, number];
-  rotSpeed: number;
-  hue: number;
-  size: number;
-  delay: number;
-};
-
-const CRYSTAL_SHAPES: ShapeData[] = (() => {
-  const items: ShapeData[] = [];
-  for (let i = 0; i < 8; i++) {
-    const angle = (i / 8) * Math.PI * 2;
-    const radius = 2.8 + Math.random() * 1.2;
-    items.push({
-      pos: [
-        Math.cos(angle) * radius,
-        (Math.random() - 0.5) * 2.5,
-        Math.sin(angle) * radius,
-      ],
-      rotSpeed: 0.2 + Math.random() * 0.6,
-      hue: 0.55 + Math.random() * 0.15,
-      size: 0.05 + Math.random() * 0.08,
-      delay: Math.random() * 2,
-    });
-  }
-  return items;
-})();
-
-function CrystalShapes() {
-  const groupRef = useRef<THREE.Group>(null!);
-  const { progress, tick } = useProgress();
-  const elapsed = useRef(0);
-  const shapes = CRYSTAL_SHAPES;
-
-  const meshRefs = useRef<(THREE.Mesh | null)[]>([]);
-
-  useFrame((_, delta) => {
-    tick(delta);
-    elapsed.current += delta;
-    const t = elapsed.current;
-    groupRef.current.rotation.y = t * 0.04;
-    meshRefs.current.forEach((mesh, i) => {
-      if (mesh) {
-        mesh.rotation.x += delta * shapes[i].rotSpeed;
-        mesh.rotation.y += delta * shapes[i].rotSpeed * 0.6;
-        const { material } = mesh as unknown as {
-          material: THREE.MeshBasicMaterial;
-        };
-        if (material) {
-          const revealDelay = Math.max(
-            0,
-            Math.min(1, (progress.current * 3 - shapes[i].delay) / 1),
-          );
-          material.opacity = 0.1 * revealDelay;
-        }
-      }
-    });
-  });
-
-  return (
-    <group ref={groupRef}>
-      {shapes.map((s, i) => {
-        const c = new THREE.Color().setHSL(s.hue, 0.8, 0.5);
-        return (
-          <mesh
-            key={i}
-            ref={(el) => {
-              meshRefs.current[i] = el;
-            }}
-            position={s.pos}
-          >
-            <octahedronGeometry args={[s.size, 0]} />
-            <meshBasicMaterial
-              color={c.getHex()}
-              transparent
-              opacity={0}
-              wireframe
-              blending={THREE.AdditiveBlending}
-            />
-          </mesh>
-        );
-      })}
-    </group>
-  );
-}
-
 export default function ThreeScene() {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
   return (
-    <div className="absolute inset-0 z-0">
+    <div className="absolute inset-0 z-0 pointer-events-none">
       <Canvas
         camera={{ position: [0, 0, 7], fov: 55 }}
         dpr={[1, 1.5]}
         gl={{ antialias: false, alpha: true }}
       >
-        <ambientLight intensity={0.3} />
-        <fog attach="fog" args={["#0c1e3a", 5, 12]} />
-        <ParticleField />
-        <NeuralWeb />
-        <OrbitParticles />
-        <CrystalShapes />
+        <fog attach="fog" args={[isDark ? "#0a0808" : "#ffffff", 5, 14]} />
+        <ParticleField isDark={isDark} />
+        <NeuralWeb isDark={isDark} />
+        <OrbitParticles isDark={isDark} />
       </Canvas>
     </div>
   );

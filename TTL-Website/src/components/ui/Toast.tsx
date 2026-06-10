@@ -1,72 +1,63 @@
 "use client"
 
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react"
-import { X, CheckCircle, AlertTriangle, Info } from "lucide-react"
+import { X, CheckCircle, AlertCircle, Info } from "lucide-react"
 
 type ToastType = "success" | "error" | "info"
 
-interface ToastItem {
+interface Toast {
   id: number
-  type: ToastType
   message: string
+  type: ToastType
 }
 
-interface ToastContextType {
-  toast: (message: string, type?: ToastType) => void
-}
+const ToastContext = createContext<{ toast: (message: string, type?: ToastType) => void }>({
+  toast: () => {},
+})
 
-const ToastContext = createContext<ToastContextType | null>(null)
-
-export function useToast() {
-  const ctx = useContext(ToastContext)
-  if (!ctx) throw new Error("useToast must be used within ToastProvider")
-  return ctx
-}
+export const useToast = () => useContext(ToastContext)
 
 const ICONS = {
   success: CheckCircle,
-  error: AlertTriangle,
+  error: AlertCircle,
   info: Info,
 }
 
 const COLORS = {
-  success: { bg: "bg-emerald-500/15", border: "border-emerald-500/25", icon: "text-emerald-400" },
-  error: { bg: "bg-danger/15", border: "border-danger/25", icon: "text-danger" },
-  info: { bg: "bg-primary/15", border: "border-primary/25", icon: "text-primary" },
+  success: { bg: "color-mix(in srgb, var(--color-success) 12%, transparent)", border: "color-mix(in srgb, var(--color-success) 25%, transparent)", text: "#07ca6b" },
+  error: { bg: "color-mix(in srgb, var(--color-danger) 12%, transparent)", border: "color-mix(in srgb, var(--color-danger) 25%, transparent)", text: "#ea2143" },
+  info: { bg: "color-mix(in srgb, var(--color-accent) 12%, transparent)", border: "color-mix(in srgb, var(--color-accent) 25%, transparent)", text: "var(--color-accent)" },
 }
 
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<ToastItem[]>([])
+  const [toasts, setToasts] = useState<Toast[]>([])
 
-  const addToast = useCallback((message: string, type: ToastType = "success") => {
+  const addToast = useCallback((message: string, type: ToastType = "info") => {
     const id = Date.now()
-    setItems((prev) => [...prev, { id, type, message }])
-    setTimeout(() => {
-      setItems((prev) => prev.filter((t) => t.id !== id))
-    }, 3500)
+    setToasts((prev) => [...prev, { id, message, type }])
+    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 3500)
   }, [])
-
-  const removeToast = (id: number) => {
-    setItems((prev) => prev.filter((t) => t.id !== id))
-  }
 
   return (
     <ToastContext.Provider value={{ toast: addToast }}>
       {children}
-
-      {/* Toast container */}
-      <div className="fixed bottom-4 right-4 z-200 flex flex-col gap-2 pointer-events-none">
-        {items.map((item) => {
-          const Icon = ICONS[item.type]
-          const colors = COLORS[item.type]
+      <div className="fixed top-4 right-4 z-60 flex flex-col gap-2 pointer-events-none">
+        {toasts.map((t) => {
+          const Icon = ICONS[t.type]
+          const c = COLORS[t.type]
           return (
             <div
-              key={item.id}
-              className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl ${colors.bg} ${colors.border} border shadow-2xl backdrop-blur-xl min-w-72 max-w-sm animate-[slideUp_0.3s_ease-out]`}
+              key={t.id}
+              className="flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg min-w-72 max-w-md pointer-events-auto animate-fade-up"
+              style={{ background: c.bg, border: `0.5px solid ${c.border}`, color: "var(--text-primary)" }}
             >
-              <Icon size={18} className={`shrink-0 ${colors.icon}`} />
-              <p className="flex-1 text-sm text-white">{item.message}</p>
-              <button onClick={() => removeToast(item.id)} className="p-0.5 text-zinc-500 hover:text-white transition-colors cursor-pointer">
+              <Icon size={16} style={{ color: c.text }} />
+              <span className="text-sm flex-1">{t.message}</span>
+              <button
+                onClick={() => setToasts((prev) => prev.filter((x) => x.id !== t.id))}
+                className="cursor-pointer"
+                style={{ color: "var(--text-tertiary)" }}
+              >
                 <X size={14} />
               </button>
             </div>

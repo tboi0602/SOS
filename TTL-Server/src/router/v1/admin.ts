@@ -41,4 +41,7 @@ router.put("/posts/:id/approve", requirePermission("approve_posts"), postControl
 router.put("/posts/:id/reject", requirePermission("approve_posts"), postController.reject)
 router.delete("/posts/:id", requirePermission("approve_posts"), postController.adminDelete)
 
+router.get("/pending-members", adminController.getPendingMembers)
+router.get("/pending-members/:userId/items", adminController.getUserPendingItems)
+
 export default router

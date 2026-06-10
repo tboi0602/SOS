@@ -19,19 +19,19 @@ export default function PostDetailModal({ post, onClose }: Props) {
   const statusBadge = (status: string) => {
     if (status === "pending")
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-yellow-400/10 border border-yellow-400/20 text-[11px] font-medium text-yellow-400">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-yellow-400/10 border text-[11px] font-medium text-yellow-400" style={{ borderColor: "color-mix(in srgb, var(--color-warning) 20%, transparent)" }}>
           <Clock size={10} /> Chờ duyệt
         </span>
       )
     if (status === "approved")
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-400/10 border border-green-400/20 text-[11px] font-medium text-green-400">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-green-400/10 border text-[11px] font-medium text-green-400" style={{ borderColor: "color-mix(in srgb, var(--color-success) 20%, transparent)" }}>
           <CheckCircle size={10} /> Đã duyệt
         </span>
       )
     if (status === "rejected")
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-400/10 border border-red-400/20 text-[11px] font-medium text-red-400">
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-400/10 border text-[11px] font-medium text-red-400" style={{ borderColor: "color-mix(in srgb, var(--color-danger) 20%, transparent)" }}>
           <XCircle size={10} /> Từ chối
         </span>
       )
@@ -43,21 +43,21 @@ export default function PostDetailModal({ post, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label="Chi tiết bài viết">
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-2xl bg-[#0c1e3a] border border-white/10 shadow-2xl">
-        <div className="sticky top-0 z-10 flex items-center justify-between px-5 py-4 border-b border-white/8 bg-[#0c1e3a]/95 backdrop-blur-xl rounded-t-2xl">
+      <div className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-2xl bg-[var(--surface-elevated)] border border-[var(--border-base)] shadow-2xl">
+        <div className="sticky top-0 z-10 flex items-center justify-between px-5 py-4 border-b border-[var(--border-base)] bg-[var(--surface-elevated)]/95 backdrop-blur-xl rounded-t-2xl">
           <div className="flex items-center gap-2.5">
-            <div className="size-8 rounded-full bg-white/10 overflow-hidden shrink-0">
+            <div className="size-8 rounded-full overflow-hidden shrink-0" style={{ background: "color-mix(in srgb, var(--text-primary) 10%, transparent)" }}>
               {post.user.avatar ? (
                 <img src={post.user.avatar} alt="" className="size-full object-cover" />
               ) : (
-                <div className="size-full flex items-center justify-center text-xs font-bold text-zinc-500">
+                <div className="size-full flex items-center justify-center text-xs font-bold" style={{ color: "var(--text-tertiary)" }}>
                   {post.user.name.charAt(0).toUpperCase()}
                 </div>
               )}
             </div>
             <div>
-              <p className="text-sm font-semibold text-white">{post.user.name}</p>
-              <p className="text-[10px] text-zinc-500">{new Date(post.createdAt).toLocaleDateString("vi-VN")}</p>
+              <p className="text-sm font-semibold text-[var(--text-primary)]">{post.user.name}</p>
+              <p className="text-[10px] text-[var(--text-tertiary)]">{new Date(post.createdAt).toLocaleDateString("vi-VN")}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -65,7 +65,7 @@ export default function PostDetailModal({ post, onClose }: Props) {
             <button
               onClick={onClose}
               aria-label="Đóng"
-              className="p-1.5 rounded-lg text-zinc-500 hover:text-white hover:bg-white/10 transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+              className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-hover)] transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
             >
               <X size={16} />
             </button>
@@ -73,7 +73,7 @@ export default function PostDetailModal({ post, onClose }: Props) {
         </div>
 
         <div className="p-5 space-y-4">
-          <p className="text-sm text-white whitespace-pre-line leading-relaxed">{post.content}</p>
+          <p className="text-sm text-[var(--text-secondary)] whitespace-pre-line leading-relaxed">{post.content}</p>
 
           {post.hashtags && post.hashtags.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
@@ -93,7 +93,7 @@ export default function PostDetailModal({ post, onClose }: Props) {
                   href={resolveUrl(url)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`block rounded-xl overflow-hidden border border-white/6 group cursor-pointer ${
+                  className={`block rounded-xl overflow-hidden border border-[var(--border-base)] group cursor-pointer ${
                     images.length === 3 && i === 0 ? "row-span-2" : ""
                   } ${images.length === 3 && i > 0 ? "col-span-1" : ""}`}
                 >
@@ -113,23 +113,23 @@ export default function PostDetailModal({ post, onClose }: Props) {
               href={post.productLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 p-3 rounded-xl bg-cyan/5 border border-cyan/10 text-cyan text-xs font-medium hover:bg-cyan/10 transition-all"
+              className="flex items-center gap-2 p-3 rounded-xl bg-accent/5 border border-accent/10 text-accent text-xs font-medium hover:bg-accent/10 transition-all"
             >
               <ExternalLink size={12} /> Link sản phẩm
             </a>
           )}
 
-          <div className="flex items-center gap-4 pt-2 border-t border-white/8">
-            <span className="flex items-center gap-1.5 text-xs text-zinc-500">
+          <div className="flex items-center gap-4 pt-2 border-t border-[var(--border-base)]">
+            <span className="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]">
               <Heart size={12} /> {post.likeCount} lượt thích
             </span>
-            <span className="flex items-center gap-1.5 text-xs text-zinc-500">
+            <span className="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)]">
               <MessageSquare size={12} /> {post.commentCount} bình luận
             </span>
           </div>
 
           {post.adminNote && (
-            <div className="p-3 rounded-xl bg-red-400/5 border border-red-400/10">
+            <div className="p-3 rounded-xl bg-red-400/5 border" style={{ borderColor: "color-mix(in srgb, var(--color-danger) 10%, transparent)" }}>
               <p className="text-[10px] text-red-400/70 font-semibold mb-1">Phản hồi từ admin:</p>
               <p className="text-xs text-red-400/90 italic">{post.adminNote}</p>
             </div>

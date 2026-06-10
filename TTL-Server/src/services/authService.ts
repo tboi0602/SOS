@@ -56,6 +56,8 @@ export const authService = {
     );
 
     const id = uuid();
+    const userCount = await getDb().user.count();
+    const memberId = `THV-TV-${String(userCount + 1).padStart(4, "0")}`;
     await getDb().user.create({
       data: {
         id,
@@ -66,6 +68,8 @@ export const authService = {
         address: data.address ?? null,
         referredBy: referredById,
         referralCode: id,
+        memberId,
+        role: "pending",
         activationToken,
         activationTokenExpires,
       },
@@ -77,7 +81,7 @@ export const authService = {
       userId: id,
       email: data.email,
       tokenVersion: 0,
-      role: "user",
+      role: "pending",
       permissions: [],
     });
 
@@ -87,13 +91,16 @@ export const authService = {
         id,
         email: data.email,
         name: data.name,
-        role: "user",
+        role: "pending",
         job: data.job ?? null,
         address: data.address ?? null,
         referralCode: id,
+        memberId,
         kyLuat: 0,
         daoDuc: 0,
         truyenCamHung: 0,
+        postScore: 0,
+        referredScore: 0,
         isActive: false,
       },
     };
@@ -172,6 +179,8 @@ export const authService = {
     if (!user) {
       const tempPassword = await bcrypt.hash(uuid(), 12);
       const id = uuid();
+      const userCount = await getDb().user.count();
+    const memberId = `THV-TV-${String(userCount + 1).padStart(10, "0")}`;
       await getDb().user.create({
         data: {
           id,
@@ -180,6 +189,7 @@ export const authService = {
           password: tempPassword,
           name: payload.name || payload.email,
           referralCode: id,
+          memberId,
           isActive: true,
         },
       });

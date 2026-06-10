@@ -1,11 +1,16 @@
 "use client";
 
-import { Plus, Sparkles, BookOpen } from "lucide-react";
+import { Plus, Sparkles, BookOpen, Clock, ListChecks, ListX } from "lucide-react";
 import { useJournal } from "@/hook/journal";
 import JournalCreateModal from "@/components/journal/JournalCreateModal";
 import JournalEntryCard from "@/components/journal/JournalEntryCard";
 import ContentListLayout from "@/components/ui/ContentListLayout";
-import { statusFilters } from "@/components/ui/StatusFilterBar";
+import StatusFilterBar from "@/components/ui/StatusFilterBar";
+const statusFilters = (Icon: any) => [
+  { key: "", label: "Tất cả", icon: Icon },
+  { key: "pending", label: "Chờ duyệt", icon: Icon },
+  { key: "approved", label: "Đã duyệt", icon: Icon },
+];
 
 export default function JournalPage() {
   const {
@@ -46,24 +51,11 @@ export default function JournalPage() {
         createLabel: "Viết nhật ký",
         onCreate: () => setShowCreate(true),
         createBtnClass:
-          "bg-emerald-400 hover:bg-emerald-500 text-[#071224] shadow-emerald-400/25",
+          "bg-emerald-400 hover:bg-emerald-500 text-[var(--surface-base)] shadow-emerald-400/25",
       }}
       stats={[
-        {
-          label: "Tổng nhật ký",
-          value: entries.length,
-          icon: BookOpen,
-          iconBg: "bg-emerald-400/10",
-          iconColor: "text-emerald-400",
-        },
-        {
-          label: "Điểm",
-          value: totalPoints,
-          icon: Sparkles,
-          iconBg: "bg-emerald-400/10",
-          iconColor: "text-emerald-400",
-          valueColor: "text-emerald-400",
-        },
+        { label: "Tổng số", value: entries.length, icon: BookOpen, iconBg: "bg-emerald-400/10", iconColor: "text-emerald-400" },
+        { label: "Điểm", value: totalPoints, icon: Sparkles, iconBg: "bg-amber-400/10", iconColor: "text-amber-400", valueColor: "text-amber-400" },
       ]}
       filters={statusFilters(BookOpen)}
       activeFilter={filter}
@@ -73,47 +65,26 @@ export default function JournalPage() {
       dateTo={dateTo}
       onFromChange={handleDateFromChange}
       onToChange={handleDateToChange}
-      skeletonName="journal-page"
+      skeletonName="journal-list"
       items={entries}
       loading={loading}
-      createForm={
-        showCreate && (
-          <JournalCreateModal
-            title={title}
-            content={content}
-            previews={previews}
-            uploading={uploading}
-            creating={creating}
-            fileRef={fileRef}
-            onTitleChange={setTitle}
-            onContentChange={setContent}
-            onSelectFiles={handleSelectFiles}
-            onRemoveImage={removeImage}
-            onSubmit={handleCreate}
-            onClose={() => setShowCreate(false)}
-          />
-        )
-      }
-      renderEmptyState={() => (
-        <div className="bg-white/1 rounded-2xl py-14 px-6 text-center border border-white/6 transition-none">
-          <div className="size-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
-            <Sparkles size={26} className="text-zinc-600" />
-          </div>
-          <p className="text-sm text-zinc-400 font-medium mb-1">
-            Chưa có nhật ký nào
-          </p>
-          <p className="text-xs text-zinc-600 mb-5">
-            Hãy viết nhật ký đầu tiên để nhận điểm
-          </p>
-          <button
-            onClick={() => setShowCreate(true)}
-            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-emerald-400 hover:bg-emerald-500 text-[#071224] text-sm font-semibold transition-all shadow-lg shadow-emerald-400/25 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50"
-          >
-            <Plus size={16} /> Viết nhật ký
-          </button>
-        </div>
-      )}
     >
+      {showCreate && (
+        <JournalCreateModal
+          title={title}
+          content={content}
+          previews={previews}
+          uploading={uploading}
+          creating={creating}
+          fileRef={fileRef}
+          onTitleChange={setTitle}
+          onContentChange={setContent}
+          onSelectFiles={handleSelectFiles}
+          onRemoveImage={removeImage}
+          onSubmit={handleCreate}
+          onClose={() => setShowCreate(false)}
+        />
+      )}
       <div className="space-y-4">
         {entries.map((entry) => (
           <JournalEntryCard

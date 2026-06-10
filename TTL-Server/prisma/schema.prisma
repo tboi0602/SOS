@@ -24,9 +24,12 @@ model User {
   zalo                  String?
   referralCode          String       @map("referral_code")
   referredBy            String?      @map("referred_by")
+  memberId              String?      @unique @map("member_id")
   kyLuat                Int          @default(0) @map("ky_luat")
   daoDuc                Int          @default(0) @map("dao_duc")
   truyenCamHung         Int          @default(0) @map("truyen_cam_hung")
+  postScore             Int          @default(0) @map("post_score")
+  referredScore         Int          @default(0) @map("referred_score")
   isActive              Boolean      @default(false) @map("is_active")
   permissions           Json         @default("[]")
   activationToken       String?      @map("activation_token")
@@ -46,6 +49,11 @@ model User {
   comments              Comment[]
   submissions           Submission[]
   notifications         Notification[]
+  customerVisitImages   CustomerVisitImage[]
+  reviewedImages        CustomerVisitImage[] @relation("Reviewer")
+  membershipFlow        UserMembershipFlow?
+  userLessons           UserLesson[]
+  reviewedPayments      UserMembershipFlow[] @relation("PaymentVerifier")
 
   @@map("users")
 }
@@ -179,4 +187,179 @@ model Comment {
 
   @@index([postId])
   @@map("comments")
+}
+
+enum VisitStatus {
+  PENDING
+  APPROVED
+  REJECTED
+
+  @@map("visit_status")
+}
+
+model CustomerVisitImage {
+  id          String      @id @default(uuid())
+  userId      String      @map("user_id")
+  imageUrl    String      @map("image_url")
+  description String?
+  status      VisitStatus @default(PENDING)
+  reviewedBy  String?     @map("reviewed_by")
+  reviewedAt  DateTime?   @map("reviewed_at")
+  createdAt   DateTime    @default(now()) @map("created_at")
+
+  user      User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviewer  User? @relation("Reviewer", fields: [reviewedBy], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@map("customer_visit_images")
+}
+
+model MembershipFlow {
+  id                  String              @id @default(uuid())
+  name                String              @default("Hội viên chính thức")
+  price               Int                 @default(6000000)
+  rules               String?
+  createdAt           DateTime            @default(now()) @map("created_at")
+  updatedAt           DateTime            @updatedAt @map("updated_at")
+  userFlows           UserMembershipFlow[]
+  lessons             LessonDef[]
+  quizQuestions       QuizQuestion[]
+  quizExamSets        QuizExamSet[]
+  situationQuestions  SituationQuestion[]
+
+  @@map("membership_flows")
+}
+
+model LessonDef {
+  id               String              @id @default(uuid())
+  membershipFlowId String              @map("membership_flow_id")
+  title            String
+  description      String?
+  type             String              @default("online")
+  orderIndex       Int                 @default(0) @map("order_index")
+  content          String?
+  membershipFlow   MembershipFlow      @relation(fields: [membershipFlowId], references: [id], onDelete: Cascade)
+  userLessons      UserLesson[]
+
+  @@index([membershipFlowId])
+  @@map("lesson_defs")
+}
+
+model UserMembershipFlow {
+  id                    String              @id @default(uuid())
+  userId                String              @unique @map("user_id")
+  membershipFlowId      String              @map("membership_flow_id")
+  status                String              @default("pending_docs")
+  documentsUrl          String?             @map("documents_url")
+  adminNote             String?             @map("admin_note")
+  paymentConfirmedAt    DateTime?           @map("payment_confirmed_at")
+  paymentVerifiedAt     DateTime?           @map("payment_verified_at")
+  paymentVerifiedBy     String?             @map("payment_verified_by")
+  quizId                String?             @map("quiz_id")
+  quizExamSetId         String?             @map("quiz_exam_set_id")
+  quizScore             Int?                @map("quiz_score")
+  quizCorrectCount      Int?                @map("quiz_correct_count")
+  quizAttempts          Int                 @default(0) @map("quiz_attempts")
+  quizPassed            Boolean?            @map("quiz_passed")
+  situation1Id          String?             @map("situation_1_id")
+  situation1Link        String?             @map("situation_1_link")
+  situation1Score       Int?                @map("situation_1_score")
+  situation2Id          String?             @map("situation_2_id")
+  situation2Link        String?             @map("situation_2_link")
+  situation2Score       Int?                @map("situation_2_score")
+  totalScore            Int?                @default(0) @map("total_score")
+  completedAt           DateTime?           @map("completed_at")
+  createdAt             DateTime            @default(now()) @map("created_at")
+  updatedAt             DateTime            @updatedAt @map("updated_at")
+
+  user            User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  membershipFlow  MembershipFlow      @relation(fields: [membershipFlowId], references: [id])
+  quiz            QuizQuestion?       @relation("AssignedQuiz", fields: [quizId], references: [id])
+  quizExamSet     QuizExamSet?        @relation(fields: [quizExamSetId], references: [id])
+  situation1      SituationQuestion?  @relation("Situation1", fields: [situation1Id], references: [id])
+  situation2      SituationQuestion?  @relation("Situation2", fields: [situation2Id], references: [id])
+  verifier        User?               @relation("PaymentVerifier", fields: [paymentVerifiedBy], references: [id])
+
+  @@index([status])
+  @@map("user_membership_flows")
+}
+
+model UserLesson {
+  id          String    @id @default(uuid())
+  userId      String    @map("user_id")
+  lessonDefId String    @map("lesson_def_id")
+  status      String    @default("pending")
+  productUrl  String?   @map("product_url")
+  score       Int?
+  adminNote   String?   @map("admin_note")
+  submittedAt DateTime? @map("submitted_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonDef LessonDef @relation(fields: [lessonDefId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonDefId])
+  @@index([userId])
+  @@index([lessonDefId])
+  @@map("user_lessons")
+}
+
+model QuizQuestion {
+  id               String                @id @default(uuid())
+  membershipFlowId String                @map("membership_flow_id")
+  question         String
+  options          Json
+  correctAnswer    String                @map("correct_answer")
+  orderIndex       Int                   @default(0) @map("order_index")
+  membershipFlow   MembershipFlow        @relation(fields: [membershipFlowId], references: [id], onDelete: Cascade)
+  userFlows        UserMembershipFlow[]  @relation("AssignedQuiz")
+  examSetQuestions QuizExamSetQuestion[]
+
+  @@index([membershipFlowId])
+  @@map("quiz_questions")
+}
+
+model SituationQuestion {
+  id               String              @id @default(uuid())
+  membershipFlowId String              @map("membership_flow_id")
+  title            String
+  description      String
+  orderIndex       Int                 @default(0) @map("order_index")
+  membershipFlow   MembershipFlow      @relation(fields: [membershipFlowId], references: [id], onDelete: Cascade)
+  userFlows1       UserMembershipFlow[] @relation("Situation1")
+  userFlows2       UserMembershipFlow[] @relation("Situation2")
+
+  @@index([membershipFlowId])
+  @@map("situation_questions")
+}
+
+model QuizExamSet {
+  id                String                @id @default(uuid())
+  membershipFlowId  String                @map("membership_flow_id")
+  name              String
+  passScore         Int                   @default(9) @map("pass_score")
+  createdAt         DateTime              @default(now()) @map("created_at")
+  updatedAt         DateTime              @updatedAt @map("updated_at")
+  membershipFlow    MembershipFlow        @relation(fields: [membershipFlowId], references: [id], onDelete: Cascade)
+  questions         QuizExamSetQuestion[]
+  userFlows         UserMembershipFlow[]
+
+  @@index([membershipFlowId])
+  @@map("quiz_exam_sets")
+}
+
+model QuizExamSetQuestion {
+  id          String       @id @default(uuid())
+  examSetId   String       @map("exam_set_id")
+  questionId  String       @map("question_id")
+  orderIndex  Int          @default(0) @map("order_index")
+  examSet     QuizExamSet  @relation(fields: [examSetId], references: [id], onDelete: Cascade)
+  question    QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([examSetId, questionId])
+  @@index([examSetId])
+  @@index([questionId])
+  @@map("quiz_exam_set_questions")
 }

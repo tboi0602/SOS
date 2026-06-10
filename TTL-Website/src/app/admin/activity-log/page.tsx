@@ -5,64 +5,77 @@ import {
   CheckCircle, XCircle, BookOpen, Video,
   ChevronDown, Trash2, ExternalLink,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Skeleton } from "@/components/ui/Skeleton";
 import Pagination from "@/components/admin/Pagination";
 import DateFilter from "@/components/ui/DateFilter";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { adminService } from "@/service/admin.service";
 import type { ActivityLogEntry } from "@/types/admin";
+gsap.registerPlugin(ScrollTrigger);
 
-const ACTION_LABELS: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
+const ACTION_LABELS: Record<string, { label: string; icon: React.ReactNode; color: string; borderColor: string }> = {
   BLOCK_USER: {
     label: "Chặn người dùng",
     icon: <Ban size={12} />,
-    color: "text-red-400 bg-red-500/10 border-red-500/20",
+    color: "text-red-400 bg-red-500/10",
+    borderColor: "color-mix(in srgb, var(--color-danger) 20%, transparent)",
   },
   UNBLOCK_USER: {
     label: "Bỏ chặn người dùng",
     icon: <ShieldOff size={12} />,
-    color: "text-green-400 bg-green-500/10 border-green-500/20",
+    color: "text-green-400 bg-green-500/10",
+    borderColor: "color-mix(in srgb, var(--color-success) 20%, transparent)",
   },
   UPDATE_PERMISSIONS: {
     label: "Cập nhật quyền",
     icon: <UserCog size={12} />,
-    color: "text-amber-400 bg-amber-500/10 border-amber-500/20",
+    color: "text-amber-400 bg-amber-500/10",
+    borderColor: "color-mix(in srgb, var(--color-warning) 20%, transparent)",
   },
   UPDATE_ROLE: {
     label: "Cập nhật vai trò",
     icon: <Shield size={12} />,
-    color: "text-purple-400 bg-purple-500/10 border-purple-500/20",
+    color: "text-purple-400 bg-purple-500/10",
+    borderColor: "color-mix(in srgb, var(--color-accent) 20%, transparent)",
   },
   APPROVE_POST: {
     label: "Duyệt bài viết",
     icon: <CheckCircle size={12} />,
-    color: "text-green-400 bg-green-500/10 border-green-500/20",
+    color: "text-green-400 bg-green-500/10",
+    borderColor: "color-mix(in srgb, var(--color-success) 20%, transparent)",
   },
   REJECT_POST: {
     label: "Từ chối bài viết",
     icon: <XCircle size={12} />,
-    color: "text-red-400 bg-red-500/10 border-red-500/20",
+    color: "text-red-400 bg-red-500/10",
+    borderColor: "color-mix(in srgb, var(--color-danger) 20%, transparent)",
   },
   APPROVE_JOURNAL: {
     label: "Duyệt nhật ký",
     icon: <BookOpen size={12} />,
-    color: "text-green-400 bg-green-500/10 border-green-500/20",
+    color: "text-green-400 bg-green-500/10",
+    borderColor: "color-mix(in srgb, var(--color-success) 20%, transparent)",
   },
   REJECT_JOURNAL: {
     label: "Từ chối nhật ký",
     icon: <XCircle size={12} />,
-    color: "text-red-400 bg-red-500/10 border-red-500/20",
+    color: "text-red-400 bg-red-500/10",
+    borderColor: "color-mix(in srgb, var(--color-danger) 20%, transparent)",
   },
   APPROVE_SUBMISSION: {
     label: "Duyệt tác phẩm",
     icon: <Video size={12} />,
-    color: "text-green-400 bg-green-500/10 border-green-500/20",
+    color: "text-green-400 bg-green-500/10",
+    borderColor: "color-mix(in srgb, var(--color-success) 20%, transparent)",
   },
   REJECT_SUBMISSION: {
     label: "Từ chối tác phẩm",
     icon: <XCircle size={12} />,
-    color: "text-red-400 bg-red-500/10 border-red-500/20",
+    color: "text-red-400 bg-red-500/10",
+    borderColor: "color-mix(in srgb, var(--color-danger) 20%, transparent)",
   },
 };
 
@@ -71,7 +84,8 @@ function getActionDisplay(action: string) {
     ACTION_LABELS[action] ?? {
       label: action,
       icon: <ClipboardList size={12} />,
-      color: "text-zinc-400 bg-white/5 border-white/10",
+      color: "text-tertiary bg-white/5",
+      borderColor: "color-mix(in srgb, var(--text-primary) 10%, transparent)",
     }
   );
 }
@@ -85,9 +99,9 @@ function LogDetail({ entry }: { entry: ActivityLogEntry }) {
 
   if (entry.action === "BLOCK_USER" || entry.action === "UNBLOCK_USER") {
     return (
-      <div className="text-xs text-zinc-400 space-y-1">
-        {targetName && <p>Người dùng: <span className="text-zinc-300">{targetName}</span></p>}
-        {targetEmail && <p>Email: <span className="text-zinc-300">{targetEmail}</span></p>}
+          <div className="text-xs space-y-1" style={{ color: "var(--text-tertiary)" }}>
+        {targetName && <p>Người dùng: <span style={{ color: "var(--text-secondary)" }}>{targetName}</span></p>}
+        {targetEmail && <p>Email: <span style={{ color: "var(--text-secondary)" }}>{targetEmail}</span></p>}
       </div>
     );
   }
@@ -95,18 +109,18 @@ function LogDetail({ entry }: { entry: ActivityLogEntry }) {
   if (entry.action === "UPDATE_PERMISSIONS") {
     const perms = Array.isArray(m.permissions) ? (m.permissions as string[]) : [];
     return (
-      <div className="text-xs text-zinc-400 space-y-1">
-        {targetName && <p>Người dùng: <span className="text-zinc-300">{targetName}</span></p>}
-        {targetEmail && <p>Email: <span className="text-zinc-300">{targetEmail}</span></p>}
+      <div className="text-xs space-y-1" style={{ color: "var(--text-tertiary)" }}>
+        {targetName && <p>Người dùng: <span style={{ color: "var(--text-secondary)" }}>{targetName}</span></p>}
+        {targetEmail && <p>Email: <span style={{ color: "var(--text-secondary)" }}>{targetEmail}</span></p>}
         <p>
           Quyền mới:{" "}
           {perms.length > 0
             ? perms.map((p) => (
                 <span key={p} className="inline-block px-1.5 py-0.5 rounded bg-primary/10 border border-primary/20 text-primary text-[10px] mr-1">
-                  {p === "approve_posts" ? "Duyệt bài" : p === "approve_journals" ? "Duyệt nhật ký" : p === "approve_submissions" ? "Duyệt tác phẩm" : p === "manage_users" ? "Quản lý user" : p === "manage_permissions" ? "Phân quyền" : p}
+                  {p === "approve_posts" ? "Duyệt bài" : p === "approve_journals" ? "Duyệt nhật ký" : p === "approve_submissions" ? "Duyệt tác phẩm" : p === "manage_users" ? "Quản lý user" : p === "manage_permissions" ? "Phân quyền" : p === "manage_notifications" ? "Thông báo" : p === "manage_lessons" ? "Bài học" : p === "manage_posts" ? "Bài đăng" : p}
                 </span>
               ))
-            : <span className="text-zinc-500 italic">Không có</span>}
+            : <span className="italic" style={{ color: "var(--text-tertiary)" }}>Không có</span>}
         </p>
       </div>
     );
@@ -115,8 +129,8 @@ function LogDetail({ entry }: { entry: ActivityLogEntry }) {
   if (entry.action === "APPROVE_POST" || entry.action === "REJECT_POST") {
     const postContent = String(m.postContent ?? "");
     return (
-      <div className="text-xs text-zinc-400 space-y-1">
-        {postContent && <p>Nội dung: <span className="text-zinc-300">"{postContent}"...</span></p>}
+      <div className="text-xs space-y-1" style={{ color: "var(--text-tertiary)" }}>
+        {postContent && <p>Nội dung: <span style={{ color: "var(--text-secondary)" }}>"{postContent}"...</span></p>}
         <a
           href={`/home/posts/${entry.resourceId}`}
           target="_blank"
@@ -132,8 +146,8 @@ function LogDetail({ entry }: { entry: ActivityLogEntry }) {
   if (entry.action === "APPROVE_JOURNAL" || entry.action === "REJECT_JOURNAL") {
     const journalTitle = String(m.journalTitle ?? "");
     return (
-      <div className="text-xs text-zinc-400 space-y-1">
-        {journalTitle && <p>Tiêu đề: <span className="text-zinc-300">"{journalTitle}"</span></p>}
+      <div className="text-xs space-y-1" style={{ color: "var(--text-tertiary)" }}>
+        {journalTitle && <p>Tiêu đề: <span style={{ color: "var(--text-secondary)" }}>"{journalTitle}"</span></p>}
         <a
           href={`/admin/journals`}
           target="_blank"
@@ -149,8 +163,8 @@ function LogDetail({ entry }: { entry: ActivityLogEntry }) {
   if (entry.action === "APPROVE_SUBMISSION" || entry.action === "REJECT_SUBMISSION") {
     const submissionTitle = String(m.submissionTitle ?? "");
     return (
-      <div className="text-xs text-zinc-400 space-y-1">
-        {submissionTitle && <p>Tiêu đề: <span className="text-zinc-300">"{submissionTitle}"</span></p>}
+      <div className="text-xs space-y-1" style={{ color: "var(--text-tertiary)" }}>
+        {submissionTitle && <p>Tiêu đề: <span style={{ color: "var(--text-secondary)" }}>"{submissionTitle}"</span></p>}
         <a
           href={`/admin/submissions`}
           target="_blank"
@@ -179,6 +193,20 @@ export default function ActivityLogPage() {
   const [deleteAllOpen, setDeleteAllOpen] = useState(false);
   const limit = 30;
   const totalPages = Math.ceil(total / limit);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = listRef.current;
+    if (!el) return;
+    const items = el.querySelectorAll(".admin-card");
+    if (!items.length) return;
+    const ctx = gsap.context(() => {
+      gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.fromTo(items, { y: 20, opacity: 0 }, { y: 0, opacity: 1, force3D: true, duration: 0.4, stagger: 0.04, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 82%", toggleActions: "play none none none" } });
+      });
+    });
+    return () => ctx.revert();
+  }, []);
 
   const fetchLogs = () => {
     setLoading(true);
@@ -211,14 +239,14 @@ export default function ActivityLogPage() {
   };
 
   return (
-    <div className="min-h-screen px-4 sm:px-6 py-8 text-white select-none relative z-10">
+    <div className="min-h-screen px-4 sm:px-6 py-8 select-none relative z-10 animate-fade-up" style={{ color: "var(--text-primary)" }}>
       <div className="max-w-8xl mx-auto space-y-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-lg font-bold text-white flex items-center gap-2">
+            <h1 className="text-lg font-bold flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
               <ClipboardList size={20} className="text-primary" /> Nhật ký hoạt động
             </h1>
-            <p className="text-xs text-zinc-500 mt-1">
+            <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>
               {total} bản ghi
             </p>
           </div>
@@ -242,7 +270,7 @@ export default function ActivityLogPage() {
           {(dateFrom || dateTo || actionFilter) && (
             <button
               onClick={() => { setDateFrom(""); setDateTo(""); setActionFilter(""); setPage(1); }}
-              className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-[11px] text-zinc-400 hover:text-white hover:bg-white/10 transition-all cursor-pointer"
+              className="px-3 py-1.5 rounded-lg text-[11px] transition-all cursor-pointer" style={{ background: "color-mix(in srgb, var(--text-primary) 5%, transparent)", border: "1px solid color-mix(in srgb, var(--text-primary) 10%, transparent)", color: "var(--text-tertiary)" }} onMouseEnter={(e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 10%, transparent)"; e.currentTarget.style.color = "var(--text-primary)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 5%, transparent)"; e.currentTarget.style.color = "var(--text-tertiary)"; }}
             >
               Xoá lọc
             </button>
@@ -257,8 +285,11 @@ export default function ActivityLogPage() {
               className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
                 actionFilter === opt.value
                   ? "bg-primary/15 text-primary border border-primary/25"
-                  : "bg-white/5 text-zinc-500 hover:text-white hover:bg-white/10 border border-transparent"
+                  : "border border-transparent"
               }`}
+              style={actionFilter !== opt.value ? { background: "color-mix(in srgb, var(--text-primary) 5%, transparent)", color: "var(--text-tertiary)" } : undefined}
+              onMouseEnter={actionFilter !== opt.value ? (e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 10%, transparent)"; e.currentTarget.style.color = "var(--text-primary)"; } : undefined}
+              onMouseLeave={actionFilter !== opt.value ? (e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 5%, transparent)"; e.currentTarget.style.color = "var(--text-tertiary)"; } : undefined}
             >
               {opt.label}
             </button>
@@ -267,18 +298,20 @@ export default function ActivityLogPage() {
 
         <Skeleton name="admin-table" loading={loading} rows={logs.length || 1}>
           {logs.length === 0 ? (
-            <div className="text-center py-12 text-zinc-500 text-sm">
-              Chưa có hoạt động nào
+            <div className="text-center py-16 rounded-3xl" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", border: "0.5px solid var(--border-base)" }}>
+              <ClipboardList size={40} className="mx-auto mb-4" style={{ color: "var(--text-tertiary)" }} />
+              <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Chưa có hoạt động</h3>
+              <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>Chưa có hoạt động nào.</p>
             </div>
           ) : (
-            <div className="space-y-2">
+            <div ref={listRef} className="space-y-2">
               {logs.map((entry) => {
                 const action = getActionDisplay(entry.action);
                 const isExpanded = expandedId === entry.id;
                 return (
                   <div
                     key={entry.id}
-                    className="glass-strong rounded-2xl border border-white/6 hover:border-white/20 transition-all duration-300"
+                    className="admin-card glass-strong card-hover cursor-pointer rounded-2xl border transition-all" style={{ borderColor: "var(--border-base)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "color-mix(in srgb, var(--text-primary) 20%, transparent)"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border-base)"; }}
                   >
                     <div className="p-4">
                       <div className="flex items-start justify-between gap-4">
@@ -288,6 +321,7 @@ export default function ActivityLogPage() {
                         >
                           <div
                             className={`flex items-center gap-1 px-2.5 py-1 rounded-full border text-[11px] font-semibold shrink-0 ${action.color}`}
+                            style={{ borderColor: action.borderColor }}
                           >
                             {action.icon}
                             {action.label}
@@ -307,18 +341,18 @@ export default function ActivityLogPage() {
                                       {(entry.user.name || "U").charAt(0).toUpperCase()}
                                     </div>
                                   )}
-                                  <span className="text-sm text-white truncate">
+                                  <span className="text-sm text-[var(--text-primary)] truncate">
                                     {entry.user.name || entry.user.email}
                                   </span>
                                 </>
                               ) : (
-                                <span className="text-sm text-zinc-500 italic">
+                                <span className="text-sm text-[var(--text-tertiary)] italic">
                                   Người dùng đã xoá
                                 </span>
                               )}
                               <ChevronDown
                                 size={12}
-                                className={`text-zinc-600 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
+                                className={`text-[var(--text-tertiary)] transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`}
                               />
                             </div>
                             {(() => {
@@ -328,7 +362,7 @@ export default function ActivityLogPage() {
                               const te = String(raw.targetEmail ?? "");
                               if (tn) {
                                 return (
-                                  <span className="text-[11px] text-zinc-500 ml-7">
+                                  <span className="text-[11px] text-[var(--text-tertiary)] ml-7">
                                     → {tn}
                                     {te && <> ({te})</>}
                                   </span>
@@ -336,15 +370,15 @@ export default function ActivityLogPage() {
                               }
                               const pc = String(raw.postContent ?? "");
                               if ((entry.action === "APPROVE_POST" || entry.action === "REJECT_POST") && pc) {
-                                return <span className="text-[11px] text-zinc-500 ml-7 truncate max-w-md">"{pc}..."</span>;
+                                return <span className="text-[11px] text-[var(--text-tertiary)] ml-7 truncate max-w-md">"{pc}..."</span>;
                               }
                               const jt = String(raw.journalTitle ?? "");
                               if ((entry.action === "APPROVE_JOURNAL" || entry.action === "REJECT_JOURNAL") && jt) {
-                                return <span className="text-[11px] text-zinc-500 ml-7 truncate max-w-md">"{jt}"</span>;
+                                return <span className="text-[11px] text-[var(--text-tertiary)] ml-7 truncate max-w-md">"{jt}"</span>;
                               }
                               const st = String(raw.submissionTitle ?? "");
                               if ((entry.action === "APPROVE_SUBMISSION" || entry.action === "REJECT_SUBMISSION") && st) {
-                                return <span className="text-[11px] text-zinc-500 ml-7 truncate max-w-md">"{st}"</span>;
+                                return <span className="text-[11px] text-[var(--text-tertiary)] ml-7 truncate max-w-md">"{st}"</span>;
                               }
                               return null;
                             })()}
@@ -352,16 +386,16 @@ export default function ActivityLogPage() {
                         </button>
                         <div className="flex items-center gap-2 shrink-0">
                           {entry.ip && (
-                            <span className="text-[11px] text-zinc-600 font-mono hidden sm:inline">
+                            <span className="text-[11px] text-[var(--text-tertiary)] font-mono hidden sm:inline">
                               {entry.ip}
                             </span>
                           )}
-                          <span className="text-[11px] text-zinc-500">
+                          <span className="text-[11px] text-[var(--text-tertiary)]">
                             {new Date(entry.createdAt).toLocaleString("vi-VN")}
                           </span>
                           <button
                             onClick={() => setDeleteId(entry.id)}
-                            className="p-1.5 rounded-lg text-zinc-500 hover:text-danger hover:bg-danger/10 transition-all cursor-pointer"
+                            className="p-1.5 rounded-lg text-[var(--text-tertiary)] hover:text-danger hover:bg-danger/10 transition-all cursor-pointer"
                             title="Xoá bản ghi"
                           >
                             <Trash2 size={13} />
@@ -370,11 +404,11 @@ export default function ActivityLogPage() {
                       </div>
                     </div>
                     {isExpanded && (
-                      <div className="border-t border-white/6 px-4 py-3 space-y-2">
+                      <div className="border-t px-4 py-3 space-y-2" style={{ borderColor: "color-mix(in srgb, var(--text-primary) 6%, transparent)" }}>
                         <LogDetail entry={entry} />
                         {entry.resourceId && (
-                          <p className="text-[11px] text-zinc-600">
-                            Resource ID: <span className="font-mono text-zinc-500">{entry.resourceId}</span>
+                          <p className="text-[11px] text-[var(--text-tertiary)]">
+                            Resource ID: <span className="font-mono text-[var(--text-tertiary)]">{entry.resourceId}</span>
                           </p>
                         )}
                       </div>

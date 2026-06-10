@@ -1,6 +1,6 @@
 "use client"
 
-import { memo } from "react"
+import { memo, useState } from "react"
 
 interface PaginationProps {
   page: number
@@ -10,6 +10,7 @@ interface PaginationProps {
 }
 
 function Pagination({ page, totalPages, onPageChange, variant = "full" }: PaginationProps) {
+  const [hovered, setHovered] = useState<string | null>(null)
   if (totalPages <= 1) return null
 
   if (variant === "simple") {
@@ -18,18 +19,34 @@ function Pagination({ page, totalPages, onPageChange, variant = "full" }: Pagina
         <button
           disabled={page <= 1}
           onClick={() => onPageChange(page - 1)}
-          className="px-3 py-1.5 rounded-lg bg-white/5 text-zinc-400 text-xs disabled:opacity-30 hover:bg-white/10 outline-none focus-visible:ring-2 focus-visible:ring-primary/50 cursor-pointer transition-all"
+          className="px-3 py-1.5 rounded-lg text-xs disabled:opacity-30 outline-none focus-visible:ring-2 focus-visible:ring-primary/50 cursor-pointer transition-all"
+          style={{
+            color: hovered === "simple-prev" ? "var(--text-primary)" : "var(--text-tertiary)",
+            background: hovered === "simple-prev"
+              ? "color-mix(in srgb, var(--text-primary) 10%, transparent)"
+              : "color-mix(in srgb, var(--text-primary) 5%, transparent)",
+          }}
+          onMouseEnter={() => setHovered("simple-prev")}
+          onMouseLeave={() => setHovered(null)}
           aria-label="Trang trước"
         >
           Trước
         </button>
-        <span className="px-3 py-1.5 text-xs text-zinc-500">
+        <span className="px-3 py-1.5 text-xs" style={{ color: "var(--text-tertiary)" }}>
           Trang {page}/{totalPages}
         </span>
         <button
           disabled={page >= totalPages}
           onClick={() => onPageChange(page + 1)}
-          className="px-3 py-1.5 rounded-lg bg-white/5 text-zinc-400 text-xs disabled:opacity-30 hover:bg-white/10 outline-none focus-visible:ring-2 focus-visible:ring-primary/50 cursor-pointer transition-all"
+          className="px-3 py-1.5 rounded-lg text-xs disabled:opacity-30 outline-none focus-visible:ring-2 focus-visible:ring-primary/50 cursor-pointer transition-all"
+          style={{
+            color: hovered === "simple-next" ? "var(--text-primary)" : "var(--text-tertiary)",
+            background: hovered === "simple-next"
+              ? "color-mix(in srgb, var(--text-primary) 10%, transparent)"
+              : "color-mix(in srgb, var(--text-primary) 5%, transparent)",
+          }}
+          onMouseEnter={() => setHovered("simple-next")}
+          onMouseLeave={() => setHovered(null)}
           aria-label="Trang sau"
         >
           Sau
@@ -43,7 +60,13 @@ function Pagination({ page, totalPages, onPageChange, variant = "full" }: Pagina
       <button
         onClick={() => onPageChange(page - 1)}
         disabled={page === 1}
-        className="px-3 py-1.5 rounded-lg text-sm text-zinc-400 hover:text-white hover:bg-white/6 disabled:opacity-30 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-primary/50 cursor-pointer transition-all"
+        className="px-3 py-1.5 rounded-lg text-sm disabled:opacity-30 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-primary/50 cursor-pointer transition-all"
+        style={{
+          color: hovered === "prev" ? "var(--text-primary)" : "var(--text-tertiary)",
+          background: hovered === "prev" ? "color-mix(in srgb, var(--text-primary) 6%, transparent)" : undefined,
+        }}
+        onMouseEnter={() => setHovered("prev")}
+        onMouseLeave={() => setHovered(null)}
       >
         Trước
       </button>
@@ -52,15 +75,25 @@ function Pagination({ page, totalPages, onPageChange, variant = "full" }: Pagina
         .map((p, idx, arr) => (
           <span key={p} className="flex items-center gap-1">
             {idx > 0 && arr[idx - 1] !== p - 1 && (
-              <span className="text-zinc-600 px-1">...</span>
+              <span className="px-1" style={{ color: "var(--text-dim)" }}>...</span>
             )}
             <button
               onClick={() => onPageChange(p)}
               className={`px-3 py-1.5 rounded-lg text-sm outline-none focus-visible:ring-2 focus-visible:ring-primary/50 cursor-pointer transition-all ${
-                p === page
-                  ? "bg-primary text-white font-medium"
-                  : "text-zinc-400 hover:text-white hover:bg-white/6"
+                p === page ? "bg-primary text-[var(--text-primary)] font-medium" : ""
               }`}
+              style={
+                p !== page
+                  ? {
+                      color: hovered === `page-${p}` ? "var(--text-primary)" : "var(--text-tertiary)",
+                      background: hovered === `page-${p}`
+                        ? "color-mix(in srgb, var(--text-primary) 6%, transparent)"
+                        : undefined,
+                    }
+                  : undefined
+              }
+              onMouseEnter={() => setHovered(`page-${p}`)}
+              onMouseLeave={() => setHovered(null)}
             >
               {p}
             </button>
@@ -69,7 +102,13 @@ function Pagination({ page, totalPages, onPageChange, variant = "full" }: Pagina
       <button
         onClick={() => onPageChange(page + 1)}
         disabled={page === totalPages}
-        className="px-3 py-1.5 rounded-lg text-sm text-zinc-400 hover:text-white hover:bg-white/6 disabled:opacity-30 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-primary/50 cursor-pointer transition-all"
+        className="px-3 py-1.5 rounded-lg text-sm disabled:opacity-30 disabled:cursor-not-allowed outline-none focus-visible:ring-2 focus-visible:ring-primary/50 cursor-pointer transition-all"
+        style={{
+          color: hovered === "next" ? "var(--text-primary)" : "var(--text-tertiary)",
+          background: hovered === "next" ? "color-mix(in srgb, var(--text-primary) 6%, transparent)" : undefined,
+        }}
+        onMouseEnter={() => setHovered("next")}
+        onMouseLeave={() => setHovered(null)}
       >
         Sau
       </button>

@@ -18,7 +18,7 @@ export default function AnimatedBorder({
     >
       <div
         className="absolute inset-0 rounded-xl pointer-events-none"
-        style={{ border: "1px solid rgba(0,183,255,0.08)" }}
+        style={{ border: "1px solid var(--border-base)" }}
       />
 
       {children}

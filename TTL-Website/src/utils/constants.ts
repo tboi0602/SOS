@@ -1,23 +1,96 @@
-import type { NavLink, Feature, ApproachStep, GalleryImage } from "@/types/landing"
+import type {
+  NavLink,
+  Feature,
+  ApproachStep,
+  GalleryImage,
+} from "@/types/landing";
 
-export const SITE_NAME = "SOS"
+export const SITE_NAME = "Tinh Hoa Việt";
 
-export const NAV_LINKS: NavLink[] = [
-  { href: "#hero", label: "Trang chủ" },
-  { href: "#values", label: "Triết lý" },
-  { href: "#features", label: "Năng lực" },
-  { href: "#approach", label: "Lộ trình" },
-  { href: "#contact", label: "Liên hệ" },
-]
+export const NAV_LINKS: NavLink[] = [{ href: "#hero", label: "Trang chủ" }];
 
 export const HERO = {
-  badge: "SOS — Hệ thống bán hàng toàn diện",
-  title: "Đánh thức tiềm năng\nKiến tạo tương lai",
+  badge: "TỔ CHỨC TINH HOA VIỆT",
+  title: "Suy tôn Trí tuệ — Lưu truyền Di sản",
   subtitle:
-    "Trang bị hành trang Sales & Marketing thực chiến, biến thanh thiếu niên Việt Nam thành đội ngũ thương mại tinh nhuệ — sẵn sàng cho kỷ nguyên số.",
+    "Tổ chức kiến tạo và bảo chứng giá trị nội dung — nơi trí tuệ được tôn vinh, di sản được bảo hộ và thành tựu của Quý vị trở thành Di sản vĩnh cửu của Dân tộc Việt Nam.",
   cta: "Tham gia ngay",
-  secondary: "Khám phá thêm",
-}
+  secondary: "Tìm hiểu thêm",
+  tagline: "VINH DANH — LƯU DANH — KINH DOANH — TRAO TRUYỀN",
+};
+
+export const MISSION = {
+  badge: "HỆ QUY CHIẾU 5T",
+  title: "5T — Truth",
+  subtitle:
+    "Mọi giá trị được suy tôn tại Tinh Hoa Việt đều phải vượt qua lăng kính khắt khe của giới học thuật toàn cầu, hội tụ trọn vẹn 5 cơ sở nền tảng.",
+  items: [
+    {
+      t: "Chân thực",
+      desc: "Khởi nguồn từ một 'lẽ sống' chân chính và đam mê tận hiến. Giá trị đích thực chỉ có thể được sinh ra từ sự thật.",
+    },
+    {
+      t: "Minh bạch",
+      desc: "Thể hiện sự tự tin vào tính chính trực và sẵn sàng chịu trách nhiệm. Không có gì phải che giấu khi giá trị là thật.",
+    },
+    {
+      t: "Tự chủ",
+      desc: "Làm chủ tư duy và tầm nhìn để đạt tự do đích thực trong sáng tạo. Năng lực tự chủ là nền tảng của mọi sự trường tồn.",
+    },
+    {
+      t: "Tinh thông",
+      desc: "Theo đuổi sự xuất sắc không ngừng nghỉ, biến tri thức thành một phẩm giá. Tinh thông là đỉnh cao của sự cống hiến.",
+    },
+    {
+      t: "Bền vững",
+      desc: "Kiến tạo giá trị hài hòa, tôn trọng con người, cộng đồng và hệ thiên nhiên. Chỉ có bền vững mới xứng đáng trường tồn.",
+    },
+  ],
+};
+
+export const ECOSYSTEM = {
+  badge: "HỆ SINH THÁI NỀN TẢNG SỐ",
+  title: "Ba cổng Tinh Hoa Việt",
+  subtitle:
+    "Tất cả Tinh Hoa nội dung được phân bổ và hệ thống hóa, đồng thời được quản trị chặt chẽ trên 3 nền tảng cốt lõi.",
+  portals: [
+    {
+      acronym: "CỔNG 1",
+      name: "ĐỀ CỬ & VINH DANH TINH HOA VIỆT",
+      subtitle: "VINH DANH",
+      desc: "Nơi tìm kiếm, tư vấn Tinh Hoa Việt và công bố mọi thông tin, quy chế, văn bản chính thức về việc Đề cử và Xác lập. Lưu trữ hồ sơ hành chính, pháp lý của toàn bộ các cá nhân, đơn vị, tổ chức đã được Xác lập.",
+      url: "tinhhoaviet.org.vn",
+      color: "from-primary to-accent",
+    },
+    {
+      acronym: "CỔNG 2",
+      name: "SÀN TÀI SẢN TRÍ TUỆ TINH HOA VIỆT",
+      subtitle: "KHAI THÁC",
+      desc: "Nền tảng hiển thị các thông tin trọng tâm về sản phẩm, dịch vụ hoặc tác phẩm của đối tượng đã Xác lập hoặc đang đề cử. Tích hợp tính năng thương mại điện tử và hệ thống Affiliate dành cho CTV, Đối tác xúc tiến.",
+      url: "santaisantritue.com",
+      color: "from-primary to-accent",
+    },
+    {
+      acronym: "CỔNG 3",
+      name: "BẢN ĐỒ TÀI SẢN TRÍ TUỆ & MXH",
+      subtitle: "LƯU DANH & TRAO TRUYỀN",
+      desc: "Nền tảng lưu danh và trao truyền các giá trị nội dung, trí tuệ. Giao diện Bản đồ Số Tinh Hoa Việt 3D giúp tra cứu thông tin toàn cầu. Kết nối MXH để chủ sở hữu phát triển cộng đồng, truyền nghề và tương tác với thị trường.",
+      url: "congdong.tinhhoaviet.org.vn",
+      color: "from-accent to-primary",
+    },
+  ],
+};
+
+export const CONTACT = {
+  badge: "Liên hệ",
+  title: "Đồng hành cùng Tinh Hoa Việt",
+  subtitle:
+    "Liên hệ với chúng tôi để được tư vấn về thủ tục Đề cử và Xác lập Tinh Hoa Việt.",
+  address: "181 Đề Thám, Phường Bến Thành, TP. Hồ Chí Minh",
+  phone: "0834.11.22.88",
+  email: "tinhhoanoidung@gmail.com",
+  hotline: "0989.55.3535",
+};
 
 export const VALUES_DATA = [
   {
@@ -35,7 +108,7 @@ export const VALUES_DATA = [
     quote: "Phẩm chất — Kỷ luật, Trung thực, Nhiệt tình",
     text: "Kỷ luật là tài chính của thành công. Trung thực tạo dựng niềm tin. Nhiệt tình thắp lửa đam mê — ba phẩm chất kiến tạo nên những cá nhân kiệt xuất.",
   },
-]
+];
 
 export const FEATURES_DATA: Feature[] = [
   {
@@ -58,7 +131,7 @@ export const FEATURES_DATA: Feature[] = [
     description:
       "Tư duy của người làm chủ — không đi xin việc, mà kiến tạo giá trị. Kỷ luật thép, khát vọng lớn, hành động hôm nay, tự do ngày mai.",
   },
-]
+];
 
 export const APPROACH_DATA: ApproachStep[] = [
   {
@@ -86,7 +159,7 @@ export const APPROACH_DATA: ApproachStep[] = [
     title: "Bắt đầu thương mại — Tạo doanh thu",
     desc: "Chính thức tham gia thị trường với sự hỗ trợ toàn diện. Doanh thu đột phá lên đến 50%, học bổng hấp dẫn tổng giá trị 4.200 TRIỆU — kết quả là thước đo duy nhất.",
   },
-]
+];
 
 export const GALLERY_IMAGES: GalleryImage[] = [
   { id: 1, label: "Đào tạo thực chiến Sales & Marketing" },
@@ -95,36 +168,63 @@ export const GALLERY_IMAGES: GalleryImage[] = [
   { id: 4, label: "Lễ vinh danh TOP 5 thành viên xuất sắc" },
   { id: 5, label: "Mạng lưới kết nối cộng đồng hiền tài" },
   { id: 6, label: "CLB HITA tại các trường Đại học, Cao đẳng" },
-]
+];
 
 export const VISION = {
   badge: "Tầm nhìn",
   quote: "Mỗi thanh thiếu niên Việt Nam là một hiền tài",
-  text: "SOS hướng tới trở thành Trung tâm Xúc tiến Thương mại & Nhân lực số 1 — nơi ươm mầm và kiến tạo thế hệ trẻ bản lĩnh, trí tuệ, phụng sự. Mở đầu bằng giáo dục, mở rộng ra thế giới.",
-}
+  text: "THV hướng tới trở thành Trung tâm Xúc tiến Thương mại & Nhân lực số 1 — nơi ươm mầm và kiến tạo thế hệ trẻ bản lĩnh, trí tuệ, phụng sự. Mở đầu bằng giáo dục, mở rộng ra thế giới.",
+};
 
 export const TARGET = {
   badge: "Đối tượng",
   title: "Thanh thiếu niên & Gen Z Việt Nam",
   emphasis: "Đừng đợi tốt nghiệp mới bắt đầu sự nghiệp!",
   text: "Dành cho học sinh, sinh viên và người trẻ mong muốn trang bị kỹ năng Sales & Marketing thực chiến, sở hữu thu nhập vượt trội và định vị bản thân trong kỷ nguyên số. Không giới hạn độ tuổi — chỉ cần bạn khao khát và kỷ luật.",
-}
+};
 
 export const STATS_DATA = [
-  { value: "10.000+", suffix: "thành viên", label: "gia nhập Hệ sinh thái SOS", color: "from-cyan to-primary" },
-  { value: "85%", suffix: "hoàn thành", label: "tỷ lệ hoàn thành lộ trình thực chiến", color: "from-primary to-cyan" },
-  { value: "120%", suffix: "tăng trưởng", label: "thu nhập trung bình sau 3 tháng", color: "from-cyan to-primary" },
-  { value: "50+", suffix: "đối tác", label: "doanh nghiệp & trường học trong hệ sinh thái", color: "from-primary to-cyan" },
-]
+  {
+    value: "10.000+",
+    suffix: "thành viên",
+    label: "gia nhập Hệ sinh thái THV",
+    color: "from-primary to-accent",
+  },
+  {
+    value: "85%",
+    suffix: "hoàn thành",
+    label: "tỷ lệ hoàn thành lộ trình thực chiến",
+    color: "from-accent to-primary",
+  },
+  {
+    value: "120%",
+    suffix: "tăng trưởng",
+    label: "thu nhập trung bình sau 3 tháng",
+    color: "from-primary to-accent",
+  },
+  {
+    value: "50+",
+    suffix: "đối tác",
+    label: "doanh nghiệp & trường học trong hệ sinh thái",
+    color: "from-accent to-primary",
+  },
+];
 
 export const CTA = {
   title: "Sẵn sàng đánh thức tiềm năng?",
-  subtitle: "Tham gia SOS ngay hôm nay để sở hữu kỹ năng — thu nhập — định vị bản thân.",
+  subtitle:
+    "Tham gia THV ngay hôm nay để sở hữu kỹ năng — thu nhập — định vị bản thân.",
   button: "Đăng ký ngay",
-}
+};
 
-export const CONTACT = {
-  badge: "Liên hệ",
-  title: "Đồng hành cùng SOS",
-  subtitle: "Để lại thông tin, đội ngũ SOS sẽ liên hệ tư vấn lộ trình phù hợp nhất cho bạn.",
-}
+export const EXPERIENCE_SECTION = {
+  badge: "Trải nghiệm",
+  title: "Câu chuyện",
+  subtitle: "Blog chia sẻ hành trình tại Tinh Hoa Việt",
+};
+
+export const NEWS_SECTION = {
+  badge: "Tin tức",
+  title: "Sự kiện & truyền thông",
+  subtitle: "Cập nhật tin tức và sự kiện mới nhất từ Tinh Hoa Việt",
+};

@@ -84,7 +84,7 @@ export default function GoogleLoginButton({
     <div className="relative w-full min-h-10">
       <div ref={containerRef} className="w-full" />
       {loading && (
-        <div  className="cursor-not-allowed absolute inset-0 flex items-center justify-center gap-2 text-sm text-zinc-400 bg-[#123266] border border-[#2997d636] rounded-xs">
+        <div  className="cursor-not-allowed absolute inset-0 flex items-center justify-center gap-2 text-sm bg-[var(--surface-elevated)] border border-[var(--glass-border)] rounded-xs" style={{ color: "var(--text-tertiary)" }}>
           <Loader2 size={16} className="animate-spin" />
           Đang xử lý...
         </div>

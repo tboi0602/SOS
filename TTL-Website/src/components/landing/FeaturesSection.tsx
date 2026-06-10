@@ -16,8 +16,8 @@ export default function FeaturesSection() {
 
   return (
     <section id="features" className="relative py-24 overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(24,86,255,0.04)_0%,transparent_60%)]" />
-      <SectionGlow position="center" color="rgba(34,211,238,0.03)" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,color-mix(in_srgb,var(--color-primary)_8%,transparent)_0%,transparent_60%)]" />
+      <SectionGlow position="center" color="color-mix(in srgb, var(--color-accent) 6%, transparent)" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6" ref={ref}>
         <motion.div
@@ -29,7 +29,7 @@ export default function FeaturesSection() {
           <span className="text-[11px] font-semibold text-primary tracking-[0.2em] uppercase">
             Giải pháp
           </span>
-          <h2 className="heading-lg font-bold text-white text-center">
+          <h2 className="heading-lg font-bold text-center" style={{ color: "var(--text-primary)" }}>
             Năng lực <span className="text-gradient">cốt lõi</span>
           </h2>
         </motion.div>
@@ -59,12 +59,12 @@ export default function FeaturesSection() {
                   transition={{ duration: 0.5, ease, delay: i * 0.15 + 0.05 }}
                   className={cn(isReversed && "lg:col-start-2")}
                 >
-                  <span className="text-[11px] font-semibold text-cyan tracking-[0.15em] uppercase mb-2 block">
+                  <span className="text-[11px] font-semibold text-accent tracking-[0.15em] uppercase mb-2 block">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <h3 className="text-2xl font-bold text-white">{f.title}</h3>
-                  <div className="divider-gradient my-5 max-w-xs" />
-                  <p className="text-zinc-400 leading-relaxed">
+                  <h3 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>{f.title}</h3>
+                  <div className="gradient-line my-5 max-w-xs" />
+                  <p className="leading-relaxed" style={{ color: "var(--text-tertiary)" }}>
                     {f.description}
                   </p>
                 </motion.div>
@@ -91,7 +91,7 @@ export default function FeaturesSection() {
                         unoptimized
                       />
                     </TiltContainer>
-                    <div className="absolute inset-0 ring-1 ring-inset ring-white/6 rounded-2xl pointer-events-none" />
+                    <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{ boxShadow: "inset 0 0 0 0.5px var(--glass-border)" }} />
                   </ShineCard>
                 </motion.div>
               </motion.div>

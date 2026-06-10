@@ -40,7 +40,8 @@ function GalleryItem({ label, index }: { label: string; index: number }) {
       variants={itemVariants}
       initial="hidden"
       animate={inView ? "visible" : "hidden"}
-      className={`${spans[index % spans.length]} relative rounded-2xl overflow-hidden group cursor-pointer border border-white/6`}
+      className={`${spans[index % spans.length]} relative rounded-2xl overflow-hidden group cursor-pointer`}
+      style={{ boxShadow: "inset 0 0 0 0.5px var(--glass-border)" }}
       tabIndex={0}
       role="button"
       aria-label={label}
@@ -55,22 +56,22 @@ function GalleryItem({ label, index }: { label: string; index: number }) {
           unoptimized
         />
 
-        <div className="absolute inset-0 bg-linear-to-t from-[#0c1e3a]/80 via-[#0c1e3a]/10 to-transparent opacity-80 transition-opacity duration-300" />
+        <div className="absolute inset-0 bg-linear-to-t from-[color-mix(in_srgb,var(--surface-elevated)_80%,transparent)] via-[color-mix(in_srgb,var(--surface-elevated)_10%,transparent)] to-transparent opacity-80 transition-opacity duration-300" />
 
         <div className="absolute top-3 left-3 glass rounded-lg px-2.5 py-1">
-          <span className="text-[10px] font-bold text-cyan tracking-wider">
+          <span className="text-[10px] font-bold text-accent tracking-wider">
             0{index + 1}
           </span>
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-linear-to-t from-[#0c1e3a]/90 to-transparent">
-          <p className="text-sm font-semibold text-white drop-shadow-sm">
+        <div className="absolute bottom-0 left-0 right-0 p-4 bg-linear-to-t from-[color-mix(in_srgb,var(--surface-elevated)_90%,transparent)] to-transparent">
+          <p className="text-sm font-semibold drop-shadow-sm" style={{ color: "var(--text-primary)" }}>
             {label}
           </p>
         </div>
       </TiltContainer>
 
-      <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/6 pointer-events-none" />
+      <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{ boxShadow: "inset 0 0 0 0.5px var(--glass-border)" }} />
 
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.06)_0%,transparent_70%)] pointer-events-none" />
     </motion.div>
@@ -83,8 +84,8 @@ export default function GallerySection() {
 
   return (
     <section className="relative py-24 overflow-hidden">
-      <div className="absolute inset-0 gradient-mesh-cyan" />
-      <SectionGlow position="center" color="rgba(24,86,255,0.03)" />
+      <div className="absolute inset-0 gradient-mesh" />
+      <SectionGlow position="center" color="color-mix(in srgb, var(--color-primary) 8%, transparent)" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6" ref={ref}>
         <motion.div
@@ -103,7 +104,7 @@ export default function GallerySection() {
             </span>
             <div className="gradient-line flex-1" />
           </div>
-          <h2 className="heading-lg font-bold text-white text-center mb-16">
+          <h2 className="heading-lg font-bold text-center mb-16" style={{ color: "var(--text-primary)" }}>
             Hình ảnh <span className="text-gradient">hoạt động</span>
           </h2>
         </motion.div>

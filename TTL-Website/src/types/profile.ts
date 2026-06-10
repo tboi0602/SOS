@@ -10,11 +10,14 @@ export interface MemberInfo {
   job: string | null;
   avatar: string | null;
   referralCode: string;
+  memberId: string | null;
   isActive: boolean;
   createdAt: string;
   kyLuat?: number;
   daoDuc?: number;
   truyenCamHung?: number;
+  postScore?: number;
+  referredScore?: number;
 }
 
 export interface MemberListResponse {
@@ -32,12 +35,15 @@ export interface ReferredMember {
   id: string;
   name: string;
   referralCode: string;
+  memberId: string | null;
   avatar: string | null;
   isActive: boolean;
   createdAt: string;
   kyLuat: number;
   daoDuc: number;
   truyenCamHung: number;
+  postScore: number;
+  referredScore: number;
   score: number;
   rank: string;
 }
@@ -71,6 +77,8 @@ export interface ProfileResponse {
     kyLuat: number;
     daoDuc: number;
     truyenCamHung: number;
+    postScore: number;
+    referredScore: number;
   };
   activities: {
     type: string;
@@ -82,5 +90,7 @@ export interface ProfileResponse {
     kyLuat: number[];
     daoDuc: number[];
     truyenCamHung: number[];
+    postScore: number[];
+    referredScore: number[];
   };
 }

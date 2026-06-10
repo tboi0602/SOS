@@ -13,9 +13,12 @@ export interface User {
   youtube: string | null;
   zalo: string | null;
   referralCode: string | null;
+  memberId?: string | null;
   kyLuat?: number;
   daoDuc?: number;
   truyenCamHung?: number;
+  postScore?: number;
+  referredScore?: number;
   isActive?: boolean;
   createdAt?: string;
   permissions?: string[];

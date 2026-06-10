@@ -13,7 +13,7 @@ export default function TargetSection() {
 
   return (
     <section className="relative py-24 overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(24,86,255,0.05)_0%,transparent_60%)]" />
+      <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 80% 50% at 50% 0%, color-mix(in srgb, var(--color-primary) 10%, transparent) 0%, transparent 60%)" }} />
       <SectionGlow position="bottom" color="rgba(200,168,78,0.03)" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6">
@@ -35,36 +35,37 @@ export default function TargetSection() {
                 unoptimized
               />
             </TiltContainer>
-            <div className="absolute inset-0 ring-1 ring-inset ring-white/6 rounded-2xl pointer-events-none" />
+            <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{ boxShadow: "inset 0 0 0 0.5px var(--glass-border)" }} />
           </div>
 
           <div className="order-1 lg:order-2">
             <span className="text-[11px] font-semibold text-accent tracking-[0.2em] uppercase">
               {TARGET.badge}
             </span>
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mt-2">
+            <h2 className="text-3xl sm:text-4xl font-bold mt-2" style={{ color: "var(--text-primary)" }}>
               {TARGET.title}
             </h2>
 
             <div className="flex items-center gap-3 mt-5 mb-6">
-              <Sparkles size={18} className="text-cyan shrink-0" />
-              <p className="text-lg font-semibold text-cyan">
+              <Sparkles size={18} className="text-accent shrink-0" />
+              <p className="text-lg font-semibold text-accent">
                 {TARGET.emphasis}
               </p>
             </div>
 
-            <div className="divider-gradient max-w-sm mb-6" />
+            <div className="gradient-line max-w-sm mb-6" />
 
-            <p className="text-zinc-400 leading-relaxed">{TARGET.text}</p>
+            <p className="leading-relaxed" style={{ color: "var(--text-tertiary)" }}>{TARGET.text}</p>
 
             <div className="flex flex-wrap gap-4 mt-8">
               {["Hiền tài", "Thực chiến", "Kỷ luật thép", "Khát vọng lớn"].map(
                 (tag) => (
                   <span
                     key={tag}
-                    className="glass rounded-full px-4 py-2 text-xs text-zinc-400 flex items-center gap-1.5"
+                    className="glass rounded-full px-4 py-2 text-xs flex items-center gap-1.5"
+                    style={{ color: "var(--text-tertiary)" }}
                   >
-                    <Target size={12} className="text-cyan" />
+                    <Target size={12} className="text-accent" />
                     {tag}
                   </span>
                 ),

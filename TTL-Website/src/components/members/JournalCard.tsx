@@ -9,7 +9,10 @@ interface JournalCardProps {
 
 export default function JournalCard({ journal }: JournalCardProps) {
   return (
-    <div className="flex gap-4 p-4 rounded-2xl bg-black/30 border border-white/5 hover:border-white/10 hover:bg-black/50 transition-all duration-300 group/j">
+    <div className="flex gap-4 p-4 rounded-2xl transition-all duration-200 hover:-translate-y-0.5 group/j" style={{ background: "var(--surface-strong)", border: "1px solid var(--border-base)", boxShadow: "0 1px 3px color-mix(in srgb, var(--clr-primary) 10%, transparent)" }}
+      onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 30px color-mix(in srgb, var(--clr-primary) 18%, transparent)"; e.currentTarget.style.borderColor = "var(--clr-accent)"; }}
+      onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "0 1px 3px color-mix(in srgb, var(--clr-primary) 10%, transparent)"; e.currentTarget.style.borderColor = "var(--border-base)"; }}
+    >
       <div className="size-10 rounded-xl bg-amber-400/10 flex items-center justify-center shrink-0 group-hover/j:scale-110 transition-transform">
         <Sparkles
           size={16}
@@ -17,10 +20,10 @@ export default function JournalCard({ journal }: JournalCardProps) {
         />
       </div>
       <div className="flex-1 min-w-0 space-y-0.5">
-        <p className="text-xs font-bold text-white truncate">
+        <p className="text-xs font-bold truncate" style={{ color: "var(--text-primary)" }}>
           {journal.title}
         </p>
-        <p className="text-[11px] text-zinc-400 font-light line-clamp-2 leading-relaxed">
+        <p className="text-[11px] font-light line-clamp-2 leading-relaxed" style={{ color: "var(--text-secondary)" }}>
           {journal.content}
         </p>
       </div>
@@ -29,7 +32,7 @@ export default function JournalCard({ journal }: JournalCardProps) {
           <span className="text-sm font-black text-amber-400">
             +{journal.points}
           </span>
-          <span className="text-[9px] text-zinc-600 uppercase font-bold">
+          <span className="text-[9px] uppercase font-bold" style={{ color: "var(--text-tertiary)" }}>
             pts
           </span>
         </div>

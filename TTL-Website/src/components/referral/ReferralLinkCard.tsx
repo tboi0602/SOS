@@ -10,13 +10,13 @@ interface ReferralLinkCardProps {
 
 export default function ReferralLinkCard({ link, copied, onCopy }: ReferralLinkCardProps) {
   return (
-    <div className="rounded-2xl bg-linear-to-b from-white/3 to-transparent border border-white/5 p-5">
-      <h2 className="text-xs font-bold uppercase tracking-wider text-zinc-200 flex items-center gap-2 mb-3">
+    <div className="rounded-2xl p-5" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", border: "0.5px solid var(--border-base)" }}>
+      <h2 className="text-xs font-bold uppercase tracking-wider flex items-center gap-2 mb-3" style={{ color: "var(--text-secondary)" }}>
         <Share2 size={15} className="text-primary" /> Đường Dẫn Đăng Ký
       </h2>
       <div className="flex items-center gap-3">
-        <div className="flex-1 bg-black/25 rounded-xl px-4 py-3 border border-white/5 min-w-0">
-          <p className="text-xs font-mono text-zinc-400 truncate">
+        <div className="flex-1 rounded-xl px-4 py-3 min-w-0" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", border: "0.5px solid var(--border-base)" }}>
+          <p className="text-xs font-mono truncate" style={{ color: "var(--text-tertiary)" }}>
             {link}
           </p>
         </div>

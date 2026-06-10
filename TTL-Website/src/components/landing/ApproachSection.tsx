@@ -21,18 +21,18 @@ function StepCard({ step, title, desc, index }: typeof APPROACH_DATA[0] & { inde
     >
       <div className="flex items-start gap-6 cursor-pointer">
         <div className="flex flex-col items-center">
-          <div className="w-14 h-14 rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center">
-            <span className="text-lg font-extrabold text-primary">{step}</span>
+          <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: "color-mix(in srgb, var(--color-accent) 15%, transparent)", border: "0.5px solid var(--glass-border)" }}>
+            <span className="text-lg font-extrabold text-accent">{step}</span>
           </div>
           {index < APPROACH_DATA.length - 1 && (
-            <div className="w-px flex-1 min-h-15 bg-linear-to-b from-primary/40 to-transparent mt-2" />
+            <div className="w-px flex-1 min-h-15 mt-2" style={{ background: "linear-gradient(to bottom, var(--color-accent), transparent)" }} />
           )}
         </div>
 
-        <div className="glass rounded-2xl p-6 flex-1 border-t border-white/4 hover:bg-white/6 transition-all">
-          <h3 className="text-lg font-bold text-white">{title}</h3>
-          <div className="divider-cyan my-3" />
-          <p className="text-sm text-zinc-400 leading-relaxed">{desc}</p>
+        <div className="glass rounded-2xl p-6 flex-1 transition-all" style={{ borderTop: "0.5px solid var(--glass-border)" }}>
+          <h3 className="text-lg font-bold" style={{ color: "var(--text-primary)" }}>{title}</h3>
+          <div className="gradient-line my-3" />
+          <p className="text-sm leading-relaxed" style={{ color: "var(--text-tertiary)" }}>{desc}</p>
         </div>
       </div>
     </div>
@@ -42,14 +42,14 @@ function StepCard({ step, title, desc, index }: typeof APPROACH_DATA[0] & { inde
 export default function ApproachSection() {
   return (
     <section id="approach" className="relative py-24 overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_100%,rgba(34,211,238,0.04)_0%,transparent_60%)]" />
-      <SectionGlow position="center" color="rgba(34,211,238,0.03)" size="ellipse_50%_40%" />
+      <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 80% 50% at 50% 100%, color-mix(in srgb, var(--color-accent) 6%, transparent) 0%, transparent 60%)" }} />
+      <SectionGlow position="center" color="color-mix(in srgb, var(--color-accent) 5%, transparent)" size="ellipse_50%_40%" />
 
       <div className="relative z-10 mx-auto max-w-4xl px-6">
         <div className="text-center mb-16">
-          <span className="text-[11px] font-semibold text-cyan tracking-[0.2em] uppercase">Lộ trình</span>
-          <h2 className="heading-lg font-bold text-white mt-2">
-            Hành trình <span className="text-gradient-cyan">phát triển</span>
+          <span className="text-[11px] font-semibold text-accent tracking-[0.2em] uppercase">Lộ trình</span>
+          <h2 className="heading-lg font-bold mt-2" style={{ color: "var(--text-primary)" }}>
+            Hành trình <span className="text-gradient-gold">phát triển</span>
           </h2>
         </div>
 
@@ -69,7 +69,7 @@ export default function ApproachSection() {
               className="object-cover"
             />
           </TiltContainer>
-          <div className="absolute inset-0 ring-1 ring-inset ring-white/6 rounded-2xl pointer-events-none" />
+          <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{ boxShadow: "inset 0 0 0 0.5px var(--glass-border)" }} />
         </div>
       </div>
     </section>

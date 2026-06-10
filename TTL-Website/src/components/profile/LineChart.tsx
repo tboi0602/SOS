@@ -38,7 +38,7 @@ export default function LineChart({
             y1={toY(v)}
             x2={w - pad.right}
             y2={toY(v)}
-            stroke="rgba(255,255,255,0.2)"
+            stroke="var(--border-base)"
             strokeWidth={1}
           />
           <text
@@ -47,7 +47,7 @@ export default function LineChart({
             textAnchor="end"
             fontSize="7"
             fontWeight="600"
-            fill="rgba(255,255,255,0.2)"
+            fill="var(--surface-strong)"
           >
             {v}
           </text>
@@ -79,7 +79,7 @@ export default function LineChart({
                 cx={p.x}
                 cy={p.y}
                 r="3"
-                fill="#070d22"
+                fill="var(--surface-elevated)"
                 stroke={ds.color}
                 strokeWidth="1.5"
               />
@@ -95,7 +95,7 @@ export default function LineChart({
           textAnchor="middle"
           fontSize="8"
           fontWeight="600"
-          fill="rgba(255,255,255,0.25)"
+          fill="var(--surface-strong)"
         >
           {l}
         </text>

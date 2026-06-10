@@ -26,7 +26,7 @@ function VisionPart() {
           sizes="100vw"
           className="object-cover opacity-30"
         />
-        <div className="absolute inset-0 bg-linear-to-r from-[#0c1e3a] via-[#0c1e3a]/80 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-r from-[var(--surface-elevated)] via-[color-mix(in_srgb,var(--surface-elevated)_80%,transparent)] to-transparent" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-7xl px-6" ref={ref}>
@@ -40,7 +40,7 @@ function VisionPart() {
             {VISION.badge}
           </span>
 
-          <blockquote className="mt-4 text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight">
+          <blockquote className="mt-4 text-2xl sm:text-3xl md:text-4xl font-bold leading-tight" style={{ color: "var(--text-primary)" }}>
             &ldquo;{VISION.quote}&rdquo;
           </blockquote>
 
@@ -48,21 +48,22 @@ function VisionPart() {
             initial={{ scaleX: 0 }}
             animate={inView ? { scaleX: 1 } : {}}
             transition={{ duration: 0.8, ease, delay: 0.3 }}
-            className="divider-gradient my-8 max-w-sm origin-left"
+            className="gradient-line my-8 max-w-sm origin-left"
           />
 
           <motion.p
             initial={{ opacity: 0, y: 15 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, ease, delay: 0.4 }}
-            className="text-zinc-400 leading-relaxed max-w-lg"
+            className="leading-relaxed max-w-lg"
+            style={{ color: "var(--text-tertiary)" }}
           >
             {VISION.text}
           </motion.p>
         </motion.div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-[#0c1e3a] to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-[var(--surface-elevated)] to-transparent" />
     </section>
   );
 }
@@ -73,8 +74,8 @@ function ValuesPart() {
 
   return (
     <section id="values" className="relative py-24 overflow-hidden">
-      <div className="absolute inset-0 gradient-mesh-cyan" />
-      <SectionGlow position="center" color="rgba(34,211,238,0.03)" size="ellipse_60%_40%" />
+      <div className="absolute inset-0 gradient-mesh" />
+      <SectionGlow position="center" color="color-mix(in srgb, var(--color-accent) 5%, transparent)" size="ellipse_60%_40%" />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6" ref={ref}>
         <motion.div
@@ -84,11 +85,11 @@ function ValuesPart() {
         >
           <div className="flex items-center gap-4 mb-4">
             <div className="gradient-line flex-1" />
-            <span className="text-[11px] font-semibold text-cyan tracking-[0.2em] uppercase">Triết lý</span>
+            <span className="text-[11px] font-semibold text-accent tracking-[0.2em] uppercase">Triết lý</span>
             <div className="gradient-line flex-1" />
           </div>
-          <h2 className="heading-lg font-bold text-white text-center mt-2">
-            Hệ <span className="text-gradient-cyan">giá trị cốt lõi</span>
+          <h2 className="heading-lg font-bold text-center mt-2" style={{ color: "var(--text-primary)" }}>
+            Hệ <span className="text-gradient-gold">giá trị cốt lõi</span>
           </h2>
         </motion.div>
 
@@ -100,19 +101,19 @@ function ValuesPart() {
               animate={inView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
               transition={{ duration: 0.6, ease, delay: i * 0.15 }}
             >
-              <ShineCard lightColor="rgba(34,211,238,0.08)">
+              <ShineCard lightColor="color-mix(in srgb, var(--color-accent) 10%, transparent)">
                 <div className="tilt-card group relative">
-                  <div className="tilt-card-inner glass rounded-3xl p-8 h-full border-t border-white/4 hover:border-primary/20 transition-all duration-300">
+                  <div className="tilt-card-inner glass rounded-3xl p-8 h-full transition-all duration-300" style={{ borderTop: "0.5px solid var(--glass-border)" }}>
                     <div className="tilt-card-content">
                       <div className="flex items-start justify-between mb-6">
-                        <span className="text-5xl font-bold text-primary/10 select-none">{v.number}</span>
-                        <Quote size={24} className="text-primary/20" />
+                        <span className="text-5xl font-bold select-none" style={{ color: "color-mix(in srgb, var(--color-accent) 15%, transparent)" }}>{v.number}</span>
+                        <Quote size={24} style={{ color: "color-mix(in srgb, var(--color-accent) 20%, transparent)" }} />
                       </div>
-                      <p className="text-lg font-semibold text-white leading-relaxed mb-4">
+                      <p className="text-lg font-semibold leading-relaxed mb-4" style={{ color: "var(--text-primary)" }}>
                         &ldquo;{v.quote}&rdquo;
                       </p>
                       <div className="gradient-line mb-5 opacity-50" />
-                      <p className="text-sm text-zinc-400 leading-relaxed">{v.text}</p>
+                      <p className="text-sm leading-relaxed" style={{ color: "var(--text-tertiary)" }}>{v.text}</p>
                     </div>
                     <div className="tilt-card-shine" />
                   </div>
