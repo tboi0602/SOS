@@ -1,0 +1,142 @@
+import { ComponentType } from "react";
+import {
+  LayoutDashboard,
+  Users,
+  Video,
+  BookOpen,
+  FileText,
+  Edit3,
+  Key,
+  ClipboardList,
+  Bell,
+  GraduationCap,
+  Camera,
+} from "lucide-react";
+
+export interface NavItem {
+  href: string;
+  label: string;
+  icon: ComponentType<{ size?: number; className?: string }>;
+  permission: string | null;
+}
+
+export interface NavGroup {
+  label: string;
+  items: NavItem[];
+}
+
+export const NAV_GROUPS: NavGroup[] = [
+  {
+    label: "Tổng quan",
+    items: [
+      {
+        href: "/admin",
+        label: "Bảng điều khiển",
+        icon: LayoutDashboard,
+        permission: null,
+      },
+    ],
+  },
+  {
+    label: "Người dùng",
+    items: [
+      {
+        href: "/admin/users",
+        label: "Danh sách",
+        icon: Users,
+        permission: "manage_users",
+      },
+      {
+        href: "/admin/permissions",
+        label: "Phân quyền",
+        icon: Key,
+        permission: "manage_permissions",
+      },
+    ],
+  },
+  {
+    label: "Nội dung",
+    items: [
+      {
+        href: "/admin/posts/manage",
+        label: "Bài đăng",
+        icon: Edit3,
+        permission: null,
+      },
+      {
+        href: "/admin/posts",
+        label: "Duyệt bài viết",
+        icon: FileText,
+        permission: "approve_posts",
+      },
+      {
+        href: "/admin/submissions",
+        label: "Duyệt tác phẩm",
+        icon: Video,
+        permission: "approve_submissions",
+      },
+      {
+        href: "/admin/journals",
+        label: "Duyệt nhật ký",
+        icon: BookOpen,
+        permission: "approve_journals",
+      },
+      {
+        href: "/admin/customer-visits",
+        label: "Gặp khách hàng",
+        icon: Camera,
+        permission: "manage_posts",
+      },
+      {
+        href: "/admin/pending-members",
+        label: "Chờ duyệt",
+        icon: Users,
+        permission: null,
+      },
+      {
+        href: "/admin/membership-flow",
+        label: "Đăng ký thành viên",
+        icon: GraduationCap,
+        permission: null,
+      },
+    ],
+  },
+  {
+    label: "Truyền thông & Học tập",
+    items: [
+      {
+        href: "/admin/notifications",
+        label: "Thông báo",
+        icon: Bell,
+        permission: "manage_notifications",
+      },
+      {
+        href: "/admin/elearning",
+        label: "E-learning",
+        icon: GraduationCap,
+        permission: "manage_lessons",
+      },
+    ],
+  },
+  {
+    label: "Giám sát",
+    items: [
+      {
+        href: "/admin/activity-log",
+        label: "Hoạt động",
+        icon: ClipboardList,
+        permission: null,
+      },
+    ],
+  },
+];
+
+export function getNavGroups(role: string, permissions: string[]) {
+  if (role === "admin") return NAV_GROUPS;
+  return NAV_GROUPS.map((group) => ({
+    ...group,
+    items: group.items.filter(
+      (item) => !item.permission || permissions.includes(item.permission),
+    ),
+  })).filter((group) => group.items.length > 0);
+}

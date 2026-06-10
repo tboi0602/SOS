@@ -1,6 +1,7 @@
 "use client";
 
 import { usePublicProfile } from "@/hook/members";
+import { useAuth } from "@/lib/auth-context";
 import Loading from "@/components/ui/Loading";
 import PostCard from "@/components/feed/PostCard";
 import ProfileHero from "@/components/members/ProfileHero";
@@ -9,9 +10,10 @@ import CompetencyGrid from "@/components/members/CompetencyGrid";
 import StatsBlock from "@/components/members/StatsBlock";
 import QrCodeSection from "@/components/members/QrCodeSection";
 import JournalsList from "@/components/members/JournalsList";
-import { FileText } from "lucide-react";
+import { FileText, ShieldBan } from "lucide-react";
 
 export default function PublicProfilePage() {
+  const { user } = useAuth();
   const {
     data,
     loading,
@@ -27,6 +29,23 @@ export default function PublicProfilePage() {
   } = usePublicProfile();
 
   if (loading) return <Loading />;
+
+  const isMember = user?.role === "member" || user?.role === "admin";
+
+  if (!isMember)
+    return (
+      <div className="min-h-screen px-4 sm:px-6 py-10 select-none animate-fade-up flex items-center justify-center" style={{ color: "var(--text-primary)" }}>
+        <div className="text-center max-w-sm space-y-4">
+          <div className="size-16 mx-auto rounded-full flex items-center justify-center" style={{ background: "color-mix(in srgb, var(--text-tertiary) 10%, transparent)" }}>
+            <ShieldBan size={28} style={{ color: "var(--text-tertiary)" }} />
+          </div>
+          <h2 className="text-base font-bold">Chưa phải hội viên</h2>
+          <p className="text-sm leading-relaxed" style={{ color: "var(--text-tertiary)" }}>
+            Người dùng này chưa là thành viên chính thức không thể xem
+          </p>
+        </div>
+      </div>
+    );
 
   if (!data)
     return (

@@ -33,19 +33,37 @@ const TABS: { key: PostTab; label: string; icon: typeof FileText }[] = [
 function StatusBadge({ status }: { status: string }) {
   if (status === "pending")
     return (
-      <span className="badge-pending inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-medium" style={{ borderColor: "color-mix(in srgb, var(--color-warning) 20%, transparent)" }}>
+      <span
+        className="badge-pending inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-medium"
+        style={{
+          borderColor:
+            "color-mix(in srgb, var(--color-warning) 20%, transparent)",
+        }}
+      >
         <Clock size={10} /> Chờ duyệt
       </span>
     );
   if (status === "approved")
     return (
-      <span className="badge-approved inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-medium" style={{ borderColor: "color-mix(in srgb, var(--color-success) 20%, transparent)" }}>
+      <span
+        className="badge-approved inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-medium"
+        style={{
+          borderColor:
+            "color-mix(in srgb, var(--color-success) 20%, transparent)",
+        }}
+      >
         <CheckCircle size={10} /> Đã duyệt
       </span>
     );
   if (status === "rejected")
     return (
-      <span className="badge-rejected inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-medium" style={{ borderColor: "color-mix(in srgb, var(--color-danger) 20%, transparent)" }}>
+      <span
+        className="badge-rejected inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-medium"
+        style={{
+          borderColor:
+            "color-mix(in srgb, var(--color-danger) 20%, transparent)",
+        }}
+      >
         <XCircle size={10} /> Từ chối
       </span>
     );
@@ -86,18 +104,40 @@ export default function PostPage() {
     if (!el) return;
     const ctx = gsap.context(() => {
       gsap.matchMedia().add("(prefers-reduced-motion: no-preference)", () => {
-        gsap.fromTo(el.querySelectorAll(".admin-post-card"), { y: 20, opacity: 0 }, { y: 0, opacity: 1, force3D: true, duration: 0.4, stagger: 0.06, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 82%", toggleActions: "play none none none" } });
+        gsap.fromTo(
+          el.querySelectorAll(".admin-post-card"),
+          { y: 20, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            force3D: true,
+            duration: 0.4,
+            stagger: 0.06,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: el,
+              start: "top 82%",
+              toggleActions: "play none none none",
+            },
+          },
+        );
       });
     });
     return () => ctx.revert();
   }, [posts]);
 
   return (
-    <div className="min-h-screen px-4 sm:px-6 py-8 select-none relative z-10 animate-fade-up" style={{ color: "var(--text-primary)" }}>
+    <div
+      className="min-h-screen px-4 sm:px-6 py-8 select-none relative z-10 animate-fade-up"
+      style={{ color: "var(--text-primary)" }}
+    >
       <div className="max-w-8xl mx-auto space-y-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-lg font-bold flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
+            <h1
+              className="text-lg font-bold flex items-center gap-2"
+              style={{ color: "var(--text-primary)" }}
+            >
               <FileText size={20} className="text-accent" aria-hidden="true" />
               Duyệt bài viết
             </h1>
@@ -132,12 +172,33 @@ export default function PostPage() {
           })}
         </div>
 
-          <Skeleton name="admin-posts" loading={loading} rows={posts.length || 1}>
+        <Skeleton name="admin-posts" loading={loading} rows={posts.length || 1}>
           {posts.length === 0 ? (
-            <div className="text-center py-16 rounded-3xl" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", border: "0.5px solid var(--border-base)" }}>
-              <FileText size={40} className="mx-auto mb-4" style={{ color: "var(--text-tertiary)" }} />
-              <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Không có bài viết</h3>
-              <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>
+            <div
+              className="text-center py-16 rounded-3xl"
+              style={{
+                background:
+                  "color-mix(in srgb, var(--surface-elevated) 18%, transparent)",
+                boxShadow:
+                  "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)",
+                border: "0.5px solid var(--border-base)",
+              }}
+            >
+              <FileText
+                size={40}
+                className="mx-auto mb-4"
+                style={{ color: "var(--text-tertiary)" }}
+              />
+              <h3
+                className="text-sm font-semibold"
+                style={{ color: "var(--text-primary)" }}
+              >
+                Không có bài viết
+              </h3>
+              <p
+                className="text-xs mt-1"
+                style={{ color: "var(--text-tertiary)" }}
+              >
                 {tab === "pending"
                   ? "Chưa có bài viết nào đang chờ duyệt"
                   : tab === "approved"
@@ -151,9 +212,21 @@ export default function PostPage() {
                 <div
                   key={post.id}
                   className="admin-post-card rounded-2xl p-4 border card-hover transition-all"
-                  style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", border: "0.5px solid var(--border-base)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)" }}
-                  onMouseEnter={(e) => { e.currentTarget.style.border = "0.5px solid var(--color-accent)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.border = "0.5px solid var(--border-base)"; }}
+                  style={{
+                    background:
+                      "color-mix(in srgb, var(--surface-elevated) 18%, transparent)",
+                    border: "0.5px solid var(--border-base)",
+                    boxShadow:
+                      "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.border =
+                      "0.5px solid var(--color-accent)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.border =
+                      "0.5px solid var(--border-base)";
+                  }}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1 min-w-0">
@@ -162,7 +235,10 @@ export default function PostPage() {
                         onClick={() => setViewPost(post)}
                       >
                         <div className="flex items-center gap-2 mb-1.5">
-                          <div className="size-7 rounded-full overflow-hidden shrink-0" style={{ background: "var(--surface-strong)" }}>
+                          <div
+                            className="size-7 rounded-full overflow-hidden shrink-0"
+                            style={{ background: "var(--surface-strong)" }}
+                          >
                             {post.user.avatar ? (
                               <img
                                 src={post.user.avatar}
@@ -170,19 +246,29 @@ export default function PostPage() {
                                 className="size-full object-cover"
                               />
                             ) : (
-                              <div className="size-full flex items-center justify-center text-[10px] font-bold" style={{ color: "var(--text-tertiary)" }}>
+                              <div
+                                className="size-full flex items-center justify-center text-[10px] font-bold"
+                                style={{ color: "var(--text-tertiary)" }}
+                              >
                                 {post.user.name.charAt(0).toUpperCase()}
                               </div>
                             )}
                           </div>
-                          <span className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>
+                          <span
+                            className="text-xs font-medium"
+                            style={{ color: "var(--text-secondary)" }}
+                          >
                             {post.user.name}
                           </span>
                           {tab === "all" && (
                             <StatusBadge status={post.status} />
                           )}
                         </div>
-                        <p className="text-sm whitespace-pre-line line-clamp-3 overflow-hidden text-ellipsis" style={{ color: "var(--text-primary)" }} title={post.content}>
+                        <p
+                          className="text-sm whitespace-pre-line line-clamp-3 overflow-hidden text-ellipsis"
+                          style={{ color: "var(--text-primary)" }}
+                          title={post.content}
+                        >
                           {post.content}
                         </p>
                         {post.images && post.images.length > 0 && (
@@ -196,7 +282,7 @@ export default function PostPage() {
                                     openImageViewer(post.images as string[], i)
                                   }
                                   className="size-16 rounded-lg overflow-hidden border cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50 hover:border-primary/30 transition-colors"
-                                    style={{ borderColor: "var(--border-base)" }}
+                                  style={{ borderColor: "var(--border-base)" }}
                                 >
                                   <img
                                     src={imgUrl(url)}
@@ -211,7 +297,12 @@ export default function PostPage() {
                                   openImageViewer(post.images as string[], 4)
                                 }
                                 className="size-16 rounded-lg overflow-hidden border flex items-center justify-center text-xs font-medium cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50 hover:border-primary/30 transition-colors"
-                                style={{ borderColor: "var(--border-base)", background: "color-mix(in srgb, var(--text-primary) 5%, transparent)", color: "var(--text-tertiary)" }}
+                                style={{
+                                  borderColor: "var(--border-base)",
+                                  background:
+                                    "color-mix(in srgb, var(--text-primary) 5%, transparent)",
+                                  color: "var(--text-tertiary)",
+                                }}
                               >
                                 +{post.images.length - 4}
                               </button>
@@ -220,18 +311,33 @@ export default function PostPage() {
                         )}
                       </div>
                       <div className="flex items-center gap-3 mt-2">
-                        <span className="inline-flex items-center gap-1 text-[10px]" style={{ color: "var(--text-tertiary)" }}>
+                        <span
+                          className="inline-flex items-center gap-1 text-[10px]"
+                          style={{ color: "var(--text-tertiary)" }}
+                        >
                           <Heart size={10} /> {post.likeCount}
                         </span>
-                        <span className="inline-flex items-center gap-1 text-[10px]" style={{ color: "var(--text-tertiary)" }}>
+                        <span
+                          className="inline-flex items-center gap-1 text-[10px]"
+                          style={{ color: "var(--text-tertiary)" }}
+                        >
                           <MessageSquare size={10} /> {post.commentCount}
                         </span>
-                        <span className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>
+                        <span
+                          className="text-[10px]"
+                          style={{ color: "var(--text-tertiary)" }}
+                        >
                           {new Date(post.createdAt).toLocaleDateString("vi-VN")}
                         </span>
                       </div>
                       {post.adminNote && (
-                        <div className="mt-2 p-2 rounded-lg bg-red-400/5 border" style={{ borderColor: "color-mix(in srgb, var(--color-danger) 10%, transparent)" }}>
+                        <div
+                          className="mt-2 p-2 rounded-lg bg-red-400/5 border"
+                          style={{
+                            borderColor:
+                              "color-mix(in srgb, var(--color-danger) 10%, transparent)",
+                          }}
+                        >
                           <p className="text-[10px] text-red-400/70 italic">
                             Phản hồi: {post.adminNote}
                           </p>
@@ -247,16 +353,34 @@ export default function PostPage() {
                             onChange={(e) => setNote(e.target.value)}
                             placeholder="Ghi chú (tuỳ chọn)..."
                             className="rounded-lg px-3 py-1.5 text-xs outline-none transition-colors"
-                            style={{ background: "var(--surface-base)", border: "1px solid var(--border-base)", color: "var(--text-primary)" }}
-                            onFocus={(e) => e.currentTarget.style.borderColor = "var(--color-accent)"}
-                            onBlur={(e) => e.currentTarget.style.borderColor = "var(--border-base)"}
+                            style={{
+                              background: "var(--surface-base)",
+                              border: "1px solid var(--border-base)",
+                              color: "var(--text-primary)",
+                            }}
+                            onFocus={(e) =>
+                              (e.currentTarget.style.borderColor =
+                                "var(--color-accent)")
+                            }
+                            onBlur={(e) =>
+                              (e.currentTarget.style.borderColor =
+                                "var(--border-base)")
+                            }
                           />
                           <div className="flex gap-2">
                             <button
                               onClick={() => handleApprove(post.id)}
                               aria-label="Duyệt bài viết"
                               className="btn-primary"
-                              style={{ fontSize: "0.75rem", padding: "0.375rem 0.75rem", background: "color-mix(in srgb, var(--color-success) 20%, transparent)", color: "var(--color-success)", border: "1px solid color-mix(in srgb, var(--color-success) 30%, transparent)" }}
+                              style={{
+                                fontSize: "0.75rem",
+                                padding: "0.375rem 0.75rem",
+                                background:
+                                  "color-mix(in srgb, var(--color-success) 20%, transparent)",
+                                color: "var(--color-success)",
+                                border:
+                                  "1px solid color-mix(in srgb, var(--color-success) 30%, transparent)",
+                              }}
                             >
                               <CheckCircle size={12} /> Duyệt
                             </button>
@@ -264,7 +388,15 @@ export default function PostPage() {
                               onClick={() => handleReject(post.id)}
                               aria-label="Từ chối bài viết"
                               className="btn-primary"
-                              style={{ fontSize: "0.75rem", padding: "0.375rem 0.75rem", background: "color-mix(in srgb, var(--color-danger) 20%, transparent)", color: "var(--color-danger)", border: "1px solid color-mix(in srgb, var(--color-danger) 30%, transparent)" }}
+                              style={{
+                                fontSize: "0.75rem",
+                                padding: "0.375rem 0.75rem",
+                                background:
+                                  "color-mix(in srgb, var(--color-danger) 20%, transparent)",
+                                color: "var(--color-danger)",
+                                border:
+                                  "1px solid color-mix(in srgb, var(--color-danger) 30%, transparent)",
+                              }}
                             >
                               <XCircle size={12} /> Từ chối
                             </button>
@@ -274,7 +406,10 @@ export default function PostPage() {
                                 setNote("");
                               }}
                               className="btn-ghost"
-                              style={{ fontSize: "0.75rem", padding: "0.375rem 0.75rem" }}
+                              style={{
+                                fontSize: "0.75rem",
+                                padding: "0.375rem 0.75rem",
+                              }}
                             >
                               Hủy
                             </button>
@@ -300,7 +435,10 @@ export default function PostPage() {
                             onClick={() => setDeleteTarget(post)}
                             aria-label={`Xoá bài viết của ${post.user.name}`}
                             className="btn-ghost"
-                            style={{ padding: "0.5rem", color: "var(--color-danger)" }}
+                            style={{
+                              padding: "0.5rem",
+                              color: "var(--color-danger)",
+                            }}
                           >
                             <Trash2 size={15} />
                           </button>
@@ -320,7 +458,10 @@ export default function PostPage() {
                           onClick={() => setDeleteTarget(post)}
                           aria-label={`Xoá bài viết của ${post.user.name}`}
                           className="btn-ghost"
-                          style={{ padding: "0.5rem", color: "var(--color-danger)" }}
+                          style={{
+                            padding: "0.5rem",
+                            color: "var(--color-danger)",
+                          }}
                         >
                           <Trash2 size={15} />
                         </button>
