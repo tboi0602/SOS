@@ -27,10 +27,10 @@ export default function TbvLoginButton() {
         type="button"
         onClick={handleClick}
         disabled={loading}
-        className="w-full rounded-xl bg-[#1a0906] hover:bg-[#2a100b] border border-[#dca14f]/40 text-white font-semibold py-3 text-[15px] transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-3 shadow-lg shadow-[#1a0906]/30"
+        className="w-full rounded-xl bg-[#1a0906] hover:bg-[#2a100b] border border-[#dca14f]/30 text-white font-semibold py-2.5 text-sm transition-all cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm shadow-[#1a0906]/20"
       >
         {loading ? (
-          <Loader2 size={20} className="animate-spin text-[#dca14f]" />
+          <Loader2 size={18} className="animate-spin text-[#dca14f]" />
         ) : (
           <img
             src="/images/tbv-logo.png"
