@@ -90,6 +90,10 @@ export const authService = {
     })
   },
 
+  initTbvLogin() {
+    return request<{ authUrl: string }>("/api/v1/auth/oidc/init")
+  },
+
   uploadAvatar(file: File) {
     return uploadSingleFile<{ user: User }>("/api/v1/auth/avatar", file, "avatar")
   },

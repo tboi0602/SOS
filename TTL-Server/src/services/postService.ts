@@ -80,7 +80,7 @@ export const postService = {
       getDb().post.count({ where: { status: "approved" } }),
     ]);
     return {
-      posts: posts.map((p) => this.formatPost(p, userId)),
+      posts: posts.map((p: any) => this.formatPost(p, userId)),
       total,
       page,
       totalPages: Math.ceil(total / limit),
@@ -109,7 +109,7 @@ export const postService = {
       getDb().post.count({ where: { userId, status: "rejected" } }),
     ]);
     return {
-      posts: posts.map((p) => this.formatPost(p, userId)),
+      posts: posts.map((p: any) => this.formatPost(p, userId)),
       total,
       page,
       totalPages: Math.ceil(total / limit),
@@ -221,7 +221,7 @@ export const postService = {
       getDb().post.count({ where: { userId: { in: adminIds }, status: "approved" } }),
     ]);
     return {
-      posts: posts.map((p) => this.formatPost(p, null)),
+      posts: posts.map((p: any) => this.formatPost(p, null)),
       total,
       page,
       totalPages: Math.ceil(total / limit),

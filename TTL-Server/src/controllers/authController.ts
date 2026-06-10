@@ -1,6 +1,10 @@
 import { type Request, type Response } from "express";
 import { authService } from "../services/authService";
+import { oidcService } from "../services/oidcService";
+import { config } from "../config";
 import { asyncHandler } from "../lib/asyncHandler";
+import { logger } from "../lib/logger";
+import { AppError } from "../lib/errors";
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
@@ -101,5 +105,35 @@ export const authController = {
       avatar: url,
     });
     res.json({ user });
+  }),
+
+  oidcInit: asyncHandler(async (_req: Request, res: Response) => {
+    const result = oidcService.initOidcLogin();
+    res.json(result);
+  }),
+
+  oidcCallback: asyncHandler(async (req: Request, res: Response) => {
+    const { code, state, error } = req.query as { code?: string; state?: string; error?: string };
+    if (error) {
+      logger.warn("TBV OIDC callback returned error", { error });
+      res.redirect(`${config.email.frontendUrl}/auth/login?error=${encodeURIComponent(error)}`);
+      return;
+    }
+
+    if (!code || !state) {
+      res.redirect(`${config.email.frontendUrl}/auth/login?error=missing_params`);
+      return;
+    }
+    try {
+      const { user, token } = await oidcService.handleOidcCallback(code, state);
+      setTokenCookie(res, token);
+      const url = user.role === "admin" ? "/admin" : "/home";
+      res.redirect(`${config.email.frontendUrl}${url}`);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      const code = err instanceof AppError && err.code ? err.code : "auth_failed";
+      logger.error("TBV OIDC callback failed", { code, error: message });
+      res.redirect(`${config.email.frontendUrl}/auth/login?error=${encodeURIComponent(code)}`);
+    }
   }),
 };

@@ -1,5 +1,5 @@
 import { type Request, type Response, type NextFunction } from "express"
-import { Prisma } from "@prisma/client"
+import { PrismaClientKnownRequestError, PrismaClientValidationError } from "@prisma/client/runtime/library"
 import { AppError } from "../lib/errors"
 import { logger } from "../lib/logger"
 
@@ -12,7 +12,7 @@ export function errorHandler(err: Error, _req: Request, res: Response, _next: Ne
     return
   }
 
-  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+  if (err instanceof PrismaClientKnownRequestError) {
     switch (err.code) {
       case "P2002":
         res.status(409).json({ error: "Dữ liệu đã tồn tại", code: "UNIQUE_CONSTRAINT" })
@@ -30,7 +30,7 @@ export function errorHandler(err: Error, _req: Request, res: Response, _next: Ne
     }
   }
 
-  if (err instanceof Prisma.PrismaClientValidationError) {
+  if (err instanceof PrismaClientValidationError) {
     logger.error("Prisma validation error", { error: err.message })
     res.status(400).json({ error: "Dữ liệu không hợp lệ", code: "VALIDATION_ERROR" })
     return

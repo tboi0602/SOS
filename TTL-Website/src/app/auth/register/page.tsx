@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuthRegister as useRegister } from "@/hook/auth";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
+import TbvLoginButton from "@/components/auth/TbvLoginButton";
 import Field from "@/components/auth/Field";
 import ReferralField from "@/components/auth/ReferralField";
 import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
@@ -30,7 +31,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (error) toast(error, "error");
-  }, [error]);
+  }, [error, toast]);
 
   return (
     <div className="relative min-h-screen flex overflow-hidden animate-fade-up" style={{ background: "var(--surface-base)" }}>
@@ -238,6 +239,10 @@ export default function RegisterPage() {
                   onSuccess={handleGoogle}
                   loading={googleLoading}
                 />
+              </div>
+
+              <div className="mt-3">
+                <TbvLoginButton />
               </div>
 
               <p className="text-center text-sm mt-5" style={{ color: "var(--text-dim)" }}>

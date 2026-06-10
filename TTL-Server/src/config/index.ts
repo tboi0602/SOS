@@ -41,4 +41,11 @@ export const config = {
   google: {
     clientId: requireEnv("GOOGLE_CLIENT_ID"),
   },
+
+  tbvOidc: {
+    issuer: optionalEnv("TBV_OIDC_ISSUER", ""),
+    clientId: optionalEnv("TBV_OIDC_CLIENT_ID", ""),
+    clientSecret: optionalEnv("TBV_OIDC_CLIENT_SECRET", ""),
+    redirectUri: optionalEnv("TBV_OIDC_REDIRECT_URI", "http://localhost:4000/api/v1/auth/oidc/callback"),
+  },
 } as const;
