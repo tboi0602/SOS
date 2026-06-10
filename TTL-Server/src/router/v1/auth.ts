@@ -50,6 +50,9 @@ router.post("/logout", authController.logout)
 router.get("/me", requireAuth, authController.me)
 router.get("/referral/:code", authController.checkReferral)
 
+router.get("/oidc/init", authLimiter, authController.oidcInit)
+router.get("/oidc/callback", authLimiter, authController.oidcCallback)
+
 router.post("/activate", validate(activateSchema), authController.activate)
 router.post("/resend-activation", authLimiter, validate(resendActivationSchema), authController.resendActivation)
 router.post("/forgot-password", authLimiter, validate(forgotPasswordSchema), authController.forgotPassword)

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useAuthLogin as useLogin } from "@/hook/auth";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
+import TbvLoginButton from "@/components/auth/TbvLoginButton";
 import { useEffect } from "react";
 import { useToast } from "@/components/ui/Toast";
 import { Eye, EyeOff, Loader2, LogIn } from "lucide-react";
@@ -29,7 +30,24 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (error) toast(error, "error");
-  }, [error]);
+  }, [error, toast]);
+
+  useEffect(() => {
+    const ssoError = new URLSearchParams(window.location.search).get("error");
+    if (!ssoError) return;
+    const messages: Record<string, string> = {
+      access_denied: "Bạn đã huỷ đăng nhập bằng Tinh Hoa Việt",
+      missing_params: "Callback TBV thiếu thông tin xác thực",
+      auth_failed: "Đăng nhập bằng Tinh Hoa Việt thất bại",
+      TBV_OIDC_NOT_CONFIGURED: "SSO TBV chưa được cấu hình",
+      TBV_OIDC_INVALID_STATE: "Phiên đăng nhập TBV không hợp lệ",
+      TBV_OIDC_STATE_EXPIRED: "Phiên đăng nhập TBV đã hết hạn",
+      TBV_OIDC_TOKEN_FAILED: "TBV từ chối đổi code lấy token",
+      TBV_OIDC_USERINFO_FAILED: "Không lấy được thông tin người dùng từ TBV",
+      TBV_OIDC_INVALID_PROFILE: "Thông tin người dùng TBV không hợp lệ",
+    };
+    toast(messages[ssoError] || "Đăng nhập bằng Tinh Hoa Việt thất bại", "error");
+  }, [toast]);
 
   return (
     <div className="relative min-h-screen flex overflow-hidden animate-fade-up" style={{ background: "var(--surface-base)" }}>
@@ -212,6 +230,10 @@ export default function LoginPage() {
                   onSuccess={handleGoogle}
                   loading={googleLoading}
                 />
+              </div>
+
+              <div className="mt-3">
+                <TbvLoginButton />
               </div>
 
               <p className="text-center text-sm mt-6" style={{ color: "var(--text-dim)" }}>

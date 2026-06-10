@@ -131,45 +131,45 @@ export const profileService = {
           : `Top ${Math.round(((rankIndex + 1) / allTotals.length) * 100)}%`;
 
     const activities = [
-      ...recentPosts.map((p) => ({
+      ...recentPosts.map((p: any) => ({
         type: "post" as const,
         title: p.content.length > 60 ? p.content.substring(0, 60) + "..." : p.content,
         time: timeAgo(p.createdAt),
       })),
-      ...recentJournals.map((j) => ({
+      ...recentJournals.map((j: any) => ({
         type: "journal" as const,
         title: `Nhật ký: ${j.title.length > 60 ? j.title.substring(0, 60) + "..." : j.title}`,
         time: timeAgo(j.createdAt),
       })),
-      ...recentSubmissions.map((s) => ({
+      ...recentSubmissions.map((s: any) => ({
         type: "submission" as const,
         title: `Bài dự thi: ${s.title.length > 60 ? s.title.substring(0, 60) + "..." : s.title}`,
         time: timeAgo(s.createdAt),
       })),
-      ...recentComments.map((c) => ({
+      ...recentComments.map((c: any) => ({
         type: "comment" as const,
         title: `Bình luận: ${c.content.length > 60 ? c.content.substring(0, 60) + "..." : c.content}`,
         time: timeAgo(c.createdAt),
       })),
-    ].sort((a, b) => parseTimeAgo(a.time) - parseTimeAgo(b.time)).slice(0, 10);
+    ].sort((a: any, b: any) => parseTimeAgo(a.time) - parseTimeAgo(b.time)).slice(0, 10);
 
     const now = new Date();
     const sixMonthsAgo = new Date(now);
     sixMonthsAgo.setMonth(now.getMonth() - 6);
-    const monthlyPosts = await getDb().$queryRawUnsafe<{ month: string; count: bigint }[]>(
+    const monthlyPosts = await getDb().$queryRawUnsafe(
       `SELECT to_char("created_at", 'YYYY-MM') as month, COUNT(*)::bigint as count
        FROM "posts"
        WHERE "user_id" = $1 AND "created_at" >= $2
        GROUP BY month ORDER BY month`,
       userId,
       sixMonthsAgo,
-    );
+    ) as { month: string; count: bigint }[];
 
     const months = ["T1", "T2", "T3", "T4", "T5", "T6"];
     const postData = months.map((_, i) => {
       const d = new Date(now.getFullYear(), now.getMonth() - 5 + i, 1);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-      const found = monthlyPosts.find((r) => r.month === key);
+      const found = monthlyPosts.find((r: any) => r.month === key);
       return found ? Number(found.count) : 0;
     });
     const chartData = {
@@ -218,7 +218,7 @@ export const profileService = {
     ]);
 
     return {
-      members: users.map((u) => {
+      members: users.map((u: any) => {
         const safe = toSafeUser(u);
         return {
           id: u.id,
@@ -249,7 +249,7 @@ export const profileService = {
       where: { role: { not: "admin" }, isActive: true },
     });
 
-    const scored = users.map((u) => {
+    const scored = users.map((u: any) => {
       const safe = toSafeUser(u);
       const score = Math.round((safe.kyLuat + safe.daoDuc + safe.truyenCamHung + safe.postScore + safe.referredScore) / 5);
       return {
@@ -272,7 +272,7 @@ export const profileService = {
       };
     });
 
-    const ranked = scored.sort((a, b) => b.score - a.score).filter((m) => m.score > 0);
+    const ranked = scored.sort((a: any, b: any) => b.score - a.score).filter((m: any) => m.score > 0);
     return { members: ranked.slice(0, 50) };
   },
 
@@ -282,7 +282,7 @@ export const profileService = {
       orderBy: { createdAt: "desc" },
       take: 20,
     });
-    return members.map((m) => {
+    return members.map((m: any) => {
       const safe = toSafeUser(m);
       const total = safe.kyLuat + safe.daoDuc + safe.truyenCamHung + safe.postScore + safe.referredScore;
       const score = Math.round(total / 5);
