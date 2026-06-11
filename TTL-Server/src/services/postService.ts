@@ -1,5 +1,6 @@
 import { getDb } from "../db";
 import { BadRequestError, NotFoundError, ForbiddenError } from "../lib/errors";
+import { notificationService } from "./notificationService";
 
 const postInclude = {
   user: {
@@ -57,10 +58,10 @@ export const postService = {
       await getDb().notification.create({
         data: {
           userId: null,
-          title: "Bài viết mới từ SOS",
+          title: "Bài viết mới từ Tinh Hoa Việt",
           content: data.content.slice(0, 120),
           type: "auto",
-          link: "/home/news",
+          link: `/home/posts/${post.id}`,
         },
       });
     }
@@ -147,6 +148,12 @@ export const postService = {
       throw new BadRequestError("Bạn không có quyền xoá bài viết này");
 
     await getDb().post.delete({ where: { id: postId } });
+    if (post.status === "approved") {
+      await getDb().user.update({
+        where: { id: userId },
+        data: { postScore: { decrement: 1 } },
+      });
+    }
     return { message: "Đã xoá bài viết" };
   },
 
@@ -155,6 +162,12 @@ export const postService = {
     if (!post) throw new NotFoundError("Bài viết không tồn tại");
 
     await getDb().post.delete({ where: { id: postId } });
+    if (post.status === "approved") {
+      await getDb().user.update({
+        where: { id: post.userId },
+        data: { postScore: { decrement: 1 } },
+      });
+    }
     return { message: "Đã xoá bài viết" };
   },
 
@@ -296,7 +309,7 @@ export const postService = {
     });
     await getDb().user.update({
       where: { id: post.userId },
-      data: { kyLuat: { increment: 1 } },
+      data: { postScore: { increment: 1 } },
     });
 
     await getDb().auditLog.create({
@@ -308,6 +321,16 @@ export const postService = {
         metadata: { postContent: post.content?.slice(0, 100), authorId: post.userId },
       },
     });
+
+    if (adminNote) {
+      await notificationService.create({
+        userId: post.userId,
+        title: "Admin đã nhận xét bài viết của bạn",
+        content: adminNote,
+        type: "auto",
+        link: `/home/posts/${postId}`,
+      }).catch(() => {});
+    }
 
     return updated;
   },
@@ -332,6 +355,16 @@ export const postService = {
         metadata: { postContent: post.content?.slice(0, 100), authorId: post.userId },
       },
     });
+
+    if (adminNote) {
+      await notificationService.create({
+        userId: post.userId,
+        title: "Admin đã nhận xét bài viết của bạn",
+        content: adminNote,
+        type: "auto",
+        link: `/home/posts/${postId}`,
+      }).catch(() => {});
+    }
 
     return updated;
   },

@@ -143,7 +143,8 @@ export const quizService = {
 
   async createQuizQuestion(data: { question: string; options: Record<string, string>; correctAnswer: string; orderIndex?: number }) {
     const flow = await flowService.getDefaultFlow();
-    return getDb().quizQuestion.create({ data: { ...data, membershipFlowId: flow.id, options: data.options } });
+    const { id: _, ...clean } = data as any;
+    return getDb().quizQuestion.create({ data: { ...clean, membershipFlowId: flow.id, options: data.options } });
   },
 
   async updateQuizQuestion(id: string, data: { question?: string; options?: Record<string, string>; correctAnswer?: string }) {

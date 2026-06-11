@@ -2,7 +2,6 @@
 
 import { useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -18,7 +17,6 @@ import {
   Star,
 } from "lucide-react";
 import { useManagePosts } from "@/hook/posts/useManagePosts";
-import { profileService } from "@/service/profile.service";
 import PostsPagination from "@/components/posts/PostsPagination";
 import EditPostModal from "@/components/post/EditPostModal";
 import ConfirmDeleteModal from "@/components/posts/ConfirmDeleteModal";
@@ -30,13 +28,6 @@ gsap.registerPlugin(ScrollTrigger);
 export default function ManagePostsPage() {
   const feedRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const [postScore, setPostScore] = useState(0);
-
-  useEffect(() => {
-    profileService.getProfile().then((p) => {
-      setPostScore(p.core.postScore);
-    }).catch(() => {});
-  }, []);
 
   useEffect(() => {
     const el = feedRef.current;
@@ -111,7 +102,7 @@ export default function ManagePostsPage() {
         },
         {
           label: "Điểm bài viết",
-          value: postScore,
+          value: posts.filter((p) => p.status === "approved").length,
           icon: Star,
           iconBg: "bg-amber-400/10",
           iconColor: "text-amber-400",

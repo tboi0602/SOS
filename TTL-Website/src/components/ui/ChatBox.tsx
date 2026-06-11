@@ -14,7 +14,7 @@ type Message = {
 const INITIAL_MESSAGES: Message[] = [
   {
     role: "ai",
-    text: "👋 Chào bạn! Tôi là trợ lý AI của **SOS** — Hệ thống bán hàng toàn diện.\n\nBạn muốn tìm hiểu về:\n• 🔥 Chương trình đào tạo thực chiến\n• 💼 Cơ hội thu nhập & học bổng\n• 🎯 Lộ trình phát triển bản thân\n\nHãy đặt câu hỏi, tôi sẽ giải đáp ngay!",
+    text: "👋 Chào bạn! Tôi là trợ lý AI của **TRUNG TÂM ĐỀ CỬ TINH HOA VIỆT** \n Bạn đang thắc mắc điều gì? \nHãy đặt câu hỏi, tôi sẽ giải đáp ngay!",
   },
 ];
 
@@ -33,8 +33,8 @@ function ChatMessage({ msg }: { msg: Message }) {
       >
         {isAI ? (
           <Image
-            src="/images/logo.png"
-            alt="SOS"
+            src="/images/tbv-logo.png"
+            alt="TINHHOAVIET"
             width={28}
             height={28}
             unoptimized
@@ -47,7 +47,10 @@ function ChatMessage({ msg }: { msg: Message }) {
       <div
         className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${isAI ? "glass rounded-tl-sm" : "bg-primary/20 border border-primary/20 rounded-tr-sm"}`}
       >
-        <div className="whitespace-pre-line" style={{ color: "var(--text-secondary)" }}>
+        <div
+          className="whitespace-pre-line"
+          style={{ color: "var(--text-secondary)" }}
+        >
           {msg.text.split(/(\*\*[^*]+\*\*)/).map((part, i) =>
             part.startsWith("**") && part.endsWith("**") ? (
               <strong key={i} style={{ color: "var(--text-primary)" }}>
@@ -64,7 +67,7 @@ function ChatMessage({ msg }: { msg: Message }) {
 }
 
 const FALLBACK =
-  "Cảm ơn bạn đã quan tâm! Đội ngũ tư vấn của **SOS** sẽ liên hệ với bạn trong thời gian sớm nhất để giải đáp chi tiết.\n\nBạn cũng có thể gọi hotline **0904 373 123** để được hỗ trợ ngay nhé! 💙";
+  "Cảm ơn bạn đã quan tâm! Đội ngũ tư vấn của **TRUNG TÂM ĐỀ CỬ TINH HOA VIỆT** sẽ liên hệ với bạn trong thời gian sớm nhất để giải đáp chi tiết.\n\nBạn cũng có thể gọi hotline **0904 373 123** để được hỗ trợ ngay nhé! 💙";
 
 export default function ChatBox() {
   const [open, setOpen] = useState(false);
@@ -135,24 +138,34 @@ export default function ChatBox() {
             animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
             exit={{ opacity: 0, y: 24, scale: 0.92, filter: "blur(4px)" }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="w-90 sm:w-100 rounded-2xl bg-[var(--surface-elevated)]/95 backdrop-blur-xl shadow-2xl overflow-hidden origin-bottom-right" style={{ border: "1px solid var(--border-base)" }}
+            className="w-90 sm:w-100 rounded-2xl bg-[var(--surface-elevated)]/95 backdrop-blur-xl shadow-2xl overflow-hidden origin-bottom-right"
+            style={{ border: "1px solid var(--border-base)" }}
           >
-            <div className="flex items-center justify-between  px-5 py-4" style={{ borderBottom: "1px solid var(--border-base)" }}>
+            <div
+              className="flex items-center justify-between  px-5 py-4"
+              style={{ borderBottom: "1px solid var(--border-base)" }}
+            >
               <div className="flex items-center gap-2">
                 <Image
-                  src="/images/logo.png"
-                  alt="SOS"
+                  src="/images/tbv-logo.png"
+                  alt="TINHHOAVIET"
                   width={36}
                   height={36}
                   unoptimized
                 />
                 <div>
-                  <p className="text-sm font-semibold flex items-center gap-1.5" style={{ color: "var(--text-primary)" }}>
-                    SOS AI
+                  <p
+                    className="text-sm font-semibold flex items-center gap-1.5"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    TRUNG TÂM ĐỀ CỬ TINH HOA VIỆT
                     <Sparkles size={12} className="text-accent" />
                   </p>
-                  <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>
-                    Trợ lý ảo — Hệ thống bán hàng toàn diện
+                  <p
+                    className="text-[10px]"
+                    style={{ color: "var(--text-tertiary)" }}
+                  >
+                    Trợ lý ảo — TRUNG TÂM ĐỀ CỬ TINH HOA VIỆT - ĐỐI TÁC
                   </p>
                 </div>
               </div>
@@ -160,8 +173,13 @@ export default function ChatBox() {
                 onClick={() => setOpen(false)}
                 className="p-1.5 rounded-lg transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary"
                 aria-label="Đóng chat"
-                onMouseEnter={(e) => e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 10%, transparent)"}
-                onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background =
+                    "color-mix(in srgb, var(--text-primary) 10%, transparent)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "transparent")
+                }
               >
                 <X size={16} style={{ color: "var(--text-tertiary)" }} />
               </button>
@@ -181,8 +199,8 @@ export default function ChatBox() {
                   className="flex items-start gap-2.5"
                 >
                   <Image
-                    src="/images/logo.png"
-                    alt="SOS"
+                    src="/images/tbv-logo.png"
+                    alt="tinhhoaviet"
                     width={28}
                     height={28}
                     unoptimized
@@ -191,15 +209,24 @@ export default function ChatBox() {
                     <span className="flex gap-1">
                       <span
                         className="w-2 h-2 rounded-full animate-bounce"
-                        style={{ animationDelay: "0ms", background: "var(--text-tertiary)" }}
+                        style={{
+                          animationDelay: "0ms",
+                          background: "var(--text-tertiary)",
+                        }}
                       />
                       <span
                         className="w-2 h-2 rounded-full animate-bounce"
-                        style={{ animationDelay: "150ms", background: "var(--text-tertiary)" }}
+                        style={{
+                          animationDelay: "150ms",
+                          background: "var(--text-tertiary)",
+                        }}
                       />
                       <span
                         className="w-2 h-2 rounded-full animate-bounce"
-                        style={{ animationDelay: "300ms", background: "var(--text-tertiary)" }}
+                        style={{
+                          animationDelay: "300ms",
+                          background: "var(--text-tertiary)",
+                        }}
                       />
                     </span>
                   </div>
@@ -207,7 +234,10 @@ export default function ChatBox() {
               )}
             </div>
 
-            <div className="p-4 flex items-center gap-2" style={{ borderTop: "1px solid var(--border-base)" }}>
+            <div
+              className="p-4 flex items-center gap-2"
+              style={{ borderTop: "1px solid var(--border-base)" }}
+            >
               <input
                 ref={inputRef}
                 type="text"
@@ -216,7 +246,12 @@ export default function ChatBox() {
                 onKeyDown={handleKeyDown}
                 placeholder="Nhập tin nhắn..."
                 disabled={loading}
-                className="flex-1 rounded-xl px-4 py-2.5 text-sm placeholder:text-[var(--text-tertiary)] focus:border-primary focus:ring-1 focus:ring-primary/30 outline-none transition-all disabled:opacity-50" style={{ background: "var(--surface-elevated)", border: "1px solid var(--border-base)", color: "var(--text-primary)" }}
+                className="flex-1 rounded-xl px-4 py-2.5 text-sm placeholder:text-[var(--text-tertiary)] focus:border-primary focus:ring-1 focus:ring-primary/30 outline-none transition-all disabled:opacity-50"
+                style={{
+                  background: "var(--surface-elevated)",
+                  border: "1px solid var(--border-base)",
+                  color: "var(--text-primary)",
+                }}
               />
               <button
                 onClick={handleSend}
@@ -236,7 +271,10 @@ export default function ChatBox() {
         className=" group relative w-14 h-14 rounded-full flex items-center justify-center cursor-pointer focus-visible:ring-2 focus-visible:ring-primary/50 transition-all duration-300 hover:scale-110 active:scale-95"
         aria-label={open ? "Đóng chat" : "Mở chat"}
       >
-        <div className="absolute inset-0 rounded-full bg-primary/20 backdrop-blur-xl shadow-xl shadow-primary/30 group-hover:shadow-primary/50 transition-shadow duration-300" style={{ border: "1px solid var(--border-base)" }} />
+        <div
+          className="absolute inset-0 rounded-full bg-primary/20 backdrop-blur-xl shadow-xl shadow-primary/30 group-hover:shadow-primary/50 transition-shadow duration-300"
+          style={{ border: "1px solid var(--border-base)" }}
+        />
         <div className="absolute inset-0 rounded-full bg-linear-to-br from-primary/40 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         <div className="absolute -inset-1 rounded-full bg-primary/20 blur-xl opacity-0 group-hover:opacity-60 transition-opacity duration-300" />
         <span className="relative z-10 flex items-center justify-center">
@@ -244,11 +282,11 @@ export default function ChatBox() {
             <X size={22} className="text-[var(--text-primary)]" />
           ) : (
             <Image
-              src="/images/logo.png"
+              src="/images/tbv-logo.png"
               alt="Chat"
-              width={32}
-              height={32}
-              className="brightness-0 invert drop-shadow-lg"
+              width={52}
+              height={52}
+              className=" drop-shadow-lg"
               unoptimized
             />
           )}

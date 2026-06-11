@@ -1,98 +1,105 @@
-"use client"
+"use client";
 
-import { useState, useRef } from "react"
-import Image from "next/image"
-import { X, ImagePlus, Loader2, Trash2, Hash, Link2 } from "lucide-react"
-import type { Post } from "@/service/api"
-import { postService } from "@/service/post.service"
+import { useState, useRef } from "react";
+import Image from "next/image";
+import { X, ImagePlus, Loader2, Trash2, Hash, Link2 } from "lucide-react";
+import type { Post } from "@/service/api";
+import { postService } from "@/service/post.service";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 interface EditPostModalProps {
-  post: Post
-  onClose: () => void
-  onUpdated: (post: Post) => void
+  post: Post;
+  onClose: () => void;
+  onUpdated: (post: Post) => void;
 }
 
 interface NewMedia {
-  file: File
-  preview: string
+  file: File;
+  preview: string;
 }
 
-export default function EditPostModal({ post, onClose, onUpdated }: EditPostModalProps) {
-  const [content, setContent] = useState(post.content)
-  const [existingImages, setExistingImages] = useState<string[]>(post.images)
-  const [newMedia, setNewMedia] = useState<NewMedia[]>([])
-  const [productLink, setProductLink] = useState(post.productLink || "")
-  const [hashtags, setHashtags] = useState<string[]>(post.hashtags || [])
-  const [hashtagInput, setHashtagInput] = useState("")
-  const [saving, setSaving] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+export default function EditPostModal({
+  post,
+  onClose,
+  onUpdated,
+}: EditPostModalProps) {
+  const [content, setContent] = useState(post.content);
+  const [existingImages, setExistingImages] = useState<string[]>(post.images);
+  const [newMedia, setNewMedia] = useState<NewMedia[]>([]);
+  const [productLink, setProductLink] = useState(post.productLink || "");
+  const [hashtags, setHashtags] = useState<string[]>(post.hashtags || []);
+  const [hashtagInput, setHashtagInput] = useState("");
+  const [saving, setSaving] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFiles = (files: FileList | null) => {
-    if (!files) return
+    if (!files) return;
     Array.from(files).forEach((file) => {
-      if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) return
-      const preview = URL.createObjectURL(file)
-      setNewMedia((prev) => [...prev, { file, preview }])
-    })
-  }
+      if (!file.type.startsWith("image/") && !file.type.startsWith("video/"))
+        return;
+      const preview = URL.createObjectURL(file);
+      setNewMedia((prev) => [...prev, { file, preview }]);
+    });
+  };
 
   const removeExisting = (index: number) => {
-    setExistingImages((prev) => prev.filter((_, i) => i !== index))
-  }
+    setExistingImages((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const removeNew = (index: number) => {
     setNewMedia((prev) => {
-      URL.revokeObjectURL(prev[index].preview)
-      return prev.filter((_, i) => i !== index)
-    })
-  }
+      URL.revokeObjectURL(prev[index].preview);
+      return prev.filter((_, i) => i !== index);
+    });
+  };
 
   const addHashtag = () => {
-    const tag = hashtagInput.trim().replace(/^#/, "")
+    const tag = hashtagInput.trim().replace(/^#/, "");
     if (tag && !hashtags.includes(tag)) {
-      setHashtags((prev) => [...prev, tag])
-      setHashtagInput("")
+      setHashtags((prev) => [...prev, tag]);
+      setHashtagInput("");
     }
-  }
+  };
 
   const handleHashtagKey = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault()
-      addHashtag()
+      e.preventDefault();
+      addHashtag();
     }
-  }
+  };
 
   const handleSave = async () => {
-    if (!content.trim()) return
-    setSaving(true)
+    if (!content.trim()) return;
+    setSaving(true);
     try {
-      let uploadedUrls: string[] = []
+      let uploadedUrls: string[] = [];
       if (newMedia.length > 0) {
-        const res = await postService.uploadMedia(newMedia.map((m) => m.file))
-        uploadedUrls = res.urls
+        const res = await postService.uploadMedia(newMedia.map((m) => m.file));
+        uploadedUrls = res.urls;
       }
 
-      const allImages = [...existingImages, ...uploadedUrls]
+      const allImages = [...existingImages, ...uploadedUrls];
 
       const res = await postService.update(post.id, {
         content: content.trim(),
         images: allImages,
         productLink: productLink.trim() || null,
         hashtags: hashtags.length > 0 ? hashtags : undefined,
-      })
-      onUpdated(res.post)
-      onClose()
+      });
+      onUpdated(res.post);
+      onClose();
     } catch {
       // handled by api interceptor
     } finally {
-      setSaving(false)
+      setSaving(false);
     }
-  }
+  };
 
   const resolveUrl = (url: string) =>
-    url.startsWith("http") || url.startsWith("blob:") ? url : `${API_URL}${url}`
+    url.startsWith("http") || url.startsWith("blob:")
+      ? url
+      : `${API_URL}${url}`;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -103,7 +110,9 @@ export default function EditPostModal({ post, onClose, onUpdated }: EditPostModa
 
       <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-[var(--surface-elevated)] border border-[var(--border-base)] shadow-2xl shadow-primary/10 animate-[slideUp_0.3s_ease-out]">
         <div className="sticky top-0 z-10 flex items-center justify-between px-6 py-4 border-b border-[var(--border-base)] bg-[var(--surface-elevated)]/95 backdrop-blur-xl rounded-t-2xl">
-          <h2 className="text-base font-bold text-[var(--text-primary)]">Chỉnh sửa bài viết</h2>
+          <h2 className="text-base font-bold text-[var(--text-primary)]">
+            Chỉnh sửa bài viết
+          </h2>
           <button
             onClick={onClose}
             className="size-8 rounded-lg flex items-center justify-center text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-hover)] transition-all cursor-pointer"
@@ -138,8 +147,15 @@ export default function EditPostModal({ post, onClose, onUpdated }: EditPostModa
               </label>
               <div className="grid grid-cols-4 gap-2">
                 {existingImages.map((url, i) => (
-                  <div key={`existing-${i}`} className="relative group aspect-square rounded-lg overflow-hidden border border-[var(--border-base)] cursor-pointer">
-                    <Image src={resolveUrl(url)} alt="" fill className="object-cover" />
+                  <div
+                    key={`existing-${i}`}
+                    className="relative group aspect-square rounded-lg overflow-hidden border border-[var(--border-base)] cursor-pointer"
+                  >
+                    <img
+                      src={resolveUrl(url)}
+                      alt={`post-image-${i}`}
+                      className="object-cover"
+                    />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button
                         type="button"
@@ -162,8 +178,15 @@ export default function EditPostModal({ post, onClose, onUpdated }: EditPostModa
               </label>
               <div className="grid grid-cols-4 gap-2">
                 {newMedia.map((m, i) => (
-                  <div key={`new-${i}`} className="relative group aspect-square rounded-lg overflow-hidden border border-accent/20 cursor-pointer">
-                    <Image src={m.preview} alt="" fill unoptimized className="object-cover" />
+                  <div
+                    key={`new-${i}`}
+                    className="relative group aspect-square rounded-lg overflow-hidden border border-accent/20 cursor-pointer"
+                  >
+                    <img
+                      src={m.preview}
+                      alt={`preview-${i}`}
+                      className="object-cover"
+                    />
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <button
                         type="button"
@@ -188,7 +211,10 @@ export default function EditPostModal({ post, onClose, onUpdated }: EditPostModa
               type="file"
               multiple
               accept="image/*,video/*"
-              onChange={(e) => { handleFiles(e.target.files); e.target.value = "" }}
+              onChange={(e) => {
+                handleFiles(e.target.files);
+                e.target.value = "";
+              }}
               className="hidden"
             />
             <button
@@ -239,7 +265,9 @@ export default function EditPostModal({ post, onClose, onUpdated }: EditPostModa
                     #{tag}
                     <button
                       type="button"
-                      onClick={() => setHashtags((prev) => prev.filter((t) => t !== tag))}
+                      onClick={() =>
+                        setHashtags((prev) => prev.filter((t) => t !== tag))
+                      }
                       className="hover:text-primary-light transition-colors cursor-pointer"
                     >
                       <X size={10} />
@@ -272,14 +300,24 @@ export default function EditPostModal({ post, onClose, onUpdated }: EditPostModa
 
       <style jsx>{`
         @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
         @keyframes slideUp {
-          from { opacity: 0; transform: translateY(20px) scale(0.97); }
-          to { opacity: 1; transform: translateY(0) scale(1); }
+          from {
+            opacity: 0;
+            transform: translateY(20px) scale(0.97);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
         }
       `}</style>
     </div>
-  )
+  );
 }

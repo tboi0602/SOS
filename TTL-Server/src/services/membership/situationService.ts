@@ -124,7 +124,8 @@ export const situationService = {
 
   async createSituationQuestion(data: { title: string; description: string; orderIndex?: number }) {
     const flow = await flowService.getDefaultFlow();
-    return getDb().situationQuestion.create({ data: { ...data, membershipFlowId: flow.id } });
+    const { id: _, ...clean } = data as any;
+    return getDb().situationQuestion.create({ data: { ...clean, membershipFlowId: flow.id } });
   },
 
   async updateSituationQuestion(id: string, data: { title?: string; description?: string }) {

@@ -3,10 +3,33 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Image from "next/image";
-import { FEATURES_DATA } from "@/utils/constants";
 import { cn } from "@/utils/cn";
 import { ShineCard, SectionGlow } from "@/components/landing/Effects";
 import TiltContainer from "@/components/ui/TiltContainer";
+
+interface FeatureItem {
+  title: string;
+  description: string;
+}
+
+const FEATURES_DATA: FeatureItem[] = [
+  {
+    title: "Đề cử & Thẩm định Tinh hoa",
+    description: "Quy trình đề cử khoa học, thẩm định khắt khe theo Hệ quy chiếu 5T — Thật, Minh, Chủ, Chuyên, Tôn — đảm bảo mọi giá trị được suy tôn đều hội tụ đầy đủ các tiêu chuẩn học thuật và đạo đức cao nhất.",
+  },
+  {
+    title: "Bảo chứng & Vinh danh",
+    description: "Chúng tôi bảo chứng tính xác thực của thành tựu, trao tặng chứng nhận Tinh Hoa Việt chính thống và tổ chức lễ vinh danh trang trọng, ghi nhận sự cống hiến của Quý vị trước cộng đồng.",
+  },
+  {
+    title: "Lưu danh & Trao truyền",
+    description: "Thành tựu được lưu danh vĩnh viễn trên Bản đồ Số Tinh Hoa Việt 3D — một di sản số bất tử, cho phép trao truyền tri thức và giá trị qua nhiều thế hệ, kết nối tinh hoa dân tộc với thế giới.",
+  },
+  {
+    title: "Khai thác & Phát triển",
+    description: "Sàn Tài sản Trí tuệ Tinh Hoa Việt là nơi Quý vị khai thác giá trị thương mại từ di sản đã được xác lập, kết nối đối tác, mở rộng cộng đồng và phát triển bền vững trong hệ sinh thái số.",
+  },
+];
 
 const ease = [0.16, 1, 0.3, 1] as const;
 

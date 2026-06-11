@@ -1,12 +1,14 @@
 "use client";
 
-import { Bell, Check } from "lucide-react";
+import { Bell, Check, ExternalLink } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/Skeleton";
 import Pagination from "@/components/admin/Pagination";
 import { useNotifications } from "@/hook/notifications/useNotifications";
 
 export default function NotificationsPage() {
   const { notifications, loading, page, total, totalPages, setPage, markRead, markAllRead } = useNotifications();
+  const router = useRouter();
 
   return (
     <div className="min-h-screen px-4 sm:px-6 py-8 select-none relative z-10 animate-fade-up" style={{ color: "var(--text-primary)" }}>
@@ -75,6 +77,16 @@ export default function NotificationsPage() {
                         <h3 className="text-sm font-bold" style={{ color: "var(--text-primary)" }}>
                           {n.title}
                         </h3>
+                        {n.link && (
+                          <button
+                            onClick={() => { router.push(n.link!); if (!n.isRead) markRead(n.id); }}
+                            className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium transition-all cursor-pointer hover:bg-primary/15"
+                            style={{ background: "color-mix(in srgb, var(--clr-primary) 12%, transparent)", color: "var(--clr-primary)" }}
+                            title="Xem chi tiết"
+                          >
+                            <ExternalLink size={10} /> Xem
+                          </button>
+                        )}
                       </div>
                       <p className="text-xs text-[var(--text-tertiary)] leading-relaxed">
                         {n.content}

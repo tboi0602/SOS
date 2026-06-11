@@ -1,5 +1,6 @@
 import { getDb } from "../db"
 import { NotFoundError, ForbiddenError } from "../lib/errors"
+import { notificationService } from "./notificationService"
 
 export const journalService = {
   async create(userId: string, data: { title: string; content: string; images?: string[] }) {
@@ -54,9 +55,15 @@ export const journalService = {
 
   async delete(journalId: string, userId: string) {
     const entry = await getDb().journal.findUnique({ where: { id: journalId } })
-    if (!entry) throw new NotFoundError("Nhật ký không tồn tại")
+    if (!entry) throw new NotFoundError("Đạo đức không tồn tại")
     if (entry.userId !== userId) throw new NotFoundError("Không có quyền xoá")
     await getDb().journal.delete({ where: { id: journalId } })
+    if (entry.status === "approved") {
+      await getDb().user.update({
+        where: { id: userId },
+        data: { daoDuc: { decrement: 1 } },
+      })
+    }
     return { message: "Đã xoá" }
   },
 
@@ -92,7 +99,7 @@ export const journalService = {
 
   async approve(journalId: string, adminNote?: string, actorId?: string) {
     const entry = await getDb().journal.findUnique({ where: { id: journalId } })
-    if (!entry) throw new NotFoundError("Nhật ký không tồn tại")
+    if (!entry) throw new NotFoundError("Đạo đức không tồn tại")
     if (entry.status !== "pending") throw new ForbiddenError("Chỉ duyệt được nhật ký đang chờ")
 
     const updated = await getDb().journal.update({
@@ -114,12 +121,22 @@ export const journalService = {
       },
     })
 
+    if (adminNote) {
+      await notificationService.create({
+        userId: entry.userId,
+        title: "Admin đã nhận xét nhật ký của bạn",
+        content: adminNote,
+        type: "auto",
+        link: "/home/journal",
+      }).catch(() => {})
+    }
+
     return updated
   },
 
   async reject(journalId: string, adminNote?: string, actorId?: string) {
     const entry = await getDb().journal.findUnique({ where: { id: journalId } })
-    if (!entry) throw new NotFoundError("Nhật ký không tồn tại")
+    if (!entry) throw new NotFoundError("Đạo đức không tồn tại")
     if (entry.status !== "pending") throw new ForbiddenError("Chỉ từ chối được nhật ký đang chờ")
 
     const updated = await getDb().journal.update({
@@ -136,6 +153,16 @@ export const journalService = {
         metadata: { journalTitle: entry.title?.slice(0, 100), authorId: entry.userId },
       },
     })
+
+    if (adminNote) {
+      await notificationService.create({
+        userId: entry.userId,
+        title: "Admin đã nhận xét nhật ký của bạn",
+        content: adminNote,
+        type: "auto",
+        link: "/home/journal",
+      }).catch(() => {})
+    }
 
     return updated
   },

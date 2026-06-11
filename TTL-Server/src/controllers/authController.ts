@@ -136,4 +136,10 @@ export const authController = {
       res.redirect(`${config.email.frontendUrl}/auth/login?error=${encodeURIComponent(code)}`);
     }
   }),
+
+  deleteAccount: asyncHandler(async (req: Request, res: Response) => {
+    await authService.deleteAccount(req.user!.userId);
+    res.clearCookie("token");
+    res.json({ message: "Đã xoá tài khoản thành công" });
+  }),
 };

@@ -34,7 +34,7 @@ router.get("/", customerVisitController.list)
 router.delete("/:id", customerVisitController.delete)
 
 // Admin routes
-router.get("/admin", requirePermission("manage_posts"), customerVisitController.adminList)
-router.put("/:id/review", requirePermission("manage_posts"), customerVisitController.review)
+router.get("/admin", requirePermission("manage_content"), customerVisitController.adminList)
+router.put("/:id/review", requirePermission("manage_content"), customerVisitController.review)
 
 export default router

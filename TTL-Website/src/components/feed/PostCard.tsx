@@ -107,8 +107,8 @@ export default function PostCard({
   };
 
   return (
-    <div className="post-card glass-strong rounded-2xl overflow-hidden" style={{ boxShadow: "0 1px 3px color-mix(in srgb, var(--clr-primary) 6%, transparent)" }}>
-      <div className="p-5">
+    <div className="post-card glass-strong max-w-2xl  rounded-2xl overflow-hidden" style={{ boxShadow: "0 1px 3px color-mix(in srgb, var(--clr-primary) 6%, transparent)" }}>
+      <div className="p-3">
         {/* Header Post */}
         <PostHeader
           post={post}
@@ -128,9 +128,20 @@ export default function PostCard({
         />
 
         {/* Content Post */}
-        <p className="text-sm whitespace-pre-line leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+        <p className="text-[13px] whitespace-pre-line leading-[1.4]" style={{ color: "var(--text-secondary)" }}>
           {post.content}
         </p>
+
+        {/* Hashtags */}
+        {post.hashtags && post.hashtags.length > 0 && (
+          <div className="flex flex-wrap gap-1 mt-2">
+            {post.hashtags.map((tag) => (
+              <span key={tag} className="inline-flex items-center px-2 py-0.5 rounded-full bg-primary/10 border border-primary/15 text-primary text-[10px] font-medium">
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
 
         {/* Product Link */}
         {post.productLink && (
@@ -138,11 +149,11 @@ export default function PostCard({
             href={post.productLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-3 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary/10 border border-primary/20 text-sm text-accent hover:bg-primary/20 transition-all group cursor-pointer"
+            className="mt-2 flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary/10 border border-primary/20 text-xs text-accent hover:bg-primary/20 transition-all group cursor-pointer"
           >
-            <ExternalLink size={14} />
+            <ExternalLink size={12} />
             <span className="flex-1 truncate">{post.productLink}</span>
-            <span className="text-xs group-hover:text-accent transition-colors" style={{ color: "var(--text-tertiary)" }}>
+            <span className="text-[10px] group-hover:text-accent transition-colors" style={{ color: "var(--text-tertiary)" }}>
               Mở link
             </span>
           </a>
@@ -158,7 +169,7 @@ export default function PostCard({
         )}
 
         {/* Post Stats */}
-        <div className="flex items-center gap-1 mt-4 pt-3 text-xs" style={{ borderTop: "1px solid var(--border-base)", color: "var(--text-tertiary)" }}>
+        <div className="flex items-center gap-1 mt-2 pt-2 text-[11px]" style={{ borderTop: "1px solid var(--border-base)", color: "var(--text-tertiary)" }}>
           <span>{post.likeCount} lượt thích</span>
           <span className="mx-2">·</span>
           <button
@@ -173,6 +184,7 @@ export default function PostCard({
         <PostActionButtons
           liked={post.liked}
           showComments={showComments}
+          postId={post.id}
           onLike={() => user ? onLike(post.id) : setShowLoginModal(true)}
           onToggleComments={() => setShowComments(!showComments)}
         />

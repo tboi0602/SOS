@@ -2,12 +2,25 @@
 
 import { useRef } from "react"
 import { motion, useInView } from "framer-motion"
-import { STATS_DATA } from "@/utils/constants"
 import { SectionGlow } from "@/components/landing/Effects"
+
+interface StatItem {
+  value: string;
+  suffix: string;
+  label: string;
+  color: string;
+}
+
+const STATS_DATA: StatItem[] = [
+  { value: "128+", suffix: "Hồ sơ", label: "Đề cử Tinh hoa đã qua thẩm định và xác lập", color: "from-primary to-accent" },
+  { value: "5", suffix: "Tiêu chí", label: "Trụ cột của Hệ quy chiếu 5T — Thật, Minh, Chủ, Chuyên, Tôn", color: "from-accent to-primary" },
+  { value: "3", suffix: "Cổng", label: "Hệ sinh thái nền tảng số kết nối và khai thác giá trị", color: "from-primary to-accent" },
+  { value: "100%", suffix: "Cam kết", label: "Bảo chứng tính xác thực và lưu danh vĩnh viễn", color: "from-accent to-primary" },
+];
 
 const ease = [0.16, 1, 0.3, 1] as const
 
-function StatCard({ value, suffix, label, color, index }: typeof STATS_DATA[0] & { index: number }) {
+function StatCard({ value, suffix, label, color, index }: StatItem & { index: number }) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: "-40px" })
 

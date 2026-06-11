@@ -46,11 +46,17 @@ export default function LoginPage() {
       TBV_OIDC_USERINFO_FAILED: "Không lấy được thông tin người dùng từ TBV",
       TBV_OIDC_INVALID_PROFILE: "Thông tin người dùng TBV không hợp lệ",
     };
-    toast(messages[ssoError] || "Đăng nhập bằng Tinh Hoa Việt thất bại", "error");
+    toast(
+      messages[ssoError] || "Đăng nhập bằng Tinh Hoa Việt thất bại",
+      "error",
+    );
   }, [toast]);
 
   return (
-    <div className="relative min-h-screen flex overflow-hidden animate-fade-up" style={{ background: "var(--surface-base)" }}>
+    <div
+      className="relative min-h-screen flex overflow-hidden animate-fade-up"
+      style={{ background: "var(--surface-base)" }}
+    >
       <div className="absolute inset-0 gradient-mesh" />
       <div className="relative z-10 flex w-full">
         <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center overflow-hidden">
@@ -62,23 +68,28 @@ export default function LoginPage() {
             className="object-cover opacity-60"
             unoptimized
           />
-          <div className="relative z-10 text-center px-12 max-w-lg">
+          <div className="relative z-10  text-center px-12 max-w-lg">
             <Link href="/" className="block w-fit mx-auto mb-6">
               <Image
                 src="/images/logo.png"
-                alt="SOS"
-                width={80}
-                height={80}
-                className="cursor-pointer"
+                alt="Tinh Hoa Việt"
+                width={300}
+                height={200}
+                className="cursor-pointer hover:scale-105"
                 unoptimized
               />
             </Link>
-            <h1 className="text-4xl font-bold mb-4 leading-tight" style={{ color: "var(--text-primary)" }}>
+            <h1
+              className="text-4xl font-bold mb-4 leading-tight"
+              style={{ color: "var(--text-primary)" }}
+            >
               Đánh thức <span className="text-gradient">tiềm năng</span>
             </h1>
-            <p className="leading-relaxed" style={{ color: "var(--text-tertiary)" }}>
-              SOS — Hệ thống bán hàng toàn diện. Trang bị hành trang Sales &amp;
-              Marketing thực chiến cho thế hệ trẻ Việt Nam.
+            <p
+              className="leading-relaxed"
+              style={{ color: "var(--text-tertiary)" }}
+            >
+              Cổng đăng ký trở thành đối tác thuộc hệ sinh thái tổ chức Tinh Hoa Việt
             </p>
             <div className="mt-10 flex gap-4 justify-center">
               <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
@@ -102,18 +113,26 @@ export default function LoginPage() {
             >
               <Image
                 src="/images/logo.png"
-                alt="SOS"
+                alt="Tinh Hoa Việt"
                 width={40}
                 height={40}
                 unoptimized
               />
-            <span className="sr-only">SOS — Sales Omni System</span>
+              <span className="sr-only">TRUNG TÂM ĐỀ CỬ TINH HOA VIỆT</span>
             </Link>
 
             <div className="card p-8">
               <div className="text-center mb-8">
-                <h1 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Đăng nhập</h1>
-                <p className="text-sm mt-1" style={{ color: "var(--text-tertiary)" }}>
+                <h1
+                  className="text-2xl font-bold"
+                  style={{ color: "var(--text-primary)" }}
+                >
+                  Đăng nhập
+                </h1>
+                <p
+                  className="text-sm mt-1"
+                  style={{ color: "var(--text-tertiary)" }}
+                >
                   Chào mừng bạn trở lại
                 </p>
               </div>
@@ -136,7 +155,8 @@ export default function LoginPage() {
                     required
                     className="w-full rounded-xl px-4 py-3 text-sm outline-none transition-all"
                     style={{
-                      background: "color-mix(in srgb, var(--text-primary) 5%, transparent)",
+                      background:
+                        "color-mix(in srgb, var(--text-primary) 5%, transparent)",
                       border: "0.5px solid var(--border-base)",
                       color: "var(--text-primary)",
                     }}
@@ -161,7 +181,8 @@ export default function LoginPage() {
                       required
                       className="w-full rounded-xl pl-4 pr-11 py-3 text-sm outline-none transition-all"
                       style={{
-                        background: "color-mix(in srgb, var(--text-primary) 5%, transparent)",
+                        background:
+                          "color-mix(in srgb, var(--text-primary) 5%, transparent)",
                         border: "0.5px solid var(--border-base)",
                         color: "var(--text-primary)",
                       }}
@@ -182,7 +203,13 @@ export default function LoginPage() {
                 </div>
 
                 {needsActivation && (
-                  <div className="rounded-xl bg-amber-500/15 border px-4 py-3 text-sm text-amber-400" style={{ borderColor: "color-mix(in srgb, var(--color-warning) 30%, transparent)" }}>
+                  <div
+                    className="rounded-xl bg-amber-500/15 border px-4 py-3 text-sm text-amber-400"
+                    style={{
+                      borderColor:
+                        "color-mix(in srgb, var(--color-warning) 30%, transparent)",
+                    }}
+                  >
                     Tài khoản chưa được kích hoạt.
                     <button
                       type="button"
@@ -220,9 +247,17 @@ export default function LoginPage() {
               </form>
 
               <div className="relative flex items-center gap-3 mt-6">
-                <div className="flex-1 h-px" style={{ background: "var(--border-base)" }} />
-                <span className="text-xs" style={{ color: "var(--text-dim)" }}>hoặc</span>
-                <div className="flex-1 h-px" style={{ background: "var(--border-base)" }} />
+                <div
+                  className="flex-1 h-px"
+                  style={{ background: "var(--border-base)" }}
+                />
+                <span className="text-xs" style={{ color: "var(--text-dim)" }}>
+                  hoặc
+                </span>
+                <div
+                  className="flex-1 h-px"
+                  style={{ background: "var(--border-base)" }}
+                />
               </div>
 
               <div className="mt-5">
@@ -236,7 +271,10 @@ export default function LoginPage() {
                 <TbvLoginButton />
               </div>
 
-              <p className="text-center text-sm mt-6" style={{ color: "var(--text-dim)" }}>
+              <p
+                className="text-center text-sm mt-6"
+                style={{ color: "var(--text-dim)" }}
+              >
                 Chưa có tài khoản?{" "}
                 <Link
                   href="/auth/register"

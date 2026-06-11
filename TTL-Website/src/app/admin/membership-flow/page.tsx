@@ -51,51 +51,56 @@ export default function AdminMembershipFlowPage() {
   return (
     <div className="min-h-screen px-4 sm:px-6 py-8 select-none relative z-10 animate-fade-up">
       <div className="max-w-7xl mx-auto space-y-8">
-        <div ref={headerRef}>
-          <h1 className="text-lg font-bold flex items-center gap-2">
-            <Users size={20} /> Quản lý đăng ký thành viên
-          </h1>
-          <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>
+        <div ref={headerRef} className="text-center">
+          <div className="inline-flex p-3 rounded-2xl mb-4" style={{ background: "color-mix(in srgb, var(--clr-primary) 10%, transparent)" }}>
+            <Users size={24} style={{ color: "var(--clr-primary)" }} />
+          </div>
+          <h1 className="text-xl font-bold tracking-tight">Quản lý đăng ký thành viên</h1>
+          <p className="text-sm mt-1.5" style={{ color: "var(--text-tertiary)" }}>
             Quản lý các bước trong luồng đăng ký hội viên
           </p>
         </div>
 
-        <div className="relative flex gap-1 p-1 rounded-2xl w-fit" style={{
-          background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)",
-          boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)",
-          border: "0.5px solid var(--border-base)",
-        }}>
-          <div ref={tabsRef} className="flex gap-1">
-            {TABS.map((t) => {
-              const Icon = t.icon
-              const active = tab === t.key
-              return (
-                <button
-                  key={t.key}
-                  data-mf-tab={t.key}
-                  onClick={() => setTab(t.key)}
-                  className={`relative z-10 flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-colors duration-200 cursor-pointer min-h-10 ${
-                    active ? "text-primary" : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
-                  }`}
-                >
-                  <Icon size={15} />
-                  {t.label}
-                </button>
-              )
-            })}
+        <div className="flex justify-center">
+          <div className="relative flex gap-1 p-1 rounded-2xl" style={{
+            background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)",
+            boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)",
+            border: "0.5px solid var(--border-base)",
+          }}>
+            <div ref={tabsRef} className="flex gap-1">
+              {TABS.map((t) => {
+                const Icon = t.icon
+                const active = tab === t.key
+                return (
+                  <button
+                    key={t.key}
+                    data-mf-tab={t.key}
+                    onClick={() => setTab(t.key)}
+                    className={`relative z-10 flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-medium transition-colors duration-200 cursor-pointer ${
+                      active ? "text-primary" : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
+                    }`}
+                  >
+                    <Icon size={16} />
+                    {t.label}
+                  </button>
+                )
+              })}
+            </div>
+            <div
+              ref={indicatorRef}
+              className="absolute top-1 bottom-1 rounded-xl transition-all duration-300 pointer-events-none"
+              style={{ width: 0, transform: "translateX(0)", background: "color-mix(in srgb, var(--clr-primary) 25%, transparent)", border: "0.5px solid color-mix(in srgb, var(--clr-primary) 40%, transparent)" }}
+            />
           </div>
-          <div
-            ref={indicatorRef}
-            className="absolute top-1 bottom-1 rounded-xl transition-all duration-300 pointer-events-none"
-            style={{ width: 0, transform: "translateX(0)", background: "color-mix(in srgb, var(--clr-primary) 25%, transparent)", border: "0.5px solid color-mix(in srgb, var(--clr-primary) 40%, transparent)" }}
-          />
         </div>
 
-        <div ref={contentRef}>
-          {tab === "pending-docs" && <PendingDocsTab />}
-          {tab === "pending-payments" && <PendingPaymentsTab />}
-          {tab === "active" && <ActiveMembersTab />}
-          {tab === "settings" && <SettingsTab />}
+        <div ref={contentRef} className="flex justify-center">
+          <div className="w-full max-w-4xl">
+            {tab === "pending-docs" && <PendingDocsTab />}
+            {tab === "pending-payments" && <PendingPaymentsTab />}
+            {tab === "active" && <ActiveMembersTab />}
+            {tab === "settings" && <SettingsTab />}
+          </div>
         </div>
       </div>
     </div>

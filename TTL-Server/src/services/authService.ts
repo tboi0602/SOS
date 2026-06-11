@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { v4 as uuid } from "uuid";
 import { OAuth2Client } from "google-auth-library";
 import { signToken } from "../utils/jwt";
+import { generateMemberId } from "../utils/id";
 import { sendActivationEmail, sendResetPasswordEmail, sendWelcomeEmail } from "./mail";
 import { logger } from "../lib/logger";
 import { config } from "../config";
@@ -38,7 +39,7 @@ export const authService = {
 
     let referredById: string | null = null;
     if (data.referralCode) {
-      const referrer = await getDb().user.findFirst({ where: { referralCode: data.referralCode } });
+      const referrer = await getDb().user.findFirst({ where: { id: data.referralCode } });
       if (!referrer) {
         throw new BadRequestError("Mã giới thiệu không hợp lệ");
       }
@@ -55,9 +56,7 @@ export const authService = {
       Date.now() + ACTIVATION_TOKEN_EXPIRY_HOURS * 60 * 60 * 1000,
     );
 
-    const id = uuid();
-    const userCount = await getDb().user.count();
-    const memberId = `THV-TV-${String(userCount + 1).padStart(4, "0")}`;
+    const id = generateMemberId();
     await getDb().user.create({
       data: {
         id,
@@ -67,8 +66,6 @@ export const authService = {
         job: data.job ?? null,
         address: data.address ?? null,
         referredBy: referredById,
-        referralCode: id,
-        memberId,
         role: "pending",
         activationToken,
         activationTokenExpires,
@@ -89,13 +86,6 @@ export const authService = {
       token,
       user: {
         id,
-        email: data.email,
-        name: data.name,
-        role: "pending",
-        job: data.job ?? null,
-        address: data.address ?? null,
-        referralCode: id,
-        memberId,
         kyLuat: 0,
         daoDuc: 0,
         truyenCamHung: 0,
@@ -178,9 +168,7 @@ export const authService = {
     let user = await getDb().user.findUnique({ where: { email: payload.email } });
     if (!user) {
       const tempPassword = await bcrypt.hash(uuid(), 12);
-      const id = uuid();
-      const userCount = await getDb().user.count();
-    const memberId = `THV-TV-${String(userCount + 1).padStart(10, "0")}`;
+      const id = generateMemberId();
       await getDb().user.create({
         data: {
           id,
@@ -188,8 +176,6 @@ export const authService = {
           avatar: payload.picture || null,
           password: tempPassword,
           name: payload.name || payload.email,
-          referralCode: id,
-          memberId,
           isActive: true,
         },
       });
@@ -378,7 +364,7 @@ export const authService = {
       throw new BadRequestError("Không có thông tin nào để cập nhật");
     }
 
-    return getDb().user.update({ where: { id: userId }, data: updateData });
+    return toSafeUser(await getDb().user.update({ where: { id: userId }, data: updateData }));
   },
 
   async getProfile(userId: string) {
@@ -386,11 +372,21 @@ export const authService = {
     if (!user) {
       throw new NotFoundError("Người dùng không tồn tại");
     }
-    return user;
+    return toSafeUser(user);
   },
 
   async checkReferral(code: string) {
-    const user = await getDb().user.findFirst({ where: { referralCode: code } });
+    const user = await getDb().user.findFirst({ where: { id: code } });
     return { valid: !!user, name: user?.name || null };
+  },
+
+  async deleteAccount(userId: string) {
+    const user = await getDb().user.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundError("Người dùng không tồn tại");
+
+    await getDb().customerVisitImage.deleteMany({ where: { reviewedBy: userId } });
+    await getDb().auditLog.updateMany({ where: { userId }, data: { userId: null } });
+    await getDb().user.delete({ where: { id: userId } });
+    return { message: "Đã xoá tài khoản" };
   },
 };

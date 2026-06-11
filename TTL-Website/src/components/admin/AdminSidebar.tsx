@@ -5,13 +5,18 @@ import { useAuth } from "@/lib/auth-context";
 import Image from "next/image";
 import { SITE_NAME } from "@/utils/constants";
 import { NavGroup } from "./AdminNavConfig";
-import {
-  ChevronRight,
-  ChevronLeft,
-  LogOut,
-  X,
-} from "lucide-react";
+import { ChevronRight, ChevronLeft, LogOut, X } from "lucide-react";
 import Link from "next/link";
+
+const defaultCounts = { posts: 0, journals: 0, submissions: 0, customerVisits: 0, contactMessages: 0 }
+
+const BADGE_MAP: Record<string, keyof typeof defaultCounts> = {
+  "/admin/posts": "posts",
+  "/admin/journals": "journals",
+  "/admin/submissions": "submissions",
+  "/admin/customer-visits": "customerVisits",
+  "/admin/contact": "contactMessages",
+}
 
 export function AdminSidebar({
   isCollapsed,
@@ -20,7 +25,7 @@ export function AdminSidebar({
   navGroups,
   expandedGroups,
   onToggleGroup,
-  pendingCount,
+  pendingCounts = defaultCounts,
 }: {
   isCollapsed: boolean;
   onToggleCollapse: () => void;
@@ -28,7 +33,7 @@ export function AdminSidebar({
   navGroups: NavGroup[];
   expandedGroups: Set<string>;
   onToggleGroup: (label: string) => void;
-  pendingCount: number;
+  pendingCounts?: { posts: number; journals: number; submissions: number; customerVisits: number; contactMessages: number };
 }) {
   const pathname = usePathname();
   const { logout } = useAuth();
@@ -38,20 +43,22 @@ export function AdminSidebar({
       <div
         className={`${isCollapsed ? "justify-center px-0" : "px-5"} pt-6 pb-4 flex items-center gap-2.5`}
       >
-        <Image
-          src="/images/logo.png"
-          alt={SITE_NAME}
-          width={150}
-          height={150}
-          unoptimized
-        />
-        {!isCollapsed && (
-          <>
-            <span className="sr-only">{SITE_NAME}</span>
-            <span className="ml-auto text-[10px] uppercase tracking-wider text-primary font-semibold bg-primary/10 px-2 py-0.5 rounded-full">
-              Admin
-            </span>
-          </>
+        {!isCollapsed ? (
+          <Image
+            src="/images/logo.png"
+            alt={SITE_NAME}
+            width={180}
+            height={180}
+            unoptimized
+          />
+        ) : (
+          <Image
+            src="/images/tbv-logo.png"
+            alt={SITE_NAME}
+            width={45}
+            height={45}
+            unoptimized
+          />
         )}
         <button
           onClick={onCloseMobile}
@@ -142,8 +149,10 @@ export function AdminSidebar({
                         {!isCollapsed && (
                           <span className="flex-1 truncate">{item.label}</span>
                         )}
-                        {item.href === "/admin/pending-members" &&
-                          pendingCount > 0 && (
+                        {(() => {
+                          const countKey = BADGE_MAP[item.href]
+                          const count = countKey ? pendingCounts[countKey] ?? 0 : 0
+                          return count > 0 ? (
                             <span
                               className={`flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[9px] font-bold shrink-0 ${
                                 isCollapsed ? "" : "ml-auto"
@@ -153,9 +162,10 @@ export function AdminSidebar({
                                 color: "#fff",
                               }}
                             >
-                              {pendingCount > 99 ? "99+" : pendingCount}
+                              {count > 99 ? "99+" : count}
                             </span>
-                          )}
+                          ) : null
+                        })()}
                       </Link>
                     );
                   })}

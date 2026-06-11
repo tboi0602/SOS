@@ -1,4 +1,5 @@
 "use client";
+import { getInitial } from "@/utils/cn";
 
 import { Users, Award, ChevronRight } from "lucide-react";
 import type { ReferredMember } from "@/service/api";
@@ -37,13 +38,13 @@ export default function ReferredMembers({ members }: { members: ReferredMember[]
                   border: `1px solid color-mix(in srgb, ${color}, transparent 81%)`,
                 }}
               >
-                {m.name.charAt(0)}
+                {getInitial(m.name)}
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-medium text-[var(--text-primary)] leading-tight truncate">
                   {m.name}
                 </p>
-                <p className="text-[9px] font-mono text-[var(--text-tertiary)]">{m.referralCode}</p>
+                <p className="text-[9px] font-mono text-[var(--text-tertiary)]">{m.id}</p>
               </div>
               <div className="flex items-center gap-1.5">
                 <span
@@ -73,3 +74,5 @@ export default function ReferredMembers({ members }: { members: ReferredMember[]
     </div>
   );
 }
+
+

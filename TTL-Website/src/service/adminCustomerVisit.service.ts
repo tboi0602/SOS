@@ -6,10 +6,11 @@ export interface CustomerVisitImageAdmin {
   imageUrl: string
   description: string | null
   status: "PENDING" | "APPROVED" | "REJECTED"
+  adminNote: string | null
   reviewedBy: string | null
   reviewedAt: string | null
   createdAt: string
-  user: { id: string; name: string; email: string; memberId: string | null }
+  user: { id: string; name: string; email: string }
   reviewer: { id: string; name: string } | null
 }
 
@@ -21,10 +22,10 @@ export const adminCustomerVisitService = {
     }>(`/api/v1/customer-visits/admin${params}`)
   },
 
-  reviewCustomerVisitImage(id: string, status: "APPROVED" | "REJECTED") {
+  reviewCustomerVisitImage(id: string, status: "APPROVED" | "REJECTED", adminNote?: string) {
     return request<{ image: CustomerVisitImageAdmin }>(
       `/api/v1/customer-visits/${id}/review`,
-      { method: "PUT", body: { status } },
+      { method: "PUT", body: { status, adminNote } },
     )
   },
 }

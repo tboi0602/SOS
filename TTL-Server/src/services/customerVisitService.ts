@@ -1,5 +1,6 @@
 import { NotFoundError, BadRequestError } from "../lib/errors";
 import { getDb } from "../db";
+import { notificationService } from "./notificationService";
 
 export const customerVisitService = {
   async upload(userId: string, imageUrl: string, description?: string) {
@@ -31,21 +32,21 @@ export const customerVisitService = {
       where,
       orderBy: { createdAt: "desc" },
       include: {
-        user: { select: { id: true, name: true, email: true, memberId: true } },
+        user: { select: { id: true, name: true, email: true } },
         reviewer: { select: { id: true, name: true } },
       },
     });
     return images;
   },
 
-  async review(id: string, reviewerId: string, status: "APPROVED" | "REJECTED") {
+  async review(id: string, reviewerId: string, status: "APPROVED" | "REJECTED", adminNote?: string) {
     const visit = await getDb().customerVisitImage.findUnique({ where: { id } });
     if (!visit) throw new NotFoundError("Không tìm thấy ảnh");
     if (visit.status !== "PENDING") throw new BadRequestError("Ảnh đã được xử lý");
 
     const updated = await getDb().customerVisitImage.update({
       where: { id },
-      data: { status, reviewedBy: reviewerId, reviewedAt: new Date() },
+      data: { status, reviewedBy: reviewerId, reviewedAt: new Date(), adminNote: adminNote ?? null },
     });
 
     // Award score only on approval
@@ -54,6 +55,16 @@ export const customerVisitService = {
         where: { id: visit.userId },
         data: { referredScore: { increment: 2 } },
       });
+    }
+
+    if (adminNote) {
+      await notificationService.create({
+        userId: visit.userId,
+        title: `Admin đã nhận xét ảnh thăm khách hàng của bạn`,
+        content: adminNote,
+        type: "auto",
+        link: "/home/customer-visits",
+      }).catch(() => {});
     }
 
     return updated;

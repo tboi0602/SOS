@@ -6,11 +6,13 @@ import EcosystemSection from "@/components/landing/EcosystemSection";
 import ContactSection from "@/components/landing/ContactSection";
 import Footer from "@/components/landing/Footer";
 import PageWrapper from "@/components/landing/PageWrapper";
+import MouseGlow from "@/components/landing/MouseGlow";
 
 export default function Home() {
   return (
     <PageWrapper>
       <BackgroundEffects />
+      <MouseGlow />
       <Header />
       <main>
         <HeroSection />

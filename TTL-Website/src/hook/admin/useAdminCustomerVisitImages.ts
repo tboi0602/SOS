@@ -34,9 +34,9 @@ export function useAdminCustomerVisitImages() {
     return () => window.clearTimeout(id);
   }, [fetch]);
 
-  const approve = async (id: string) => {
+  const approve = async (id: string, adminNote?: string) => {
     try {
-      await adminService.reviewCustomerVisitImage(id, "APPROVED");
+      await adminService.reviewCustomerVisitImage(id, "APPROVED", adminNote);
       toast("Đã duyệt ảnh", "success");
       await fetch();
     } catch (err) {
@@ -44,9 +44,9 @@ export function useAdminCustomerVisitImages() {
     }
   };
 
-  const reject = async (id: string) => {
+  const reject = async (id: string, adminNote?: string) => {
     try {
-      await adminService.reviewCustomerVisitImage(id, "REJECTED");
+      await adminService.reviewCustomerVisitImage(id, "REJECTED", adminNote);
       toast("Đã từ chối ảnh", "success");
       await fetch();
     } catch (err) {

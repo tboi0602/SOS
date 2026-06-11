@@ -11,6 +11,7 @@ import {
   Bell,
   GraduationCap,
   Camera,
+  MessageSquare,
 } from "lucide-react";
 
 export interface NavItem {
@@ -50,7 +51,7 @@ export const NAV_GROUPS: NavGroup[] = [
         href: "/admin/permissions",
         label: "Phân quyền",
         icon: Key,
-        permission: "manage_permissions",
+        permission: "manage_users",
       },
     ],
   },
@@ -61,43 +62,37 @@ export const NAV_GROUPS: NavGroup[] = [
         href: "/admin/posts/manage",
         label: "Bài đăng",
         icon: Edit3,
-        permission: null,
+        permission: "manage_content",
       },
       {
         href: "/admin/posts",
         label: "Duyệt bài viết",
         icon: FileText,
-        permission: "approve_posts",
+        permission: "manage_content",
       },
       {
         href: "/admin/submissions",
         label: "Duyệt tác phẩm",
         icon: Video,
-        permission: "approve_submissions",
+        permission: "manage_content",
       },
       {
         href: "/admin/journals",
         label: "Duyệt nhật ký",
         icon: BookOpen,
-        permission: "approve_journals",
+        permission: "manage_content",
       },
       {
         href: "/admin/customer-visits",
         label: "Gặp khách hàng",
         icon: Camera,
-        permission: "manage_posts",
-      },
-      {
-        href: "/admin/pending-members",
-        label: "Chờ duyệt",
-        icon: Users,
-        permission: null,
+        permission: "manage_content",
       },
       {
         href: "/admin/membership-flow",
         label: "Đăng ký thành viên",
         icon: GraduationCap,
-        permission: null,
+        permission: "manage_users",
       },
     ],
   },
@@ -125,18 +120,31 @@ export const NAV_GROUPS: NavGroup[] = [
         href: "/admin/activity-log",
         label: "Hoạt động",
         icon: ClipboardList,
-        permission: null,
+        permission: "admin",
+      },
+    ],
+  },
+  {
+    label: "Hỗ trợ",
+    items: [
+      {
+        href: "/admin/contact",
+        label: "Hỗ Trợ",
+        icon: MessageSquare,
+        permission: "admin",
       },
     ],
   },
 ];
 
 export function getNavGroups(role: string, permissions: string[]) {
-  if (role === "admin") return NAV_GROUPS;
+  const isAdmin = role === "admin";
   return NAV_GROUPS.map((group) => ({
     ...group,
-    items: group.items.filter(
-      (item) => !item.permission || permissions.includes(item.permission),
-    ),
+    items: group.items.filter((item) => {
+      if (!item.permission) return true;
+      if (item.permission === "admin") return isAdmin;
+      return isAdmin || permissions.includes(item.permission);
+    }),
   })).filter((group) => group.items.length > 0);
 }

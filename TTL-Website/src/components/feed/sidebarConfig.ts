@@ -21,7 +21,7 @@ export const PERSONAL_PATHS = [
 export const NAV_ITEMS = [
   { href: "/home/members", label: "Thành viên", icon: Users },
   { href: "/home", label: "Bảng tin cộng đồng", icon: LayoutGrid },
-  { href: "/home/news", label: "Thông Báo Ban Quản trị", icon: Newspaper },
+  { href: "/home/news", label: "Bảng tin - BQT", icon: Newspaper },
   { href: "/home/top-sales", label: "Top doanh số", icon: TrendingUp },
 ];
 

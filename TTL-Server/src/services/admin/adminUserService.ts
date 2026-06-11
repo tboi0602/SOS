@@ -36,7 +36,7 @@ export const adminUserService = {
   async getUserById(id: string) {
     const user = await getDb().user.findUnique({ where: { id } });
     if (!user) throw new NotFoundError("Người dùng không tồn tại");
-    return user;
+    return toSafeUser(user);
   },
 
   async updateUserRole(id: string, role: string) {
@@ -101,7 +101,7 @@ export const adminUserService = {
           role: u.role,
           avatar: u.avatar,
           job: u.job,
-          memberId: u.memberId,
+    
           isActive: u.isActive,
           permissions: Array.isArray(u.permissions) ? u.permissions : [],
           kyLuat: u.kyLuat ?? 0,
@@ -129,14 +129,10 @@ export const adminUserService = {
     if (!user) throw new NotFoundError("Người dùng không tồn tại");
 
     const VALID_PERMISSIONS = [
-      "approve_posts",
-      "approve_journals",
-      "approve_submissions",
+      "manage_content",
       "manage_users",
-      "manage_permissions",
       "manage_notifications",
       "manage_lessons",
-      "manage_posts",
     ];
     const invalid = permissions.filter((p) => !VALID_PERMISSIONS.includes(p));
     if (invalid.length > 0) {

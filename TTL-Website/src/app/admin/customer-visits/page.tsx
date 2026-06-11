@@ -24,6 +24,7 @@ export default function CustomerVisitApprovalPage() {
     useAdminCustomerVisitImages();
   const listRef = useRef<HTMLDivElement>(null);
   const [actionId, setActionId] = useState<string | null>(null);
+  const [note, setNote] = useState("");
 
   useEffect(() => {
     const el = listRef.current;
@@ -40,7 +41,7 @@ export default function CustomerVisitApprovalPage() {
 
   return (
     <div className="min-h-screen px-4 sm:px-6 py-8 select-none relative z-10 animate-fade-up" style={{ color: "var(--text-primary)" }}>
-      <div className="max-w-8xl mx-auto space-y-8">
+      <div className="max-w-6xl mx-auto space-y-8">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-lg font-bold flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
@@ -150,7 +151,7 @@ export default function CustomerVisitApprovalPage() {
                           )}
                           <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>
                             {img.user?.name || "Không rõ"}
-                            {img.user?.memberId && ` (${img.user.memberId})`}
+                            {img.user?.id && ` (${img.user.id})`}
                             {" "}&bull;{" "}
                             {new Date(img.createdAt).toLocaleDateString("vi-VN")}
                           </p>
@@ -160,16 +161,30 @@ export default function CustomerVisitApprovalPage() {
                               {img.reviewedAt && ` - ${new Date(img.reviewedAt).toLocaleDateString("vi-VN")}`}
                             </p>
                           )}
+                          {img.adminNote && (
+                            <p className="text-[11px] mt-1 italic" style={{ color: "var(--text-tertiary)" }}>
+                              Phản hồi: {img.adminNote}
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>
                     {img.status === "PENDING" ? (
                       actionId === img.id ? (
-                        <div className="flex flex-col gap-2 shrink-0">
+                        <div className="flex flex-col gap-2 w-64 shrink-0">
+                          <input
+                            type="text"
+                            value={note}
+                            onChange={(e) => setNote(e.target.value)}
+                            placeholder="Ghi chú (tuỳ chọn)..."
+                            className="w-full px-3 py-2 rounded-lg text-xs outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                            style={{ background: "var(--surface-elevated)", color: "var(--text-primary)", border: "0.5px solid var(--border-base)" }}
+                          />
                           <div className="flex gap-2">
                             <button
                               onClick={async () => {
-                                await approve(img.id);
+                                await approve(img.id, note || undefined);
+                                setNote("");
                                 setActionId(null);
                               }}
                               className="flex items-center justify-center gap-1 px-4 py-2 rounded-lg bg-green-500/20 text-green-400 text-xs font-semibold hover:bg-green-500/30 transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-green-400/50"
@@ -179,7 +194,8 @@ export default function CustomerVisitApprovalPage() {
                             </button>
                             <button
                               onClick={async () => {
-                                await reject(img.id);
+                                await reject(img.id, note || undefined);
+                                setNote("");
                                 setActionId(null);
                               }}
                               className="flex items-center justify-center gap-1 px-4 py-2 rounded-lg bg-red-500/20 text-red-400 text-xs font-semibold hover:bg-red-500/30 transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-red-400/50"
@@ -188,7 +204,7 @@ export default function CustomerVisitApprovalPage() {
                               <XCircle size={12} /> Từ chối
                             </button>
                             <button
-                              onClick={() => setActionId(null)}
+                              onClick={() => { setActionId(null); setNote(""); }}
                               className="px-3 py-2 rounded-lg text-xs transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
                               style={{ background: "var(--surface-elevated)", color: "var(--text-tertiary)" }}
                               onMouseEnter={(e) => {

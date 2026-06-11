@@ -60,5 +60,6 @@ router.post("/reset-password", authLimiter, validate(resetPasswordSchema), authC
 router.put("/profile", requireAuth, validate(updateProfileSchema), authController.updateProfile)
 router.put("/change-password", requireAuth, validate(changePasswordSchema), authController.changePassword)
 router.post("/avatar", requireAuth, upload.single("avatar"), authController.uploadAvatar)
+router.delete("/account", requireAuth, authController.deleteAccount)
 
 export default router

@@ -36,15 +36,15 @@ export default function JournalPage() {
 
   return (
     <div className="min-h-screen px-4 sm:px-6 py-8 select-none relative z-10 animate-fade-up" style={{ color: "var(--text-primary)" }}>
-      <div className="max-w-8xl mx-auto space-y-8">
+      <div className="max-w-6xl mx-auto space-y-8">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-lg font-bold flex items-center gap-2" style={{ color: "var(--text-primary)" }}>
             <BookOpen size={20} className="text-primary" aria-hidden="true" />{" "}
-            Duyệt nhật ký
+            Duyệt đạo đức
           </h1>
           <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>
-            {total} nhật ký đang chờ duyệt
+            {total} đạo đức đang chờ duyệt
           </p>
         </div>
       </div>
@@ -53,8 +53,8 @@ export default function JournalPage() {
         {entries.length === 0 ? (
           <div className="text-center py-16 rounded-3xl" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", border: "0.5px solid var(--border-base)" }}>
             <BookOpen size={40} className="mx-auto mb-4" style={{ color: "var(--text-tertiary)" }} />
-            <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Không có nhật ký</h3>
-            <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>Chưa có nhật ký nào đang chờ duyệt.</p>
+            <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Không có đạo đức</h3>
+            <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>Chưa có đạo đức nào đang chờ duyệt.</p>
           </div>
         ) : (
           <div ref={listRef} className="space-y-3">
@@ -121,7 +121,7 @@ export default function JournalPage() {
                             setActionId(null);
                             setNote("");
                           }}
-                          aria-label="Duyệt nhật ký"
+                          aria-label="Duyệt đạo đức"
                           className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-green-500/20 text-green-400 text-xs font-semibold hover:bg-green-500/30 transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-green-400/50"
                           style={{ border: "1px solid color-mix(in srgb, var(--color-success) 30%, transparent)" }}
                         >
@@ -133,7 +133,7 @@ export default function JournalPage() {
                             setActionId(null);
                             setNote("");
                           }}
-                          aria-label="Từ chối nhật ký"
+                          aria-label="Từ chối đạo đức"
                           className="flex-1 flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg bg-red-500/20 text-red-400 text-xs font-semibold hover:bg-red-500/30 transition-all cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-red-400/50"
                           style={{ border: "1px solid color-mix(in srgb, var(--color-danger) 30%, transparent)" }}
                         >

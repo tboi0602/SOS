@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client"
 
+import { getInitial } from "@/utils/cn";
 import { X, Heart, MessageSquare, Clock, CheckCircle, XCircle, ExternalLink } from "lucide-react"
 import type { Post } from "@/service/api"
 
@@ -51,7 +52,7 @@ export default function PostDetailModal({ post, onClose }: Props) {
                 <img src={post.user.avatar} alt="" className="size-full object-cover" />
               ) : (
                 <div className="size-full flex items-center justify-center text-xs font-bold" style={{ color: "var(--text-tertiary)" }}>
-                  {post.user.name.charAt(0).toUpperCase()}
+                  {getInitial(post.user.name)}
                 </div>
               )}
             </div>
@@ -139,3 +140,6 @@ export default function PostDetailModal({ post, onClose }: Props) {
     </div>
   )
 }
+
+
+

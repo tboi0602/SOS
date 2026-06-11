@@ -31,7 +31,7 @@ export default function ResetPasswordPage() {
           <Image src="/images/auth-visual.svg" alt="" fill className="object-cover opacity-60" unoptimized />
           <div className="relative z-10 text-center px-12 max-w-lg">
             <Link href="/" className="block w-fit mx-auto mb-6">
-              <Image src="/images/logo.png" alt="SOS" width={80} height={80} className="cursor-pointer" unoptimized />
+              <Image src="/images/logo.png" alt="logo" width={80} height={80} className="cursor-pointer" unoptimized />
             </Link>
             <h1 className="text-4xl font-bold mb-4 leading-tight" style={{ color: "var(--text-primary)" }}>
               Đặt lại <span className="text-gradient">mật khẩu</span>
@@ -45,7 +45,7 @@ export default function ResetPasswordPage() {
         <div className="flex-1 flex items-center justify-center px-6 py-12">
           <div className="w-full max-w-md">
             <Link href="/" className="flex items-center justify-center gap-2.5 mb-10 cursor-pointer lg:hidden">
-              <Image src="/images/logo.png" alt="SOS" width={40} height={40} unoptimized />
+              <Image src="/images/logo.png" alt="logo" width={40} height={40} unoptimized />
             </Link>
             <div className="card p-8">
               {done ? (

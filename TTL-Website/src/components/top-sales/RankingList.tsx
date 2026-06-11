@@ -1,4 +1,5 @@
 "use client";
+import { getInitial } from "@/utils/cn";
 
 import { useRef, useEffect } from "react";
 import { Briefcase, Star } from "lucide-react";
@@ -88,7 +89,7 @@ export default function RankingList({
                 />
               ) : (
                 <div className="size-10 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border-base)] flex items-center justify-center text-sm font-black text-[var(--text-tertiary)] shrink-0 shadow-md">
-                  {m.name.charAt(0).toUpperCase()}
+                  {getInitial(m.name)}
                 </div>
               )}
 
@@ -141,3 +142,5 @@ function ScoreChip({
     </div>
   );
 }
+
+

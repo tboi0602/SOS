@@ -54,22 +54,15 @@ export function useManagePosts() {
   );
 
   useEffect(() => {
-    if (!user && !loading) {
+    if (!user) {
       router.push("/auth/login");
       return;
     }
     const id = window.setTimeout(() => {
-      void fetchMyPosts(1);
+      void fetchMyPosts(page);
     }, 0);
     return () => window.clearTimeout(id);
-  }, [user, fetchMyPosts]);
-
-  useEffect(() => {
-    const id = window.setTimeout(() => {
-      if (user) void fetchMyPosts();
-    }, 0);
-    return () => window.clearTimeout(id);
-  }, [filter, dateFrom, dateTo]);
+  }, [user, fetchMyPosts, page]);
 
   const handleDelete = async () => {
     if (!deletePost) return;

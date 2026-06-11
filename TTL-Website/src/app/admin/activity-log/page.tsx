@@ -1,6 +1,7 @@
 "use client";
+import { getInitial } from "@/utils/cn";
 
-import { ClipboardList, ChevronDown, Trash2 } from "lucide-react";
+import { ClipboardList, ChevronDown, Trash2, Filter } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -10,7 +11,7 @@ import DateFilter from "@/components/ui/DateFilter";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
 import { adminService } from "@/service/admin.service";
 import type { ActivityLogEntry } from "@/types/admin";
-import { ACTION_LABELS, getActionDisplay, LogDetail } from "@/components/admin/ActivityLogComponents";
+import { getActionDisplay, LogDetail } from "@/components/admin/ActivityLogComponents";
 gsap.registerPlugin(ScrollTrigger);
 
 export default function ActivityLogPage() {
@@ -20,7 +21,17 @@ export default function ActivityLogPage() {
   const [total, setTotal] = useState(0);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [actionFilter, setActionFilter] = useState("");
+  const [resourceFilter, setResourceFilter] = useState("");
+  const [selectOpen, setSelectOpen] = useState(false);
+  const selectRef = useRef<HTMLDivElement>(null);
+
+  const RESOURCE_OPTIONS = [
+    { value: "", label: "Tất cả" },
+    { value: "post", label: "Bài đăng" },
+    { value: "journal", label: "Đạo đức" },
+    { value: "submission", label: "Kỷ luật" },
+    { value: "user", label: "Người dùng" },
+  ];
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteAllOpen, setDeleteAllOpen] = useState(false);
@@ -43,7 +54,7 @@ export default function ActivityLogPage() {
 
   const fetchLogs = () => {
     setLoading(true);
-    adminService.getActivityLog(page, limit, dateFrom || undefined, dateTo || undefined, actionFilter || undefined).then((res) => {
+    adminService.getActivityLog(page, limit, dateFrom || undefined, dateTo || undefined, resourceFilter || undefined).then((res) => {
       setLogs(res.logs);
       setTotal(res.total);
       setLoading(false);
@@ -52,7 +63,16 @@ export default function ActivityLogPage() {
 
   useEffect(() => {
     fetchLogs();
-  }, [page, dateFrom, dateTo, actionFilter]);
+  }, [page, dateFrom, dateTo, resourceFilter]);
+
+  useEffect(() => {
+    if (!selectOpen) return;
+    const handleClick = (e: MouseEvent) => {
+      if (selectRef.current && !selectRef.current.contains(e.target as Node)) setSelectOpen(false);
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [selectOpen]);
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -100,9 +120,9 @@ export default function ActivityLogPage() {
             onFromChange={(v) => { setDateFrom(v); setPage(1); }}
             onToChange={(v) => { setDateTo(v); setPage(1); }}
           />
-          {(dateFrom || dateTo || actionFilter) && (
+          {(dateFrom || dateTo || resourceFilter) && (
             <button
-              onClick={() => { setDateFrom(""); setDateTo(""); setActionFilter(""); setPage(1); }}
+              onClick={() => { setDateFrom(""); setDateTo(""); setResourceFilter(""); setPage(1); }}
               className="px-3 py-1.5 rounded-lg text-[11px] transition-all cursor-pointer" style={{ background: "color-mix(in srgb, var(--text-primary) 5%, transparent)", border: "1px solid color-mix(in srgb, var(--text-primary) 10%, transparent)", color: "var(--text-tertiary)" }} onMouseEnter={(e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 10%, transparent)"; e.currentTarget.style.color = "var(--text-primary)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 5%, transparent)"; e.currentTarget.style.color = "var(--text-tertiary)"; }}
             >
               Xoá lọc
@@ -110,23 +130,51 @@ export default function ActivityLogPage() {
           )}
         </div>
 
-        <div className="flex flex-wrap gap-1.5">
-          {[{ value: "", label: "Tất cả" }, ...Object.entries(ACTION_LABELS).map(([value, info]) => ({ value, label: info.label }))].map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => { setActionFilter(opt.value); setPage(1); }}
-              className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all cursor-pointer ${
-                actionFilter === opt.value
-                  ? "bg-primary/15 text-primary border border-primary/25"
-                  : "border border-transparent"
-              }`}
-              style={actionFilter !== opt.value ? { background: "color-mix(in srgb, var(--text-primary) 5%, transparent)", color: "var(--text-tertiary)" } : undefined}
-              onMouseEnter={actionFilter !== opt.value ? (e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 10%, transparent)"; e.currentTarget.style.color = "var(--text-primary)"; } : undefined}
-              onMouseLeave={actionFilter !== opt.value ? (e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 5%, transparent)"; e.currentTarget.style.color = "var(--text-tertiary)"; } : undefined}
+        <div className="relative" ref={selectRef}>
+          <button
+            onClick={() => setSelectOpen((o) => !o)}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all cursor-pointer border"
+            style={{
+              background: "color-mix(in srgb, var(--text-primary) 5%, transparent)",
+              borderColor: "color-mix(in srgb, var(--text-primary) 10%, transparent)",
+              color: "var(--text-tertiary)",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 10%, transparent)"; e.currentTarget.style.color = "var(--text-primary)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 5%, transparent)"; e.currentTarget.style.color = "var(--text-tertiary)"; }}
+          >
+            <Filter size={12} />
+            {RESOURCE_OPTIONS.find((o) => o.value === resourceFilter)?.label ?? "Tất cả"}
+            <ChevronDown size={10} className={`transition-transform ${selectOpen ? "rotate-180" : ""}`} />
+          </button>
+          {selectOpen && (
+            <div
+              className="absolute top-full left-0 mt-1 z-50 min-w-[180px] rounded-xl border overflow-hidden shadow-xl"
+              style={{
+                background: "var(--surface-elevated)",
+                borderColor: "var(--border-base)",
+              }}
             >
-              {opt.label}
-            </button>
-          ))}
+              {RESOURCE_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => { setResourceFilter(opt.value); setPage(1); setSelectOpen(false); }}
+                  className="w-full text-left px-3 py-2 text-[12px] transition-all cursor-pointer flex items-center gap-2"
+                  style={{
+                    color: resourceFilter === opt.value ? "var(--color-primary)" : "var(--text-secondary)",
+                    background: resourceFilter === opt.value ? "color-mix(in srgb, var(--color-primary) 8%, transparent)" : "transparent",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "color-mix(in srgb, var(--text-primary) 6%, transparent)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = resourceFilter === opt.value ? "color-mix(in srgb, var(--color-primary) 8%, transparent)" : "transparent"; }}
+                >
+                  {opt.value === "" ? <span style={{ opacity: 0.5 }}>—</span> : null}
+                  {opt.label}
+                  {resourceFilter === opt.value && (
+                    <span className="ml-auto text-primary">✓</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <Skeleton name="admin-table" loading={loading} rows={logs.length || 1}>
@@ -171,7 +219,7 @@ export default function ActivityLogPage() {
                                     />
                                   ) : (
                                     <div className="size-5 rounded-full bg-primary/25 flex items-center justify-center text-[9px] font-bold text-primary shrink-0">
-                                      {(entry.user.name || "U").charAt(0).toUpperCase()}
+                                      {getInitial(entry.user.name)}
                                     </div>
                                   )}
                                   <span className="text-sm text-[var(--text-primary)] truncate">
@@ -281,3 +329,5 @@ export default function ActivityLogPage() {
     </div>
   );
 }
+
+

@@ -8,6 +8,7 @@ import {
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { membershipService, type UserFlow } from "@/service/membership.service"
+import { useAuth } from "@/lib/auth-context"
 import { Skeleton } from "@/components/ui/Skeleton"
 import UploadDocsStep from "./_components/UploadDocsStep"
 import DocsSubmittedStep from "./_components/DocsSubmittedStep"
@@ -30,11 +31,13 @@ const STATUS_LABELS: Record<string, { label: string; icon: typeof Upload; desc: 
 }
 
 export default function MembershipPage() {
+  const { loading: authLoading } = useAuth()
   const [flow, setFlow] = useState<UserFlow | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const headerRef = useRef<HTMLDivElement>(null)
   const stepsRef = useRef<HTMLDivElement>(null)
+  const fetchedRef = useRef(false)
 
   const fetchFlow = useCallback(async () => {
     try {
@@ -49,7 +52,12 @@ export default function MembershipPage() {
     }
   }, [])
 
-  useEffect(() => { fetchFlow() }, [fetchFlow])
+  useEffect(() => {
+    if (authLoading) return
+    if (fetchedRef.current) return
+    fetchedRef.current = true
+    fetchFlow()
+  }, [authLoading, fetchFlow])
 
   useEffect(() => {
     const ctx = gsap.context(() => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Sparkles, BookOpen, Clock, ListChecks, ListX } from "lucide-react";
+import { Plus, Sparkles, BookOpen, Clock, ListChecks, ListX, XCircle } from "lucide-react";
 import { useJournal } from "@/hook/journal";
 import JournalCreateModal from "@/components/journal/JournalCreateModal";
 import JournalEntryCard from "@/components/journal/JournalEntryCard";
@@ -10,6 +10,7 @@ const statusFilters = (Icon: any) => [
   { key: "", label: "Tất cả", icon: Icon },
   { key: "pending", label: "Chờ duyệt", icon: Icon },
   { key: "approved", label: "Đã duyệt", icon: Icon },
+  { key: "rejected", label: "Từ chối", icon: XCircle },
 ];
 
 export default function JournalPage() {
@@ -42,13 +43,14 @@ export default function JournalPage() {
   } = useJournal();
 
   return (
+    <>
     <ContentListLayout
       header={{
-        title: "Nhật ký",
+        title: "Đạo đức",
         subtitle: "Ghi lại hành trình của bạn",
         icon: BookOpen,
         iconClass: "bg-emerald-400/15",
-        createLabel: "Viết nhật ký",
+        createLabel: "Viết đạo đức",
         onCreate: () => setShowCreate(true),
         createBtnClass:
           "bg-emerald-400 hover:bg-emerald-500 text-[var(--surface-base)] shadow-emerald-400/25",
@@ -68,23 +70,14 @@ export default function JournalPage() {
       skeletonName="journal-list"
       items={entries}
       loading={loading}
-    >
-      {showCreate && (
-        <JournalCreateModal
-          title={title}
-          content={content}
-          previews={previews}
-          uploading={uploading}
-          creating={creating}
-          fileRef={fileRef}
-          onTitleChange={setTitle}
-          onContentChange={setContent}
-          onSelectFiles={handleSelectFiles}
-          onRemoveImage={removeImage}
-          onSubmit={handleCreate}
-          onClose={() => setShowCreate(false)}
-        />
+      renderEmptyState={() => (
+        <div className="text-center py-16 rounded-2xl" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", border: "0.5px solid var(--border-base)" }}>
+          <BookOpen size={32} className="mx-auto mb-3" style={{ color: "var(--text-tertiary)" }} />
+          <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Chưa có nhật ký nào</p>
+          <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>Hãy ghi lại những việc tốt của bạn mỗi ngày!</p>
+        </div>
       )}
+    >
       <div className="space-y-4">
         {entries.map((entry) => (
           <JournalEntryCard
@@ -96,5 +89,23 @@ export default function JournalPage() {
         ))}
       </div>
     </ContentListLayout>
+
+    {showCreate && (
+      <JournalCreateModal
+        title={title}
+        content={content}
+        previews={previews}
+        uploading={uploading}
+        creating={creating}
+        fileRef={fileRef}
+        onTitleChange={setTitle}
+        onContentChange={setContent}
+        onSelectFiles={handleSelectFiles}
+        onRemoveImage={removeImage}
+        onSubmit={handleCreate}
+        onClose={() => setShowCreate(false)}
+      />
+    )}
+    </>
   );
 }

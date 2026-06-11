@@ -1,12 +1,25 @@
 "use client";
 
 import Image from "next/image";
-import { TARGET } from "@/utils/constants";
 import { useScrollAnimation } from "@/hook/landing/useScrollAnimation";
 import { cn } from "@/utils/cn";
 import { Sparkles, Target } from "lucide-react";
 import { SectionGlow } from "@/components/landing/Effects";
 import TiltContainer from "@/components/ui/TiltContainer";
+
+interface TargetData {
+  badge: string;
+  title: string;
+  emphasis: string;
+  text: string;
+}
+
+const TARGET: TargetData = {
+  badge: "Đối tượng mục tiêu",
+  title: "Thanh thiếu niên & Gen Z Việt Nam",
+  emphasis: "Thế hệ trẻ — Chủ nhân tương lai của đất nước",
+  text: "Tinh Hoa Việt hướng đến thế hệ thanh thiếu niên và Gen Z Việt Nam — những người trẻ giàu khát vọng, sáng tạo và mong muốn khẳng định bản thân. Chúng tôi đồng hành cùng các bạn trên hành trình phát hiện, phát triển và lưu danh những giá trị tinh hoa, góp phần xây dựng một thế hệ Việt Nam tri thức, bản lĩnh và trách nhiệm.",
+};
 
 export default function TargetSection() {
   const { ref, visible } = useScrollAnimation(0.1);

@@ -30,7 +30,7 @@ export const config = {
 
   email: {
     resendApiKey: requireEnv("RESEND_API_KEY"),
-    from: optionalEnv("EMAIL_FROM", "SOS onboarding@vnsales.org"),
+    from: optionalEnv("EMAIL_FROM", "Tinh Hoa Việt <onboarding@vnsales.org>"),
     frontendUrl: optionalEnv("FRONTEND_URL", "http://localhost:3000"),
   },
 

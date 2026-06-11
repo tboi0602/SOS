@@ -12,10 +12,9 @@ import CustomerVisitsTab from "@/components/content/CustomerVisitsTab";
 gsap.registerPlugin(ScrollTrigger);
 
 const TABS = [
-  { key: "journal", label: "Nhật ký", icon: BookOpen },
-  { key: "videos", label: "Tác phẩm", icon: Video },
-  { key: "posts", label: "Bài viết", icon: FileText },
-  { key: "customer-visits", label: "Gặp khách hàng", icon: Camera },
+  { key: "journal", label: "Đạo đức", icon: BookOpen },
+  { key: "videos", label: "Kỷ luật", icon: Video },
+  { key: "customer-visits", label: "Lan Toả", icon: Camera },
 ] as const;
 
 export default function ContentPage() {

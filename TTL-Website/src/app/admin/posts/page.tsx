@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
+import { getInitial } from "@/utils/cn";
 import {
   FileText,
   CheckCircle,
@@ -128,10 +129,10 @@ export default function PostPage() {
 
   return (
     <div
-      className="min-h-screen px-4 sm:px-6 py-8 select-none relative z-10 animate-fade-up"
+      className="min-h-screen  px-4 sm:px-6 py-8 select-none relative z-10 animate-fade-up"
       style={{ color: "var(--text-primary)" }}
     >
-      <div className="max-w-8xl mx-auto space-y-8">
+      <div className="max-w-6xl mx-auto space-y-8">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1
@@ -250,7 +251,7 @@ export default function PostPage() {
                                 className="size-full flex items-center justify-center text-[10px] font-bold"
                                 style={{ color: "var(--text-tertiary)" }}
                               >
-                                {post.user.name.charAt(0).toUpperCase()}
+                                {getInitial(post.user.name)}
                               </div>
                             )}
                           </div>

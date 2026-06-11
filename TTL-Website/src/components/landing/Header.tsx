@@ -1,4 +1,5 @@
 "use client";
+import { getInitial } from "@/utils/cn";
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -7,6 +8,7 @@ import { cn } from "@/utils/cn";
 import { NAV_LINKS, SITE_NAME } from "@/utils/constants";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTheme } from "@/components/ui/ThemeProvider";
 import {
   LogIn,
@@ -28,6 +30,7 @@ export default function Header() {
   const [unreadCount, setUnreadCount] = useState(0);
   const { user, logout } = useAuth();
   const { theme, toggle } = useTheme();
+  const router = useRouter();
 
   useEffect(() => {
     if (!user) {
@@ -91,7 +94,8 @@ export default function Header() {
             backgroundColor:
               "color-mix(in srgb, var(--surface-base) 75%, transparent)",
             borderColor: "var(--glass-border)",
-            boxShadow: "0 1px 3px color-mix(in srgb, var(--clr-primary) 6%, transparent)",
+            boxShadow:
+              "0 1px 3px color-mix(in srgb, var(--clr-primary) 6%, transparent)",
           }}
         >
           <div className="mx-auto flex items-center justify-between px-5 py-3">
@@ -138,13 +142,15 @@ export default function Header() {
               >
                 Thành Viên
               </Link>
-              <Link
-                href="/home/elearning"
+              <button
+                onClick={() =>
+                  router.push(user ? "/home/membership" : "/auth/login")
+                }
                 className="px-3.5 py-2 rounded-lg text-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary"
                 style={{ color: "var(--text-muted)" }}
               >
                 Đăng Ký Thành Viên
-              </Link>
+              </button>
               <Link
                 href="/home/news"
                 className="px-3.5 py-2 rounded-lg text-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary"
@@ -165,7 +171,7 @@ export default function Header() {
               </button>
 
               {user ? (
-                <div className="relative flex items-center gap-1">
+                <div className="flex items-center gap-1">
                   <Link
                     href="/home/notifications"
                     className="relative p-2 rounded-xl transition-all cursor-pointer hover:opacity-70 focus-visible:ring-2 focus-visible:ring-primary"
@@ -176,69 +182,71 @@ export default function Header() {
                       <span className="absolute top-1 right-1 size-2 rounded-full bg-danger" />
                     )}
                   </Link>
-                  <button
-                    onClick={() => setUserOpen(!userOpen)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary"
-                    style={{ color: "var(--text-muted)" }}
-                  >
-                    <div className="size-7 rounded-full bg-primary/30 flex items-center justify-center text-xs font-bold text-primary">
-                      {user.name?.charAt(0).toUpperCase() || "U"}
-                    </div>
-                    <span
-                      className="max-w-25 truncate"
-                      style={{ color: "var(--text-primary)" }}
+                  <div className="relative">
+                    <button
+                      onClick={() => setUserOpen(!userOpen)}
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary"
+                      style={{ color: "var(--text-muted)" }}
                     >
-                      {user.name}
-                    </span>
-                    <ChevronDown
-                      size={14}
-                      className={`transition-transform ${userOpen ? "rotate-180" : ""}`}
-                    />
-                  </button>
-                  {userOpen && (
-                    <div
-                      className="absolute right-0 top-full mt-2 w-48 glass-strong rounded-xl py-2 shadow-xl"
-                      style={{ borderColor: "var(--glass-border)" }}
-                    >
-                      <div
-                        className="px-4 py-2"
-                        style={{
-                          borderBottom: "1px solid var(--glass-border)",
-                        }}
-                      >
-                        <p
-                          className="text-xs"
-                          style={{ color: "var(--text-dim)" }}
-                        >
-                          Đã đăng nhập
-                        </p>
-                        <p
-                          className="text-sm truncate"
-                          style={{ color: "var(--text-primary)" }}
-                        >
-                          {user.email}
-                        </p>
+                      <div className="size-7 rounded-full bg-primary/30 flex items-center justify-center text-xs font-bold text-primary">
+                        {getInitial(user.name)}
                       </div>
-                      <Link
-                        href="/home/settings"
-                        onClick={() => setUserOpen(false)}
-                        className="flex items-center gap-2 px-4 py-2.5 text-sm transition-all cursor-pointer hover:opacity-70"
-                        style={{ color: "var(--text-muted)" }}
+                      <span
+                        className="max-w-25 truncate"
+                        style={{ color: "var(--text-primary)" }}
                       >
-                        <Settings size={14} /> Cài đặt tài khoản
-                      </Link>
-                      <button
-                        onClick={() => {
-                          logout();
-                          setUserOpen(false);
-                        }}
-                        className="w-full flex items-center gap-2 px-4 py-2.5 text-sm transition-all cursor-pointer hover:opacity-70"
-                        style={{ color: "var(--text-muted)" }}
+                        {user.name}
+                      </span>
+                      <ChevronDown
+                        size={14}
+                        className={`transition-transform ${userOpen ? "rotate-180" : ""}`}
+                      />
+                    </button>
+                    {userOpen && (
+                      <div
+                        className="absolute right-0 top-full mt-2 w-48 glass-strong rounded-xl py-2 shadow-xl"
+                        style={{ borderColor: "var(--glass-border)" }}
                       >
-                        <LogOut size={14} /> Đăng xuất
-                      </button>
-                    </div>
-                  )}
+                        <div
+                          className="px-4 py-2"
+                          style={{
+                            borderBottom: "1px solid var(--glass-border)",
+                          }}
+                        >
+                          <p
+                            className="text-xs"
+                            style={{ color: "var(--text-dim)" }}
+                          >
+                            Đã đăng nhập
+                          </p>
+                          <p
+                            className="text-sm truncate"
+                            style={{ color: "var(--text-primary)" }}
+                          >
+                            {user.email}
+                          </p>
+                        </div>
+                        <Link
+                          href="/home/settings"
+                          onClick={() => setUserOpen(false)}
+                          className="flex items-center gap-2 px-4 py-2.5 text-sm transition-all cursor-pointer hover:opacity-70"
+                          style={{ color: "var(--text-muted)" }}
+                        >
+                          <Settings size={14} /> Cài đặt tài khoản
+                        </Link>
+                        <button
+                          onClick={() => {
+                            logout();
+                            setUserOpen(false);
+                          }}
+                          className="w-full flex items-center gap-2 px-4 py-2.5 text-sm transition-all cursor-pointer hover:opacity-70"
+                          style={{ color: "var(--text-muted)" }}
+                        >
+                          <LogOut size={14} /> Đăng xuất
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
               ) : (
                 <>
@@ -311,14 +319,16 @@ export default function Header() {
               >
                 Thành Viên
               </Link>
-              <Link
-                href="/home/elearning"
-                onClick={() => setOpen(false)}
-                className="px-3 py-2 rounded-lg text-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary hover:opacity-70"
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  router.push(user ? "/home/membership" : "/auth/login");
+                }}
+                className="w-full text-left px-3 py-2 rounded-lg text-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary hover:opacity-70"
                 style={{ color: "var(--text-muted)" }}
               >
                 Đăng Ký Thành Viên
-              </Link>
+              </button>
               <Link
                 href="/home/news"
                 onClick={() => setOpen(false)}
@@ -372,3 +382,5 @@ export default function Header() {
     </>
   );
 }
+
+

@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id                    String       @id @default(uuid())
+  id                    String       @id
   email                 String       @unique
   password              String
   name                  String
@@ -22,9 +22,7 @@ model User {
   tiktok                String?
   youtube               String?
   zalo                  String?
-  referralCode          String       @map("referral_code")
   referredBy            String?      @map("referred_by")
-  memberId              String?      @unique @map("member_id")
   kyLuat                Int          @default(0) @map("ky_luat")
   daoDuc                Int          @default(0) @map("dao_duc")
   truyenCamHung         Int          @default(0) @map("truyen_cam_hung")
@@ -56,6 +54,18 @@ model User {
   reviewedPayments      UserMembershipFlow[] @relation("PaymentVerifier")
 
   @@map("users")
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String?
+  message   String
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("contact_messages")
 }
 
 model AuditLog {
@@ -203,6 +213,7 @@ model CustomerVisitImage {
   imageUrl    String      @map("image_url")
   description String?
   status      VisitStatus @default(PENDING)
+  adminNote   String?     @map("admin_note")
   reviewedBy  String?     @map("reviewed_by")
   reviewedAt  DateTime?   @map("reviewed_at")
   createdAt   DateTime    @default(now()) @map("created_at")

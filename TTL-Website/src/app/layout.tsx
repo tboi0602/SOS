@@ -23,27 +23,27 @@ const siteUrl = "https://vnsales.org";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "SOS — Sales Omni System",
+  title: "TRUNG TÂM ĐỀ CỬ TINH HOA VIỆT",
   description:
-    "Đánh thức tiềm năng — Kiến tạo tương lai. Trang bị hành trang Sales & Marketing thực chiến cho thế hệ trẻ Việt Nam.",
+    "Tìm kiếm đề cử Tinh Hoa VIệt - Kiến tạo Di sản Việt - Chia sẻ - Truyền cảm hứng - Phát triển.",
   openGraph: {
-    title: "SOS — Sales Omni System",
+    title: "TRUNG TÂM ĐỀ CỬ TINH HOA VIỆT",
     description:
-      "Đánh thức tiềm năng — Kiến tạo tương lai. Trang bị hành trang Sales & Marketing thực chiến cho thế hệ trẻ Việt Nam.",
+      "Tìm kiếm đề cử Tinh Hoa VIệt - Kiến tạo Di sản Việt - Chia sẻ - Truyền cảm hứng - Phát triển.",
     url: siteUrl,
-    siteName: "SOS",
+    siteName: "Tinh Hoa Việt",
     images: [
-      { url: `${siteUrl}/images/hero-visual.png`, width: 1200, height: 630 },
+      { url: `${siteUrl}/images/tbv-logo.png`, width: 630, height: 630 },
     ],
     locale: "vi_VN",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "SOS — Sales Omni System",
+    title: "TRUNG TÂM ĐỀ CỬ TINH HOA VIỆT",
     description:
-      "Đánh thức tiềm năng — Kiến tạo tương lai. Trang bị hành trang Sales & Marketing thực chiến cho thế hệ trẻ Việt Nam.",
-    images: [`${siteUrl}/images/hero-visual.png`],
+      "Tìm kiếm đề cử Tinh Hoa VIệt - Kiến tạo Di sản Việt - Chia sẻ - Truyền cảm hứng - Phát triển.",
+    images: [`${siteUrl}/images/tbv-logo.png`],
   },
 };
 

@@ -54,7 +54,7 @@ export default function MissionSection() {
             >
               <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-accent/10 mb-5 ring-1 ring-accent/10 group-hover:ring-accent/30 group-hover:scale-110 transition-all duration-300">
                 <span className="text-2xl font-extrabold text-accent">
-                  {item.t[0]}
+                 T
                 </span>
               </div>
               <h3 className="text-base font-bold mb-2 transition-colors duration-300" style={{ color: "var(--text-primary)" }}>{item.t}</h3>

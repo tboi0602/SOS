@@ -1,4 +1,5 @@
 "use client";
+import { getInitial } from "@/utils/cn";
 
 import Image from "next/image";
 import { useState } from "react";
@@ -39,7 +40,7 @@ export default function ReferredMemberCard({
           />
         ) : (
           <div className="relative size-11 rounded-xl flex items-center justify-center text-base font-black" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", border: "0.5px solid var(--border-base)", color: "var(--text-secondary)" }}>
-            {member.name.charAt(0).toUpperCase()}
+            {getInitial(member.name)}
           </div>
         )}
       </div>
@@ -51,7 +52,7 @@ export default function ReferredMemberCard({
         <p className="text-[10px] font-mono truncate flex items-center gap-1.5" style={{ color: "var(--text-tertiary)" }}>
           <QrCode size={11} className="shrink-0" style={{ color: "var(--text-dim)" }} />
           <span className="px-1.5 py-0.5 rounded group-hover:text-emerald-300 transition-colors" style={{ background: "color-mix(in srgb, var(--text-primary) 3%, transparent)", borderColor: "var(--border-base)", color: isHovered ? undefined : "var(--text-tertiary)" }}>
-            {member.referralCode || "No Code"}
+            {member.id}
           </span>
         </p>
       </div>
@@ -72,3 +73,5 @@ export default function ReferredMemberCard({
     </div>
   );
 }
+
+

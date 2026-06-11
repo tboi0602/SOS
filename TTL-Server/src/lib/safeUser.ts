@@ -12,8 +12,7 @@ export interface SafeUser {
   tiktok: string | null;
   youtube: string | null;
   zalo: string | null;
-  referralCode: string;
-  memberId: string | null;
+
   kyLuat: number;
   daoDuc: number;
   truyenCamHung: number;
@@ -38,8 +37,7 @@ export function toSafeUser(user: {
   tiktok?: string | null;
   youtube?: string | null;
   zalo?: string | null;
-  referralCode: string;
-  memberId?: string | null;
+
   kyLuat?: number;
   daoDuc?: number;
   truyenCamHung?: number;
@@ -63,8 +61,7 @@ export function toSafeUser(user: {
     tiktok: user.tiktok ?? null,
     youtube: user.youtube ?? null,
     zalo: user.zalo ?? null,
-    referralCode: user.referralCode,
-    memberId: user.memberId ?? null,
+
     kyLuat: user.kyLuat ?? 0,
     daoDuc: user.daoDuc ?? 0,
     truyenCamHung: user.truyenCamHung ?? 0,

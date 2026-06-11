@@ -89,7 +89,7 @@ export default function PublicProfilePage() {
               <QrCodeSection
                 qrUrl={qrUrl}
                 userName={u.name}
-                referralCode={u.referralCode}
+                id={u.id}
               />
             </div>
           )}

@@ -23,11 +23,6 @@ const SHADOW = "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparen
 export default function ProfilePage() {
   const { user } = useAuth();
   const { profile, referred, loading } = useProfile(user);
-
-  if (!user) return null;
-
-  const profileUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/profile/${user.referralCode || user.id}`;
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(profileUrl)}&color=FFFFFF&bgcolor=1A1A1A`;
   const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -46,6 +41,11 @@ export default function ProfilePage() {
     });
     return () => ctx.revert();
   }, [profile]);
+
+  if (!user) return null;
+
+  const profileUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/profile/${user.id}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(profileUrl)}&color=FFFFFF&bgcolor=1A1A1A`;
 
   const activities =
     profile?.activities.map((a) => ({
@@ -76,7 +76,7 @@ export default function ProfilePage() {
                 <AnimatedBorder className="profile-section" style={{ background: BG, boxShadow: SHADOW }}>
                   <ProfileHeader
                     name={user.name}
-                    referralCode={user.referralCode}
+                    id={user.id}
                     avatar={user.avatar}
                     bio={user.bio}
                     job={user.job}

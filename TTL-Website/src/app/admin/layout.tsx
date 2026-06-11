@@ -6,10 +6,10 @@ import { useAuth } from "@/lib/auth-context";
 import Image from "next/image";
 import { SITE_NAME } from "@/utils/constants";
 import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
-import { adminService } from "@/service/admin.service";
 import { Menu } from "lucide-react";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { getNavGroups } from "@/components/admin/AdminNavConfig";
+import { adminContentService } from "@/service/adminPost.service";
 
 export default function AdminLayout({
   children,
@@ -21,22 +21,22 @@ export default function AdminLayout({
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  const [pendingCount, setPendingCount] = useState(0);
+  const [pendingCounts, setPendingCounts] = useState({ posts: 0, journals: 0, submissions: 0, customerVisits: 0, contactMessages: 0 });
 
-  const fetchPendingCount = useCallback(async () => {
+  const fetchPendingCounts = useCallback(async () => {
     try {
-      const res = await adminService.getPendingMembers(1, 1);
-      setPendingCount(res.total);
+      const res = await adminContentService.getPendingCounts();
+      setPendingCounts(res);
     } catch {
-      setPendingCount(0);
+      setPendingCounts({ posts: 0, journals: 0, submissions: 0, customerVisits: 0, contactMessages: 0 });
     }
   }, []);
 
   useEffect(() => {
-    fetchPendingCount();
-    const interval = setInterval(fetchPendingCount, 30000);
+    fetchPendingCounts();
+    const interval = setInterval(fetchPendingCounts, 30000);
     return () => clearInterval(interval);
-  }, [fetchPendingCount]);
+  }, [fetchPendingCounts]);
 
   const perms: string[] = Array.isArray(user?.permissions)
     ? user.permissions!
@@ -116,7 +116,7 @@ export default function AdminLayout({
           navGroups={navGroups}
           expandedGroups={expandedGroups}
           onToggleGroup={toggleGroup}
-          pendingCount={pendingCount}
+          pendingCounts={pendingCounts}
         />
       </aside>
 
@@ -185,7 +185,7 @@ export default function AdminLayout({
           navGroups={navGroups}
           expandedGroups={expandedGroups}
           onToggleGroup={toggleGroup}
-          pendingCount={pendingCount}
+          pendingCounts={pendingCounts}
         />
       </div>
 

@@ -5,7 +5,6 @@ import { useReferral } from "@/hook/referral/useReferral";
 import ReferralQrCode from "@/components/referral/ReferralQrCode";
 import ReferralCodeCard from "@/components/referral/ReferralCodeCard";
 import ReferralLinkCard from "@/components/referral/ReferralLinkCard";
-import CompetencyBars from "@/components/referral/CompetencyBars";
 import GuideTimeline from "@/components/referral/GuideTimeline";
 
 function ReferralHeader() {
@@ -28,7 +27,6 @@ function ReferralHeader() {
 
 export default function ReferralPage() {
   const {
-    user,
     code,
     link,
     qrUrl,
@@ -45,35 +43,26 @@ export default function ReferralPage() {
       <div className="max-w-5xl mx-auto space-y-8">
         <ReferralHeader />
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          <div className="lg:col-span-2 space-y-4">
-            <ReferralQrCode
-              qrUrl={qrUrl}
-              qrDownloaded={qrDownloaded}
-              qrRef={qrRef}
-              onDownloadQR={handleDownloadQR}
-            />
-            <ReferralCodeCard
-              code={code}
-              copied={copied}
-              onCopy={handleCopyCode}
-            />
-            <ReferralLinkCard
-              link={link}
-              copied={copied}
-              onCopy={handleCopyLink}
-            />
-          </div>
-
-          <div className="lg:col-span-3 space-y-4">
-            <CompetencyBars
-              kLuat={user?.kyLuat ?? 0}
-              dDuc={user?.daoDuc ?? 0}
-              tC_Hung={user?.truyenCamHung ?? 0}
-            />
-            <GuideTimeline />
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <ReferralQrCode
+            qrUrl={qrUrl}
+            qrDownloaded={qrDownloaded}
+            qrRef={qrRef}
+            onDownloadQR={handleDownloadQR}
+          />
+          <ReferralCodeCard
+            code={code}
+            copied={copied}
+            onCopy={handleCopyCode}
+          />
+          <ReferralLinkCard
+            link={link}
+            copied={copied}
+            onCopy={handleCopyLink}
+          />
         </div>
+
+        <GuideTimeline />
       </div>
     </div>
   );

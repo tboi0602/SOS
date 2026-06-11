@@ -7,6 +7,7 @@ import {
   Trash2,
 } from "lucide-react";
 import type { Post } from "@/service/api";
+import { getInitial } from "@/utils/cn";
 
 interface PostHeaderProps {
   post: Post;
@@ -37,29 +38,29 @@ export default function PostHeader({
   };
 
   return (
-    <div className="flex items-center justify-between mb-3">
+    <div className="flex items-center justify-between mb-2">
       <div
-        className="flex items-center gap-3 cursor-pointer"
+        className="flex items-center gap-2 cursor-pointer"
         onClick={onUserClick}
       >
         {post.user.avatar ? (
           <Image
             src={getImageUrl(post.user.avatar)}
             alt={`${post.user.name}'s avatar`}
-            width={40}
-            height={40}
-            className="size-10 rounded-full object-cover"
+            width={32}
+            height={32}
+            className="size-8 rounded-full object-cover"
           />
         ) : (
-          <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary">
-            {post.user.name.charAt(0).toUpperCase()}
+          <div className="size-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
+            {getInitial(post.user.name)}
           </div>
         )}
         <div>
-          <p className="text-sm font-semibold hover:text-accent transition-colors" style={{ color: "var(--text-primary)" }}>
+          <p className="text-[13px] font-semibold hover:text-accent transition-colors duration-150" >
             {post.user.name}
           </p>
-          <p className="text-[11px]" style={{ color: "var(--text-tertiary)" }}>
+          <p className="text-[10px]" style={{ color: "var(--text-tertiary)" }}>
             {new Date(post.createdAt).toLocaleDateString("vi-VN", {
               hour: "2-digit",
               minute: "2-digit",

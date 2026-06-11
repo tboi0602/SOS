@@ -1,4 +1,5 @@
 "use client";
+import { getInitial } from "@/utils/cn";
 
 import { useAuth } from "@/lib/auth-context";
 import { usePathname, useRouter } from "next/navigation";
@@ -44,8 +45,15 @@ export default function FeedSidebar() {
   const mobileOpenRef = useRef(mobileOpen);
 
   useEffect(() => {
-    if (!user) { setUnreadCount(0); return; }
-    const fetch = () => notificationService.list(1, 1).then((res) => setUnreadCount(res.unreadCount)).catch(() => {});
+    if (!user) {
+      setUnreadCount(0);
+      return;
+    }
+    const fetch = () =>
+      notificationService
+        .list(1, 1)
+        .then((res) => setUnreadCount(res.unreadCount))
+        .catch(() => {});
     fetch();
     const id = setInterval(fetch, 30000);
     return () => clearInterval(id);
@@ -89,18 +97,24 @@ export default function FeedSidebar() {
           className="flex items-center gap-2.5 group cursor-pointer min-w-0"
           onClick={() => router.push("/")}
         >
-          <Image
-            src="/images/logo.png"
-            alt={SITE_NAME}
-            width={isCollapsed ? 28 : 32}
-            height={isCollapsed ? 28 : 32}
-            unoptimized
-            className="shrink-0"
-          />
-          {!isCollapsed && (
-            <span className="text-sm font-bold tracking-tight bg-linear-to-r from-[var(--text-primary)] via-accent to-primary bg-clip-text text-transparent truncate">
-              {SITE_NAME}
-            </span>
+          {!isCollapsed ? (
+            <Image
+              src="/images/logo.png"
+              alt={SITE_NAME}
+              width={150}
+              height={150}
+              unoptimized
+              className="shrink-0"
+            />
+          ) : (
+            <Image
+              src="/images/tbv-logo.png"
+              alt={SITE_NAME}
+              width={50}
+              height={50}
+              unoptimized
+              className="shrink-0"
+            />
           )}
         </span>
         <button
@@ -157,7 +171,9 @@ export default function FeedSidebar() {
         {/* Đăng bài */}
         <div className={isCollapsed ? "flex justify-center py-2" : "py-3"}>
           <button
-            onClick={() => user ? router.push("/home/create") : setShowLoginModal(true)}
+            onClick={() =>
+              user ? router.push("/home/create") : setShowLoginModal(true)
+            }
             className={`flex items-center justify-center ${
               isCollapsed
                 ? "size-9 rounded-xl bg-primary text-[var(--text-primary)] hover:bg-primary-light shadow-lg shadow-primary/25"
@@ -187,7 +203,9 @@ export default function FeedSidebar() {
         <div className="border-t border-[var(--border-base)] pt-3">
           {isCollapsed ? (
             <button
-              onClick={() => user ? router.push("/home/profile") : setShowLoginModal(true)}
+              onClick={() =>
+                user ? router.push("/home/profile") : setShowLoginModal(true)
+              }
               className={`w-full flex justify-center py-3 rounded-xl text-sm transition-all cursor-pointer ${
                 isPersonalActive
                   ? "text-primary bg-primary/20 font-semibold"
@@ -200,7 +218,11 @@ export default function FeedSidebar() {
           ) : (
             <>
               <button
-                onClick={() => user ? setPersonalOpen(!personalOpen) : setShowLoginModal(true)}
+                onClick={() =>
+                  user
+                    ? setPersonalOpen(!personalOpen)
+                    : setShowLoginModal(true)
+                }
                 className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-all cursor-pointer ${
                   isPersonalActive
                     ? "text-primary bg-primary/20 font-semibold"
@@ -223,7 +245,9 @@ export default function FeedSidebar() {
                   return (
                     <button
                       key={item.href}
-                      onClick={() => user ? router.push(item.href) : setShowLoginModal(true)}
+                      onClick={() =>
+                        user ? router.push(item.href) : setShowLoginModal(true)
+                      }
                       className={`w-full flex items-center gap-3 pl-9 pr-3.5 py-2 rounded-lg text-sm transition-all cursor-pointer ${
                         active
                           ? "text-primary font-medium"
@@ -252,9 +276,13 @@ export default function FeedSidebar() {
             title={isCollapsed ? "Thông báo" : undefined}
           >
             <Bell size={18} className="shrink-0" />
-            {!isCollapsed && <span className="flex-1 text-left">Thông báo</span>}
+            {!isCollapsed && (
+              <span className="flex-1 text-left">Thông báo</span>
+            )}
             {unreadCount > 0 && (
-              <span className={`${isCollapsed ? "absolute -top-0.5 -right-0.5" : ""} flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-danger text-white text-[9px] font-bold`}>
+              <span
+                className={`${isCollapsed ? "absolute -top-0.5 -right-0.5" : ""} flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-danger text-white text-[9px] font-bold`}
+              >
                 {unreadCount > 99 ? "99+" : unreadCount}
               </span>
             )}
@@ -297,23 +325,15 @@ export default function FeedSidebar() {
                     className="inline-flex items-center gap-1 text-[10px] text-primary bg-primary/8 px-1.5 py-0.5 rounded-full border border-primary/15"
                   >
                     <ShieldCheck size={10} />
-                    {p === "approve_posts"
-                      ? "Duyệt bài"
-                      : p === "approve_journals"
-                        ? "Duyệt nhật ký"
-                        : p === "approve_submissions"
-                          ? "Duyệt tác phẩm"
-                          : p === "manage_users"
-                            ? "Quản lý user"
-                            : p === "manage_permissions"
-                              ? "Phân quyền"
-                              : p === "manage_notifications"
-                                ? "Thông báo"
-                                : p === "manage_lessons"
-                                  ? "Bài học"
-                                  : p === "manage_posts"
-                                    ? "Bài đăng"
-                                    : p}
+                    {p === "manage_content"
+                      ? "Quản lý nội dung"
+                      : p === "manage_users"
+                        ? "Quản lý người dùng"
+                        : p === "manage_notifications"
+                          ? "Thông báo"
+                          : p === "manage_lessons"
+                            ? "Bài học"
+                            : p}
                   </span>
                 ))}
               </div>
@@ -336,7 +356,7 @@ export default function FeedSidebar() {
               <div
                 className={`${isCollapsed ? "size-8" : "size-9"} rounded-full bg-primary/25 flex items-center justify-center text-sm font-bold text-primary shrink-0`}
               >
-                {user.name?.charAt(0).toUpperCase() || "U"}
+                {getInitial(user.name)}
               </div>
             )}
             {!isCollapsed && (
@@ -360,7 +380,11 @@ export default function FeedSidebar() {
             )}
           </div>
         ) : (
-          <div className={isCollapsed ? "flex flex-col items-center gap-3" : "space-y-2"}>
+          <div
+            className={
+              isCollapsed ? "flex flex-col items-center gap-3" : "space-y-2"
+            }
+          >
             {isCollapsed ? (
               <>
                 <button
@@ -491,7 +515,9 @@ export default function FeedSidebar() {
           </button>
 
           <button
-            onClick={() => user ? router.push("/home/profile") : setShowLoginModal(true)}
+            onClick={() =>
+              user ? router.push("/home/profile") : setShowLoginModal(true)
+            }
             className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${isPersonalActive ? "text-primary bg-primary/15" : "text-[var(--text-tertiary)] hover:bg-[var(--glass-hover)]"}`}
           >
             <User size={20} />
@@ -507,3 +533,5 @@ export default function FeedSidebar() {
     </>
   );
 }
+
+

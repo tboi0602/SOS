@@ -1,4 +1,5 @@
 "use client";
+import { getInitial } from "@/utils/cn";
 
 import { Trophy, Medal, Crown, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -82,7 +83,7 @@ function PodiumCard({
         ) : (
           <div className={`relative ${isFirst ? "size-14 sm:size-16" : "size-12 sm:size-14"} rounded-full bg-[var(--surface-elevated)] border-2 flex items-center justify-center ${isFirst ? "text-xl" : "text-lg"} font-black text-[var(--text-primary)] shadow-lg group-hover:scale-105 transition duration-300`}
             style={avatarBorder ? { borderColor: avatarBorder } : undefined}>
-            {member.name.charAt(0).toUpperCase()}
+            {getInitial(member.name)}
           </div>
         )}
         {isFirst && <Crown size={18} className="absolute -top-4 left-1/2 -translate-y-1/2 -translate-x-1/2 text-amber-400 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)] animate-bounce" />}
@@ -194,3 +195,5 @@ export default function Podium({ members }: { members: Member[] }) {
     </div>
   );
 }
+
+

@@ -6,14 +6,10 @@ import { Shield, ShieldCheck, ShieldOff, Search, X } from "lucide-react";
 import { useState } from "react";
 
 const ALL_PERMS = [
-  { key: "approve_posts", label: "Duyệt bài viết" },
-  { key: "approve_journals", label: "Duyệt nhật ký" },
-  { key: "approve_submissions", label: "Duyệt tác phẩm" },
+  { key: "manage_content", label: "Quản lý nội dung" },
   { key: "manage_users", label: "Quản lý người dùng" },
-  { key: "manage_permissions", label: "Phân quyền" },
   { key: "manage_notifications", label: "Quản lý thông báo" },
   { key: "manage_lessons", label: "Quản lý bài học" },
-  { key: "manage_posts", label: "Quản lý bài đăng" },
 ];
 
 export default function PermissionsPage() {

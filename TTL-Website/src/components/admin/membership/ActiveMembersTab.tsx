@@ -1,5 +1,6 @@
 "use client"
 
+import { getInitial } from "@/utils/cn";
 import { useEffect, useRef, useState, useCallback } from "react"
 import { Users, Clock, ChevronRight, CheckCircle2, Edit3, Loader2 } from "lucide-react"
 import gsap from "gsap"
@@ -9,7 +10,7 @@ import Pagination from "@/components/admin/Pagination"
 
 export default function ActiveMembersTab() {
   const [data, setData] = useState<{
-    users: { user: { id: string; name: string; email: string; memberId: string | null }; flow: import("@/service/membership.service").UserFlow }[]
+    users: { user: { id: string; name: string; email: string }; flow: import("@/service/membership.service").UserFlow }[]
     total: number; page: number; totalPages: number
   } | null>(null)
   const [loading, setLoading] = useState(true)
@@ -86,7 +87,7 @@ export default function ActiveMembersTab() {
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="size-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0" style={{ background: "color-mix(in srgb, var(--clr-primary) 15%, transparent)", color: "var(--clr-primary)" }}>
-                        {entry.user.name.charAt(0).toUpperCase()}
+                        {getInitial(entry.user.name)}
                       </div>
                       <div className="min-w-0 text-left">
                         <p className="text-sm font-semibold truncate">{entry.user.name}</p>
@@ -153,3 +154,6 @@ export default function ActiveMembersTab() {
     </Skeleton>
   )
 }
+
+
+

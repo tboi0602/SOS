@@ -83,7 +83,8 @@ export const lessonService = {
 
   async createLesson(data: { title: string; description?: string; type?: string; orderIndex?: number; content?: string }) {
     const flow = await flowService.getDefaultFlow();
-    return getDb().lessonDef.create({ data: { ...data, membershipFlowId: flow.id } });
+    const { id: _, ...clean } = data as any;
+    return getDb().lessonDef.create({ data: { ...clean, membershipFlowId: flow.id } });
   },
 
   async updateLesson(id: string, data: { title?: string; description?: string; type?: string; orderIndex?: number; content?: string }) {

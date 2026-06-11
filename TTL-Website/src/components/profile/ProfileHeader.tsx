@@ -1,4 +1,5 @@
 "use client";
+import { getInitial } from "@/utils/cn";
 
 import { MessageCircle, ExternalLink } from "lucide-react";
 import Image from "next/image";
@@ -56,7 +57,7 @@ const SOCIALS = [
 
 export default function ProfileHeader({
   name,
-  referralCode,
+  id,
   avatar,
   bio,
   job,
@@ -68,7 +69,7 @@ export default function ProfileHeader({
   zalo,
 }: {
   name: string;
-  referralCode: string | null;
+  id: string;
   avatar: string | null;
   bio: string | null;
   job: string | null;
@@ -121,7 +122,7 @@ export default function ProfileHeader({
               />
             ) : (
               <div className="w-full h-full rounded-full bg-[var(--surface-elevated)] flex items-center justify-center text-lg font-bold">
-                {name.charAt(0).toUpperCase() || "U"}
+                {getInitial(name)}
               </div>
             )}
           </div>
@@ -134,7 +135,7 @@ export default function ProfileHeader({
         <div className="min-w-0">
           <h2 className="text-base font-bold truncate" style={{ color: "var(--text-primary)" }}>{name}</h2>
           <p className="text-[10px] text-[var(--text-tertiary)] font-mono">
-            ID: {referralCode}
+            ID: {id}
           </p>
         </div>
       </div>
@@ -276,3 +277,5 @@ export default function ProfileHeader({
     </div>
   );
 }
+
+

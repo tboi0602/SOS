@@ -1,4 +1,5 @@
 "use client";
+import { getInitial } from "@/utils/cn";
 
 import { Camera, Loader2, Copy, Check } from "lucide-react";
 import { useRef, useState } from "react";
@@ -9,7 +10,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 export default function ProfileBanner({
   name,
   email,
-  referralCode,
+  id,
   avatar,
   bio,
   uploading,
@@ -17,7 +18,7 @@ export default function ProfileBanner({
 }: {
   name: string;
   email: string;
-  referralCode: string | null;
+  id: string;
   avatar: string | null;
   bio: string;
   uploading: boolean;
@@ -38,8 +39,7 @@ export default function ProfileBanner({
   };
 
   const copyReferral = () => {
-    if (!referralCode) return;
-    navigator.clipboard.writeText(referralCode);
+    navigator.clipboard.writeText(id);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -66,7 +66,7 @@ export default function ProfileBanner({
               />
             ) : (
               <div className="w-full h-full rounded-full bg-[var(--surface-elevated)] flex items-center justify-center text-3xl sm:text-4xl font-bold" style={{ color: "var(--text-primary)" }}>
-                {name.charAt(0).toUpperCase() || "U"}
+                {getInitial(name)}
               </div>
             )}
           </div>
@@ -101,19 +101,17 @@ export default function ProfileBanner({
           <p className="text-xs text-[var(--text-tertiary)] font-mono mt-0.5">{email}</p>
         </div>
 
-        {referralCode && (
-          <button
-            type="button"
-            onClick={copyReferral}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface-elevated)] border border-[var(--border-base)] text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-elevated)] transition-all cursor-pointer"
-          >
-            {copied ? (
-              <><Check size={12} className="text-green-400" /> Đã sao chép</>
-            ) : (
-              <><Copy size={12} /> Mã giới thiệu: <span className="text-[var(--clr-accent)] font-mono font-bold">{referralCode}</span></>
-            )}
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={copyReferral}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface-elevated)] border border-[var(--border-base)] text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-elevated)] transition-all cursor-pointer"
+        >
+          {copied ? (
+            <><Check size={12} className="text-green-400" /> Đã sao chép</>
+          ) : (
+            <><Copy size={12} /> Mã giới thiệu: <span className="text-[var(--clr-accent)] font-mono font-bold">{id}</span></>
+          )}
+        </button>
 
         <p className="text-xs text-[var(--text-tertiary)] leading-relaxed max-w-lg">
           {bio || "Chưa có giới thiệu"}
@@ -126,3 +124,5 @@ export default function ProfileBanner({
     </div>
   );
 }
+
+

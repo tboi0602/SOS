@@ -96,8 +96,8 @@ export const adminController = {
       const limit = Math.min(100, Math.max(1, parseInt(s(req.query.limit, "50")) || 50))
       const dateFrom = s(req.query.dateFrom) || undefined
       const dateTo = s(req.query.dateTo) || undefined
-      const action = s(req.query.action) || undefined
-      const result = await adminService.getActivityLog(page, limit, dateFrom, dateTo, action)
+      const resource = s(req.query.resource) || undefined
+      const result = await adminService.getActivityLog(page, limit, dateFrom, dateTo, resource)
       res.json(result)
     } catch (err) {
       next(err)
@@ -122,24 +122,9 @@ export const adminController = {
     }
   },
 
-  async getPendingMembers(req: Request, res: Response, next: NextFunction) {
+  async getPendingCounts(req: Request, res: Response, next: NextFunction) {
     try {
-      const page = Math.max(1, parseInt(s(req.query.page, "1")) || 1)
-      const limit = Math.min(50, Math.max(1, parseInt(s(req.query.limit, "20")) || 20))
-      const result = await adminService.getPendingMembers(page, limit)
-      res.json(result)
-    } catch (err) {
-      next(err)
-    }
-  },
-
-  async getUserPendingItems(req: Request, res: Response, next: NextFunction) {
-    try {
-      const userId = s(req.params.userId)
-      const filterType = s(req.query.type) || undefined
-      const page = Math.max(1, parseInt(s(req.query.page, "1")) || 1)
-      const limit = Math.min(50, Math.max(1, parseInt(s(req.query.limit, "20")) || 20))
-      const result = await adminService.getUserPendingItems(userId, filterType, page, limit)
+      const result = await adminService.getPendingCounts()
       res.json(result)
     } catch (err) {
       next(err)

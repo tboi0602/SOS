@@ -8,6 +8,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
+import { useRouter } from "next/navigation";
 import { authService } from "@/service/auth.service";
 import type { User } from "@/service/api";
 
@@ -21,7 +22,7 @@ interface AuthContextType {
     password: string;
     job?: string;
     address?: string;
-    referralCode?: string;
+
   }) => Promise<User>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -53,6 +54,7 @@ function saveUserToStorage(user: User | null) {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const setAndPersistUser = useCallback((u: User | null) => {
     setUser(u);
@@ -74,8 +76,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (restored) {
         setUser(restored);
       }
-
-      fetchUser().finally(() => setLoading(false));
+      setLoading(false);
+      fetchUser();
     }, 0);
 
     return () => {
@@ -98,7 +100,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password: string;
       job?: string;
       address?: string;
-      referralCode?: string;
+  
     }) => {
       const res = await authService.register(data);
       setUser(res.user);
@@ -110,7 +112,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(async () => {
     await authService.logout();
     setAndPersistUser(null);
-  }, [setAndPersistUser]);
+    router.push("/");
+  }, [setAndPersistUser, router]);
 
   return (
     <AuthContext.Provider

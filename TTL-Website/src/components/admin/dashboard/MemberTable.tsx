@@ -1,4 +1,5 @@
 "use client";
+import { getInitial } from "@/utils/cn";
 
 import {
   Search,
@@ -16,14 +17,10 @@ import Image from "next/image";
 import { SortHeader } from "@/components/admin/SortHeader";
 
 const PERMISSION_LABELS: Record<string, string> = {
-  approve_posts: "Duyệt bài",
-  approve_journals: "Duyệt nhật ký",
-  approve_submissions: "Duyệt tác phẩm",
-  manage_users: "Quản lý user",
-  manage_permissions: "Phân quyền",
+  manage_content: "Quản lý nội dung",
+  manage_users: "Quản lý người dùng",
   manage_notifications: "Thông báo",
   manage_lessons: "Bài học",
-  manage_posts: "Bài đăng",
 };
 
 interface Member {
@@ -202,7 +199,7 @@ export default function MemberTable({
                         />
                       ) : (
                         <span className="text-xs font-bold" style={{ color: "var(--text-secondary)" }}>
-                          {m.name.charAt(0).toUpperCase()}
+                          {getInitial(m.name)}
                         </span>
                       )}
                     </div>
@@ -344,3 +341,5 @@ export default function MemberTable({
     </>
   );
 }
+
+

@@ -30,8 +30,8 @@ export const customerVisitController = {
 
   review: asyncHandler(async (req: Request, res: Response) => {
     const id = req.params.id as string;
-    const { status } = req.body as { status: "APPROVED" | "REJECTED" };
-    const result = await customerVisitService.review(id, req.user!.userId, status);
+    const { status, adminNote } = req.body as { status: "APPROVED" | "REJECTED"; adminNote?: string };
+    const result = await customerVisitService.review(id, req.user!.userId, status, adminNote);
     res.json({ image: result });
   }),
 

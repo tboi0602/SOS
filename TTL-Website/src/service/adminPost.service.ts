@@ -3,6 +3,14 @@ import type { Post } from "@/types/post"
 import type { JournalEntry } from "@/types/journal"
 import type { Submission } from "@/types/submission"
 
+export const adminContentService = {
+  getPendingCounts() {
+    return request<{ posts: number; journals: number; submissions: number; customerVisits: number; contactMessages: number }>(
+      "/api/v1/admin/pending-counts",
+    )
+  },
+}
+
 export const adminPostService = {
   listPosts(page = 1, limit = 20) {
     return request<{

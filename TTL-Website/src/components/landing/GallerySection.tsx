@@ -3,9 +3,22 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Image from "next/image";
-import { GALLERY_IMAGES } from "@/utils/constants";
 import { SectionGlow } from "@/components/landing/Effects";
 import TiltContainer from "@/components/ui/TiltContainer";
+
+interface GalleryImage {
+  id: string;
+  label: string;
+}
+
+const GALLERY_IMAGES: GalleryImage[] = [
+  { id: "1", label: "Lễ Vinh danh Tinh Hoa Việt" },
+  { id: "2", label: "Hội thảo Hệ quy chiếu 5T" },
+  { id: "3", label: "Sàn Tài sản Trí tuệ" },
+  { id: "4", label: "Bản đồ Số 3D Tinh Hoa Việt" },
+  { id: "5", label: "Cộng đồng Tinh hoa Việt" },
+  { id: "6", label: "Trao truyền Di sản" },
+];
 
 const spans = [
   "md:col-span-2 md:row-span-2",

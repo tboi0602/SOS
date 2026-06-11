@@ -18,7 +18,7 @@ export function useJournal() {
   const [creating, setCreating] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);

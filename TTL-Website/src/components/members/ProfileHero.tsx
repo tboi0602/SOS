@@ -1,4 +1,5 @@
 "use client";
+import { getInitial } from "@/utils/cn";
 
 import Image from "next/image";
 import { Briefcase, Trophy, Star, Users, MapPin, ExternalLink } from "lucide-react";
@@ -36,7 +37,7 @@ export default function ProfileHero({
             />
           ) : (
             <div className="relative size-28 rounded-[1.8rem] bg-linear-to-r from-[var(--surface-elevated)] to-[var(--surface-base)] flex items-center justify-center text-4xl font-extrabold text-[var(--text-primary)]" style={{ borderColor: "var(--border-base)" }}>
-              {user.name.charAt(0).toUpperCase()}
+              {getInitial(user.name)}
             </div>
           )}
         </div>
@@ -119,3 +120,5 @@ export default function ProfileHero({
     </div>
   );
 }
+
+

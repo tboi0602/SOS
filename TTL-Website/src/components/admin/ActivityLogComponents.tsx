@@ -105,7 +105,7 @@ function LogDetail({ entry }: { entry: ActivityLogEntry }) {
           {perms.length > 0
             ? perms.map((p) => (
                 <span key={p} className="inline-block px-1.5 py-0.5 rounded bg-primary/10 border border-primary/20 text-primary text-[10px] mr-1">
-                  {p === "approve_posts" ? "Duyệt bài" : p === "approve_journals" ? "Duyệt nhật ký" : p === "approve_submissions" ? "Duyệt tác phẩm" : p === "manage_users" ? "Quản lý user" : p === "manage_permissions" ? "Phân quyền" : p === "manage_notifications" ? "Thông báo" : p === "manage_lessons" ? "Bài học" : p === "manage_posts" ? "Bài đăng" : p}
+                  {p === "manage_content" ? "Quản lý nội dung" : p === "manage_users" ? "Quản lý người dùng" : p === "manage_notifications" ? "Thông báo" : p === "manage_lessons" ? "Bài học" : p}
                 </span>
               ))
             : <span className="italic" style={{ color: "var(--text-tertiary)" }}>Không có</span>}

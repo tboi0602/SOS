@@ -2,10 +2,45 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { VALUES_DATA, VISION } from "@/utils/constants";
 import Image from "next/image";
 import { Quote } from "lucide-react";
 import { ShineCard, SectionGlow } from "@/components/landing/Effects";
+
+interface ValueItem {
+  number: string;
+  quote: string;
+  text: string;
+}
+
+interface VisionData {
+  badge: string;
+  quote: string;
+  text: string;
+}
+
+const VALUES_DATA: ValueItem[] = [
+  {
+    number: "01",
+    quote: "Trí tuệ là di sản bất tử — mỗi thành tựu hôm nay là nền móng cho thế hệ mai sau.",
+    text: "Tinh Hoa Việt tôn vinh trí tuệ như giá trị cốt lõi và di sản trường tồn. Chúng tôi tin rằng mỗi cá nhân đều mang trong mình một tinh hoa riêng, xứng đáng được khai phá, vinh danh và lưu truyền.",
+  },
+  {
+    number: "02",
+    quote: "Tính xác thực là nền tảng của mọi giá trị — chỉ sự thật mới đáng được trân quý.",
+    text: "Với Hệ quy chiếu 5T khắt khe, chúng tôi đảm bảo mọi thành tựu được xác lập đều đáp ứng tiêu chuẩn học thuật và đạo đức cao nhất, mang lại sự tin cậy tuyệt đối cho cộng đồng và xã hội.",
+  },
+  {
+    number: "03",
+    quote: "Kết nối tinh hoa — Trao truyền giá trị — Kiến tạo tương lai.",
+    text: "Bản đồ Số Tinh Hoa Việt 3D và Sàn Tài sản Trí tuệ là cầu nối giữa quá khứ, hiện tại và tương lai, nơi di sản trí tuệ được bảo tồn, khai thác và trao truyền qua nhiều thế hệ.",
+  },
+];
+
+const VISION: VisionData = {
+  badge: "Tầm nhìn",
+  quote: "Suy tôn Trí tuệ — Lưu truyền Di sản — Vì một Việt Nam hùng cường.",
+  text: "Trở thành tổ chức hàng đầu Việt Nam trong việc phát hiện, bảo chứng và vinh danh giá trị tinh hoa, kiến tạo một hệ sinh thái số bền vững — nơi trí tuệ được tôn vinh, di sản được bảo hộ và thành tựu của người Việt sống mãi với thời gian.",
+};
 
 const ease = [0.16, 1, 0.3, 1] as const;
 

@@ -6,13 +6,13 @@ import { QrCode, Download } from "lucide-react";
 interface QrCodeSectionProps {
   qrUrl: string;
   userName: string;
-  referralCode: string | null;
+  id: string;
 }
 
 export default function QrCodeSection({
   qrUrl,
   userName,
-  referralCode,
+  id,
 }: QrCodeSectionProps) {
   return (
     <div className="space-y-6 animate-fade-up">
@@ -60,7 +60,7 @@ export default function QrCodeSection({
           Mã Định Danh Định Vị
         </p>
         <code className="text-base font-mono font-black tracking-wider" style={{ color: "var(--clr-accent)" }}>
-          {referralCode}
+          {id}
         </code>
       </div>
     </div>

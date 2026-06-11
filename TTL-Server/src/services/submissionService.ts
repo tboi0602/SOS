@@ -1,5 +1,6 @@
 import { getDb } from "../db";
 import { NotFoundError, ForbiddenError } from "../lib/errors";
+import { notificationService } from "./notificationService";
 
 export const submissionService = {
   async create(
@@ -83,9 +84,15 @@ export const submissionService = {
     const sub = await getDb().submission.findUnique({
       where: { id: submissionId },
     });
-    if (!sub) throw new NotFoundError("Tác phẩm không tồn tại");
+    if (!sub) throw new NotFoundError("Kỷ luật không tồn tại");
     if (sub.userId !== userId) throw new NotFoundError("Không có quyền xoá");
     await getDb().submission.delete({ where: { id: submissionId } });
+    if (sub.status === "approved") {
+      await getDb().user.update({
+        where: { id: userId },
+        data: { kyLuat: { decrement: 2 } },
+      });
+    }
     return { message: "Đã xoá" };
   },
 
@@ -127,7 +134,7 @@ export const submissionService = {
     const sub = await getDb().submission.findUnique({
       where: { id: submissionId },
     });
-    if (!sub) throw new NotFoundError("Tác phẩm không tồn tại");
+    if (!sub) throw new NotFoundError("Kỷ luật không tồn tại");
     if (sub.status !== "pending")
       throw new ForbiddenError("Chỉ duyệt được tác phẩm đang chờ");
 
@@ -150,6 +157,16 @@ export const submissionService = {
       },
     });
 
+    if (adminNote) {
+      await notificationService.create({
+        userId: sub.userId,
+        title: "Admin đã nhận xét tác phẩm của bạn",
+        content: adminNote,
+        type: "auto",
+        link: "/home/submissions",
+      }).catch(() => {});
+    }
+
     return updated;
   },
 
@@ -157,7 +174,7 @@ export const submissionService = {
     const sub = await getDb().submission.findUnique({
       where: { id: submissionId },
     });
-    if (!sub) throw new NotFoundError("Tác phẩm không tồn tại");
+    if (!sub) throw new NotFoundError("Kỷ luật không tồn tại");
     if (sub.status !== "pending")
       throw new ForbiddenError("Chỉ từ chối được tác phẩm đang chờ");
 
@@ -175,6 +192,16 @@ export const submissionService = {
         metadata: { submissionTitle: sub.title?.slice(0, 100), authorId: sub.userId },
       },
     });
+
+    if (adminNote) {
+      await notificationService.create({
+        userId: sub.userId,
+        title: "Admin đã nhận xét tác phẩm của bạn",
+        content: adminNote,
+        type: "auto",
+        link: "/home/submissions",
+      }).catch(() => {});
+    }
 
     return updated;
   },

@@ -138,7 +138,7 @@ export const profileService = {
       })),
       ...recentJournals.map((j: any) => ({
         type: "journal" as const,
-        title: `Nhật ký: ${j.title.length > 60 ? j.title.substring(0, 60) + "..." : j.title}`,
+        title: `Đạo đức: ${j.title.length > 60 ? j.title.substring(0, 60) + "..." : j.title}`,
         time: timeAgo(j.createdAt),
       })),
       ...recentSubmissions.map((s: any) => ({
@@ -226,9 +226,7 @@ export const profileService = {
           email: u.email,
           role: u.role,
           job: u.job,
-          avatar: u.avatar,
-          referralCode: u.referralCode,
-          memberId: safe.memberId,
+          address: u.address,
           isActive: u.isActive,
           createdAt: u.createdAt.toISOString(),
           kyLuat: safe.kyLuat,
@@ -259,8 +257,6 @@ export const profileService = {
         role: u.role,
         job: u.job,
         avatar: u.avatar,
-        referralCode: u.referralCode,
-        memberId: safe.memberId,
         isActive: u.isActive,
         kyLuat: safe.kyLuat,
         daoDuc: safe.daoDuc,
@@ -290,8 +286,6 @@ export const profileService = {
       return {
         id: m.id,
         name: m.name,
-        referralCode: m.referralCode,
-        memberId: safe.memberId,
         avatar: m.avatar,
         isActive: m.isActive,
         createdAt: m.createdAt.toISOString(),

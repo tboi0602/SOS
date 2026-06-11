@@ -97,4 +97,8 @@ export const authService = {
   uploadAvatar(file: File) {
     return uploadSingleFile<{ user: User }>("/api/v1/auth/avatar", file, "avatar")
   },
+
+  deleteAccount() {
+    return request<{ message: string }>("/api/v1/auth/account", { method: "DELETE" })
+  },
 }

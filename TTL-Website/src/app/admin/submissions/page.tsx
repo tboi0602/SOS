@@ -32,7 +32,7 @@ export default function SubmissionPage() {
 
   return (
     <div className="min-h-screen px-4 sm:px-6 py-8 select-none relative z-10 animate-fade-up" style={{ color: "var(--text-primary)" }}>
-      <div className="max-w-8xl mx-auto space-y-8">
+      <div className="max-w-6xl mx-auto space-y-8">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-lg font-bold flex items-center gap-2" style={{ color: "var(--text-primary)" }}>

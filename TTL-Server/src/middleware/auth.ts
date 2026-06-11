@@ -1,5 +1,5 @@
 import { type Request, type Response, type NextFunction } from "express"
-import { signToken, verifyToken, type JwtPayload } from "../utils/jwt"
+import { verifyToken, type JwtPayload } from "../utils/jwt"
 import { getDb } from "../db"
 import { UnauthorizedError, ForbiddenError } from "../lib/errors"
 
@@ -9,13 +9,6 @@ declare global {
       user?: JwtPayload
     }
   }
-}
-
-const COOKIE_OPTIONS = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax" as const,
-  maxAge: 2 * 60 * 60 * 1000,
 }
 
 export async function requireAuth(req: Request, res: Response, next: NextFunction) {
@@ -49,27 +42,6 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
 
     const permissions = Array.isArray(user.permissions) ? user.permissions as string[] : []
     req.user = { ...payload, role: user.role, permissions }
-
-    // Token rotation: mỗi request tiêu thụ token cũ, trả token mới
-    const newVersion = user.tokenVersion + 1
-    const newToken = signToken({
-      userId: payload.userId,
-      email: payload.email,
-      tokenVersion: newVersion,
-      role: user.role,
-      permissions,
-    })
-    res.cookie("token", newToken, COOKIE_OPTIONS)
-
-    // Bump version sau khi response đã gửi — tránh race condition giữa các request đồng thời
-    res.on("finish", () => {
-      getDb().user
-        .updateMany({
-          where: { id: payload.userId, tokenVersion: user.tokenVersion },
-          data: { tokenVersion: newVersion },
-        })
-        .catch(() => {})
-    })
 
     next()
   } catch (err) {

@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://vnsales.org/sitemap.xml

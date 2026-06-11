@@ -1,17 +1,24 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuthSettings as useSettings } from "@/hook/auth";
 import AnimatedBorder from "@/components/profile/AnimatedBorder";
 import ProfileBanner from "@/components/profile/ProfileBanner";
 import ProfileForm from "@/components/profile/ProfileForm";
 import PasswordForm from "@/components/profile/PasswordForm";
 import Loading from "@/components/ui/Loading";
-import { Settings } from "lucide-react";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import { Settings, Trash2 } from "lucide-react";
+import { authService } from "@/service/auth.service";
 
 const BG = "color-mix(in srgb, var(--surface-elevated) 18%, transparent)";
 const SHADOW = "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)";
 
 export default function SettingsPage() {
+  const router = useRouter();
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const {
     user,
     authLoading,
@@ -75,7 +82,7 @@ export default function SettingsPage() {
           <ProfileBanner
             name={name}
             email={user?.email || ""}
-            referralCode={user?.referralCode ?? null}
+            id={user?.id ?? ""}
             avatar={avatar}
             bio={bio}
             uploading={uploading}
@@ -122,7 +129,37 @@ export default function SettingsPage() {
             </AnimatedBorder>
           </div>
         </div>
+
+        <div className="pt-6 border-t" style={{ borderColor: "color-mix(in srgb, var(--text-primary) 8%, transparent)" }}>
+          <button
+            onClick={() => setDeleteOpen(true)}
+            disabled={deleting}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-[12px] font-medium transition-all cursor-pointer border border-danger/30 text-danger hover:bg-danger/10 disabled:opacity-50"
+          >
+            <Trash2 size={14} />
+            {deleting ? "Đang xoá..." : "Xoá tài khoản"}
+          </button>
+        </div>
       </div>
+
+      <ConfirmDialog
+        open={deleteOpen}
+        onCancel={() => setDeleteOpen(false)}
+        onConfirm={async () => {
+          setDeleting(true);
+          try {
+            await authService.deleteAccount();
+            router.push("/auth/login");
+          } catch {
+            setDeleting(false);
+            setDeleteOpen(false);
+          }
+        }}
+        title="Xoá tài khoản"
+        message="Bạn có chắc muốn xoá tài khoản? Toàn bộ dữ liệu (bài viết, nhật ký, tác phẩm, ...) sẽ bị xoá vĩnh viễn. Hành động này không thể hoàn tác."
+        confirmLabel="Xoá tài khoản"
+        variant="danger"
+      />
     </div>
   );
 }

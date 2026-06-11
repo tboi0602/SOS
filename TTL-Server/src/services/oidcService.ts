@@ -5,6 +5,7 @@ import { config } from "../config"
 import { getDb } from "../db"
 import { signToken } from "../utils/jwt"
 import { toSafeUser } from "../lib/safeUser"
+import { generateMemberId } from "../utils/id"
 import { logger } from "../lib/logger"
 import { BadRequestError, ServiceUnavailableError, UnauthorizedError } from "../lib/errors"
 
@@ -135,7 +136,7 @@ export const oidcService = {
     let user = await getDb().user.findUnique({ where: { email: profile.email } })
 
     if (!user) {
-      const id = uuid()
+      const id = generateMemberId()
       const tempPassword = await bcrypt.hash(uuid(), 12)
       await getDb().user.create({
         data: {
@@ -144,7 +145,6 @@ export const oidcService = {
           name: profile.name || profile.email,
           avatar: profile.picture || null,
           password: tempPassword,
-          referralCode: id,
           isActive: true,
         },
       })

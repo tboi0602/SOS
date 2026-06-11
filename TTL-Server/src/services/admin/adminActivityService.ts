@@ -2,7 +2,7 @@ import { NotFoundError } from "../../lib/errors";
 import { getDb } from "../../db";
 
 export const adminActivityService = {
-  async getActivityLog(page = 1, limit = 50, dateFrom?: string, dateTo?: string, action?: string) {
+  async getActivityLog(page = 1, limit = 50, dateFrom?: string, dateTo?: string, resource?: string) {
     const where: Record<string, unknown> = {};
     if (dateFrom) {
       where.createdAt = { ...(where.createdAt as object || {}), gte: new Date(dateFrom + "T00:00:00") };
@@ -10,8 +10,8 @@ export const adminActivityService = {
     if (dateTo) {
       where.createdAt = { ...(where.createdAt as object || {}), lte: new Date(dateTo + "T23:59:59") };
     }
-    if (action) {
-      where.action = action;
+    if (resource) {
+      where.resource = resource;
     }
 
     const [logs, total] = await Promise.all([

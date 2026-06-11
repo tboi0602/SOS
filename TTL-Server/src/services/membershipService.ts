@@ -408,7 +408,7 @@ export const membershipService = {
     const [flows, total] = await Promise.all([
       getDb().userMembershipFlow.findMany({
         where,
-        include: { user: { select: { id: true, name: true, email: true, avatar: true, memberId: true } } },
+        include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
         orderBy: { updatedAt: "desc" },
         skip,
         take: limit,
@@ -424,7 +424,7 @@ export const membershipService = {
     const [flows, total] = await Promise.all([
       getDb().userMembershipFlow.findMany({
         where,
-        include: { user: { select: { id: true, name: true, email: true, avatar: true, memberId: true } } },
+        include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
         orderBy: { updatedAt: "desc" },
         skip,
         take: limit,
@@ -441,7 +441,7 @@ export const membershipService = {
     const [flows, total] = await Promise.all([
       getDb().userMembershipFlow.findMany({
         where,
-        include: { user: { select: { id: true, name: true, email: true, avatar: true, memberId: true } } },
+        include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
         orderBy: { updatedAt: "desc" },
         skip,
         take: limit,

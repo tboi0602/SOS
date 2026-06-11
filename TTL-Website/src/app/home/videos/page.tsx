@@ -87,7 +87,7 @@ export default function TacPhamPage() {
   return (
     <ContentListLayout
       header={{
-        title: "Tác phẩm",
+        title: "Kỷ luật",
         subtitle: "Gửi video bài dự thi của bạn",
         icon: Video,
         createLabel: "Gửi bài",
@@ -186,7 +186,7 @@ export default function TacPhamPage() {
                 <div className="flex items-center gap-2 p-3 rounded-xl bg-amber-400/5 border" style={{ borderColor: "color-mix(in srgb, var(--color-warning) 10%, transparent)" }}>
                   <Clock size={14} className="text-amber-400 shrink-0" />
                   <p className="text-xs text-[var(--text-tertiary)]">
-                    Tác phẩm sẽ được{" "}
+                    Kỷ luật sẽ được{" "}
                     <span className="text-amber-400 font-semibold">
                       quản trị viên duyệt
                     </span>{" "}

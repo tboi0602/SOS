@@ -4,13 +4,12 @@ import type { JournalEntry } from "./journal";
 
 export interface MemberInfo {
   id: string;
-  name: string;
   email: string;
+  name: string;
   role: string;
   job: string | null;
+  address: string | null;
   avatar: string | null;
-  referralCode: string;
-  memberId: string | null;
   isActive: boolean;
   createdAt: string;
   kyLuat?: number;
@@ -34,8 +33,6 @@ export interface TopSalesResponse {
 export interface ReferredMember {
   id: string;
   name: string;
-  referralCode: string;
-  memberId: string | null;
   avatar: string | null;
   isActive: boolean;
   createdAt: string;

@@ -12,7 +12,7 @@ export function useReferral() {
   const [origin, setOrigin] = useState("");
   const qrRef = useRef<HTMLDivElement>(null);
 
-  const code = user?.referralCode ?? "";
+  const code = user?.id ?? "";
   const link = `${origin}${BASE_REFERRAL_PATH}${code}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(link)}&color=FFFFFF&bgcolor=1A1A1A`;
 

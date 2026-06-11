@@ -8,17 +8,23 @@ const FRONTEND_URL = config.email.frontendUrl;
 const FROM = config.email.from;
 
 const BRAND = {
-  name: "SOS — Sales Omni System",
-  primary: "#1856ff",
-  primaryLight: "#3b7aff",
-  cyan: "#00c3ff",
-  gold: "#f59e0b",
-  bg: "#0c1e3a",
-  bgCard: "#132545",
-  text: "#e2e8f0",
-  textMuted: "#94a3b8",
-  border: "rgba(255,255,255,0.08)",
+  name: "TRUNG TÂM ĐỀ CỬ TINH HOA VIỆT",
+  short: "TINH HOA VIỆT",
+  gold: "#d4a843",
+  goldLight: "#e8c76a",
+  goldDark: "#b8912e",
+  bg: "#0a0a1a",
+  bgCard: "#111128",
+  text: "#e8e4f0",
+  textMuted: "#8880a0",
+  border: "rgba(212,168,67,0.15)",
 };
+
+const LOGO_SVG = `<svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="22" cy="22" r="20" stroke="url(#lg)" stroke-width="2" fill="none"/>
+  <text x="22" y="22" text-anchor="middle" dominant-baseline="central" font-size="18" font-weight="bold" fill="url(#lg)">THV</text>
+  <defs><linearGradient id="lg" x1="0" y1="0" x2="44" y2="44"><stop stop-color="${BRAND.gold}"/><stop offset="1" stop-color="${BRAND.goldLight}"/></linearGradient></defs>
+</svg>`;
 
 function wrapLayout(body: string): string {
   return `<!DOCTYPE html>
@@ -41,45 +47,47 @@ function wrapLayout(body: string): string {
       border: 1px solid ${BRAND.border};
     }
     .header {
-      background: linear-gradient(135deg, ${BRAND.primary}, ${BRAND.cyan});
-      padding: 32px 28px; text-align: center;
+      background: linear-gradient(135deg, #0d0d24, #1a1040);
+      padding: 36px 28px 28px; text-align: center;
     }
-    .header h1 { color: #fff; font-size: 20px; font-weight: 700; letter-spacing: 1px; }
-    .header p { color: rgba(255,255,255,0.8); font-size: 13px; margin-top: 4px; }
+    .logo { margin-bottom: 12px; display: inline-block; }
+    .header h1 {
+      color: ${BRAND.gold}; font-size: 18px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .header .tagline {
+      color: ${BRAND.textMuted}; font-size: 12px; margin-top: 4px; letter-spacing: 0.5px;
+    }
     .body { padding: 28px; color: ${BRAND.text}; font-size: 14px; line-height: 1.7; }
     .body strong { color: #fff; }
     .btn {
       display: inline-block; margin: 20px 0;
-      background: linear-gradient(135deg, ${BRAND.primary}, ${BRAND.primaryLight});
-      color: #fff !important; padding: 14px 36px; border-radius: 12px;
-      text-decoration: none; font-weight: 600; font-size: 15px;
-      box-shadow: 0 4px 20px rgba(24,86,255,0.35);
+      background: linear-gradient(135deg, ${BRAND.gold}, ${BRAND.goldLight});
+      color: #0a0a1a !important; padding: 13px 36px; border-radius: 10px;
+      text-decoration: none; font-weight: 700; font-size: 14px;
+      box-shadow: 0 4px 24px rgba(212,168,67,0.3);
     }
     .fallback-link {
       color: ${BRAND.textMuted}; font-size: 12px; word-break: break-all;
-      background: rgba(255,255,255,0.04); padding: 10px 14px; border-radius: 8px;
+      background: rgba(255,255,255,0.03); padding: 10px 14px; border-radius: 8px;
       margin-top: 8px; display: block; border: 1px solid ${BRAND.border};
     }
     .divider { border: none; border-top: 1px solid ${BRAND.border}; margin: 24px 0; }
     .footer { padding: 20px 28px 28px; text-align: center; }
     .footer p { color: ${BRAND.textMuted}; font-size: 12px; line-height: 1.6; }
-    .footer .social { margin-top: 12px; }
-    .footer .social a {
-      display: inline-block; margin: 0 6px; padding: 6px 12px;
-      background: rgba(255,255,255,0.06); border-radius: 6px;
-      color: ${BRAND.textMuted}; text-decoration: none; font-size: 11px;
-    }
+    .footer .brand-name { color: ${BRAND.gold}; font-weight: 700; }
     @media (max-width: 480px) {
       .body { padding: 20px; }
-      .header { padding: 24px 20px; }
+      .header { padding: 28px 20px 24px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>${BRAND.name}</h1>
-      <p>Đánh thức tiềm năng — Kiến tạo tương lai</p>
+      <div class="logo">${LOGO_SVG}</div>
+      <h1>${BRAND.short}</h1>
+      <p class="tagline">Trung Tâm Đề Cử Tinh Hoa Việt</p>
     </div>
     <div class="body">
       ${body}
@@ -87,15 +95,13 @@ function wrapLayout(body: string): string {
     <div class="divider" />
     <div class="footer">
       <p>
-        <strong style="color:#fff;">SOS — Sales Omni System</strong><br />
-        Hotline: 0904 373 123 · Email: support@vnsales.org
+        <span class="brand-name">${BRAND.short}</span><br />
+        Hotline: 0904 373 123
       </p>
-      <div class="social">
-        <a href="https://vnsales.org">Website</a>
-        <a href="#">Facebook</a>
-        <a href="#">Zalo</a>
-      </div>
-      <p style="margin-top:12px; font-size:11px; color:rgba(148,163,184,0.5);">
+      <p style="margin-top:10px;">
+        <a href="${FRONTEND_URL}" style="color:${BRAND.gold}; text-decoration:none; font-size:12px;">vnsales.org</a>
+      </p>
+      <p style="margin-top:12px; font-size:11px; color:rgba(136,128,160,0.4);">
         Email này được gửi tự động. Vui lòng không trả lời trực tiếp.
       </p>
     </div>
@@ -115,8 +121,8 @@ export async function sendActivationEmail(
 
   const body = `
     <p>Xin chào <strong>${name}</strong>,</p>
-    <p>Cảm ơn bạn đã đăng ký tài khoản tại <strong>SOS</strong> — Hệ thống đào tạo Sales &amp; Marketing thực chiến dành cho giới trẻ Việt Nam.</p>
-    <p style="margin-top:16px;">Vui lòng nhấn nút bên dưới để kích hoạt tài khoản và bắt đầu hành trình phát triển kỹ năng của bạn:</p>
+    <p>Bạn vừa đăng ký tài khoản tại <strong>${BRAND.short}</strong> — Nơi hội tụ nhân tài, kết nối giá trị Việt.</p>
+    <p style="margin-top:16px;">Nhấn nút bên dưới để kích hoạt tài khoản và bắt đầu hành trình phát triển:</p>
     <div style="text-align:center;">
       <a href="${link}" class="btn">Kích hoạt tài khoản</a>
     </div>
@@ -125,8 +131,8 @@ export async function sendActivationEmail(
     <code class="fallback-link">${link}</code>
     <div class="divider" />
     <p style="color:${BRAND.textMuted}; font-size:13px;">
-      Bạn nhận được email này vì địa chỉ email của bạn đã được sử dụng để đăng ký tài khoản SOS.
-      Nếu bạn không thực hiện hành động này, vui lòng bỏ qua email này.
+      Bạn nhận được email này vì địa chỉ của bạn đã được dùng để đăng ký tại ${BRAND.short}.
+      Nếu bạn không thực hiện hành động này, vui lòng bỏ qua email.
     </p>
   `;
 
@@ -134,7 +140,7 @@ export async function sendActivationEmail(
     await resend.emails.send({
       from: FROM,
       to: email,
-      subject: "Kích hoạt tài khoản SOS — Sales Omni System",
+      subject: "Kích hoạt tài khoản TINH HOA VIỆT",
       html: wrapLayout(body),
     });
   } catch (err) {
@@ -153,14 +159,14 @@ export async function sendWelcomeEmail(
 
   const body = `
     <p>Xin chào <strong>${name}</strong>,</p>
-    <p>Cảm ơn bạn đã đăng ký tài khoản tại <strong>SOS</strong> — Hệ thống đào tạo Sales &amp; Marketing thực chiến dành cho giới trẻ Việt Nam.</p>
-    <p style="margin-top:16px;">Tài khoản của bạn đã được kích hoạt thành công. Bạn có thể bắt đầu ngay hành trình phát triển kỹ năng bán hàng, đạo đức và cảm hứng của mình.</p>
+    <p>Tài khoản <strong>${BRAND.short}</strong> của bạn đã được kích hoạt thành công!</p>
+    <p style="margin-top:16px;">Bạn có thể bắt đầu ngay hành trình rèn luyện — đăng bài viết, viết nhật ký, nộp tác phẩm và theo dõi sự phát triển của bản thân.</p>
     <div style="text-align:center;">
-      <a href="${FRONTEND_URL}/home" class="btn">Bắt đầu ngay</a>
+      <a href="${FRONTEND_URL}/home" class="btn">Vào hệ thống</a>
     </div>
     <div class="divider" />
     <p style="color:${BRAND.textMuted}; font-size:13px;">
-      Nếu bạn có bất kỳ câu hỏi nào, hãy liên hệ với chúng tôi qua hotline <strong>0904 373 123</strong> hoặc email <strong>support@vnsales.org</strong>.
+      Mọi thắc mắc vui lòng liên hệ hotline <strong>0904 373 123</strong>.
     </p>
   `;
 
@@ -168,7 +174,7 @@ export async function sendWelcomeEmail(
     await resend.emails.send({
       from: FROM,
       to: email,
-      subject: "Chào mừng bạn đến với SOS — Sales Omni System",
+      subject: "Chào mừng bạn đến với TINH HOA VIỆT",
       html: wrapLayout(body),
     });
   } catch (err) {
@@ -190,8 +196,8 @@ export async function sendResetPasswordEmail(
 
   const body = `
     <p>Xin chào <strong>${name}</strong>,</p>
-    <p>Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản <strong>SOS</strong> của bạn.</p>
-    <p>Nhấn nút bên dưới để tạo mật khẩu mới:</p>
+    <p>Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản ${BRAND.short} của bạn.</p>
+    <p style="margin-top:16px;">Nhấn nút bên dưới để tạo mật khẩu mới:</p>
     <div style="text-align:center;">
       <a href="${link}" class="btn">Đặt lại mật khẩu</a>
     </div>
@@ -200,7 +206,7 @@ export async function sendResetPasswordEmail(
     <code class="fallback-link">${link}</code>
     <div class="divider" />
     <p style="color:${BRAND.textMuted}; font-size:13px;">
-      Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này hoặc liên hệ hotline <strong>0904 373 123</strong> để được hỗ trợ.
+      Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này hoặc liên hệ <strong>0904 373 123</strong> để được hỗ trợ.
     </p>
   `;
 
@@ -208,7 +214,7 @@ export async function sendResetPasswordEmail(
     await resend.emails.send({
       from: FROM,
       to: email,
-      subject: "Đặt lại mật khẩu SOS — Sales Omni System",
+      subject: "Đặt lại mật khẩu TINH HOA VIỆT",
       html: wrapLayout(body),
     });
   } catch (err) {

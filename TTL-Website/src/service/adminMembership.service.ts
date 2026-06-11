@@ -85,7 +85,7 @@ export const adminMembershipService = {
   getPendingDocs(page = 1, limit = 20) {
     return request<{
       users: {
-        user: { id: string; name: string; email: string; memberId: string | null }
+        user: { id: string; name: string; email: string }
         flow: UserFlow
       }[]
       total: number
@@ -97,7 +97,7 @@ export const adminMembershipService = {
   getPendingPayments(page = 1, limit = 20) {
     return request<{
       users: {
-        user: { id: string; name: string; email: string; memberId: string | null }
+        user: { id: string; name: string; email: string }
         flow: UserFlow
       }[]
       total: number
@@ -109,7 +109,7 @@ export const adminMembershipService = {
   getActiveMembers(page = 1, limit = 20) {
     return request<{
       users: {
-        user: { id: string; name: string; email: string; memberId: string | null }
+        user: { id: string; name: string; email: string }
         flow: UserFlow
       }[]
       total: number
