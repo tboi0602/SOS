@@ -15,19 +15,23 @@ interface FeatureItem {
 const FEATURES_DATA: FeatureItem[] = [
   {
     title: "Đề cử & Thẩm định Tinh hoa",
-    description: "Quy trình đề cử khoa học, thẩm định khắt khe theo Hệ quy chiếu 5T — Thật, Minh, Chủ, Chuyên, Tôn — đảm bảo mọi giá trị được suy tôn đều hội tụ đầy đủ các tiêu chuẩn học thuật và đạo đức cao nhất.",
+    description:
+      "Quy trình đề cử khoa học, thẩm định khắt khe theo Hệ quy chiếu 5T — Thật, Minh, Chủ, Chuyên, Tôn — đảm bảo mọi giá trị được suy tôn đều hội tụ đầy đủ các tiêu chuẩn học thuật và đạo đức cao nhất.",
   },
   {
     title: "Bảo chứng & Vinh danh",
-    description: "Chúng tôi bảo chứng tính xác thực của thành tựu, trao tặng chứng nhận Tinh Hoa Việt chính thống và tổ chức lễ vinh danh trang trọng, ghi nhận sự cống hiến của Quý vị trước cộng đồng.",
+    description:
+      "Chúng tôi bảo chứng tính xác thực của thành tựu, trao tặng chứng nhận Tinh Hoa Việt chính thống và tổ chức lễ vinh danh trang trọng, ghi nhận sự cống hiến của Quý vị trước cộng đồng.",
   },
   {
     title: "Lưu danh & Trao truyền",
-    description: "Thành tựu được lưu danh vĩnh viễn trên Bản đồ Số Tinh Hoa Việt 3D — một di sản số bất tử, cho phép trao truyền tri thức và giá trị qua nhiều thế hệ, kết nối tinh hoa dân tộc với thế giới.",
+    description:
+      "Thành tựu được lưu danh vĩnh viễn trên Bản đồ Số Tinh Hoa Việt 3D — một di sản số bất tử, cho phép trao truyền tri thức và giá trị qua nhiều thế hệ, kết nối tinh hoa dân tộc với thế giới.",
   },
   {
     title: "Khai thác & Phát triển",
-    description: "Sàn Tài sản Trí tuệ Tinh Hoa Việt là nơi Quý vị khai thác giá trị thương mại từ di sản đã được xác lập, kết nối đối tác, mở rộng cộng đồng và phát triển bền vững trong hệ sinh thái số.",
+    description:
+      "Sàn Tài sản Trí tuệ Tinh Hoa Việt là nơi Quý vị khai thác giá trị thương mại từ di sản đã được xác lập, kết nối đối tác, mở rộng cộng đồng và phát triển bền vững trong hệ sinh thái số.",
   },
 ];
 
@@ -40,7 +44,10 @@ export default function FeaturesSection() {
   return (
     <section id="features" className="relative py-24 overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,color-mix(in_srgb,var(--color-primary)_8%,transparent)_0%,transparent_60%)]" />
-      <SectionGlow position="center" color="color-mix(in srgb, var(--color-accent) 6%, transparent)" />
+      <SectionGlow
+        position="center"
+        color="color-mix(in srgb, var(--color-accent) 6%, transparent)"
+      />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6" ref={ref}>
         <motion.div
@@ -52,7 +59,10 @@ export default function FeaturesSection() {
           <span className="text-[11px] font-semibold text-primary tracking-[0.2em] uppercase">
             Giải pháp
           </span>
-          <h2 className="heading-lg font-bold text-center" style={{ color: "var(--text-primary)" }}>
+          <h2
+            className="heading-lg font-bold text-center"
+            style={{ color: "var(--text-primary)" }}
+          >
             Năng lực <span className="text-gradient">cốt lõi</span>
           </h2>
         </motion.div>
@@ -85,9 +95,17 @@ export default function FeaturesSection() {
                   <span className="text-[11px] font-semibold text-accent tracking-[0.15em] uppercase mb-2 block">
                     {String(i + 1).padStart(2, "0")}
                   </span>
-                  <h3 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>{f.title}</h3>
+                  <h3
+                    className="text-2xl font-bold"
+                    style={{ color: "var(--text-primary)" }}
+                  >
+                    {f.title}
+                  </h3>
                   <div className="gradient-line my-5 max-w-xs" />
-                  <p className="leading-relaxed" style={{ color: "var(--text-tertiary)" }}>
+                  <p
+                    className="leading-relaxed"
+                    style={{ color: "var(--text-tertiary)" }}
+                  >
                     {f.description}
                   </p>
                 </motion.div>
@@ -106,7 +124,7 @@ export default function FeaturesSection() {
                   >
                     <TiltContainer className="size-full" limit={6}>
                       <Image
-                        src={`/images/features/features-${String(i + 1).padStart(2, "0")}.png`}
+                        src={`/images/features/features-${String(i + 1).padStart(2, "")}.jpg`}
                         alt={f.title}
                         fill
                         sizes="(max-width: 768px) 100vw, 50vw"
@@ -114,7 +132,12 @@ export default function FeaturesSection() {
                         unoptimized
                       />
                     </TiltContainer>
-                    <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{ boxShadow: "inset 0 0 0 0.5px var(--glass-border)" }} />
+                    <div
+                      className="absolute inset-0 rounded-2xl pointer-events-none"
+                      style={{
+                        boxShadow: "inset 0 0 0 0.5px var(--glass-border)",
+                      }}
+                    />
                   </ShineCard>
                 </motion.div>
               </motion.div>

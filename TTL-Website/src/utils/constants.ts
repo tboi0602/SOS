@@ -45,33 +45,32 @@ export const MISSION = {
 
 export const ECOSYSTEM = {
   badge: "HỆ SINH THÁI NỀN TẢNG SỐ",
-  title: "Ba cổng Tinh Hoa Việt",
+  title: "Bốn cổng Tinh Hoa Việt",
   subtitle:
-    "Tất cả Tinh Hoa nội dung được phân bổ và hệ thống hóa, đồng thời được quản trị chặt chẽ trên 3 nền tảng cốt lõi.",
+    "Tất cả Tinh Hoa nội dung được phân bổ và hệ thống hóa, đồng thời được quản trị chặt chẽ trên 4 nền tảng cốt lõi.",
   portals: [
     {
-      acronym: "CỔNG 1",
       name: "ĐỀ CỬ & VINH DANH TINH HOA VIỆT",
-      subtitle: "VINH DANH",
       desc: "Nơi tìm kiếm, tư vấn Tinh Hoa Việt và công bố mọi thông tin, quy chế, văn bản chính thức về việc Đề cử và Xác lập. Lưu trữ hồ sơ hành chính, pháp lý của toàn bộ các cá nhân, đơn vị, tổ chức đã được Xác lập.",
       url: "tinhhoaviet.org.vn",
-      color: "from-primary to-accent",
     },
+
     {
-      acronym: "CỔNG 2",
-      name: "SÀN TÀI SẢN TRÍ TUỆ TINH HOA VIỆT",
-      subtitle: "KHAI THÁC",
-      desc: "Nền tảng hiển thị các thông tin trọng tâm về sản phẩm, dịch vụ hoặc tác phẩm của đối tượng đã Xác lập hoặc đang đề cử. Tích hợp tính năng thương mại điện tử và hệ thống Affiliate dành cho CTV, Đối tác xúc tiến.",
-      url: "santaisantritue.com",
-      color: "from-primary to-accent",
-    },
-    {
-      acronym: "CỔNG 3",
       name: "BẢN ĐỒ TÀI SẢN TRÍ TUỆ & MXH",
-      subtitle: "LƯU DANH & TRAO TRUYỀN",
       desc: "Nền tảng lưu danh và trao truyền các giá trị nội dung, trí tuệ. Giao diện Bản đồ Số Tinh Hoa Việt 3D giúp tra cứu thông tin toàn cầu. Kết nối MXH để chủ sở hữu phát triển cộng đồng, truyền nghề và tương tác với thị trường.",
-      url: "congdong.tinhhoaviet.org.vn",
-      color: "from-accent to-primary",
+      url: "santaisantritue.com",
+    },
+    {
+      name: "VIỆN NHỮNG VẤN ĐỀ PHÁT TRIỂN - VIDS",
+      desc: "Tổ chức khoa học công nghệ chuyên nghiên cứu các vấn đề phát triển kinh tế - xã hội, bảo đảm an ninh kinh tế, đổi mới sáng tạo và bảo tồn các giá trị văn hóa tâm linh. Đồng thời quản lý các đơn vị trực thuộc như Trung tâm Xử lý khủng hoảng và Trung tâm Phát triển Thủy hải sản Việt Nam.",
+      url: "vids.edu.vn",
+      color: "from-blue-600 to-indigo-600",
+    },
+    {
+      name: "MẠNG LƯỚI TRUYỀN THÔNG BÁO CHÍ ONLINE",
+      desc: "Hệ sinh thái truyền thông tích hợp công nghệ bao gồm Web, App và Cộng đồng số. Nền tảng hỗ trợ các nhà báo, cộng tác viên và đối tác kết nối, chia sẻ thông tin, quản lý nội dung số và phát triển các giải pháp báo chí hiện đại trên không gian mạng.",
+      url: "baochi.online",
+      color: "from-teal-600 to-emerald-600",
     },
   ],
 };

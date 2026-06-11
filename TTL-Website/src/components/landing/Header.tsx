@@ -98,7 +98,7 @@ export default function Header() {
               "0 1px 3px color-mix(in srgb, var(--clr-primary) 6%, transparent)",
           }}
         >
-          <div className="mx-auto flex items-center justify-between px-5 py-3">
+          <div className="mx-auto flex items-center justify-between px-5 py-3 ">
             <Link
               href="/"
               className="flex items-center gap-2.5 group cursor-pointer"
@@ -108,6 +108,7 @@ export default function Header() {
                 alt={SITE_NAME}
                 width={180}
                 height={180}
+                className="hover:scale-105 transition-transform  "
               />
             </Link>
 
@@ -135,6 +136,14 @@ export default function Header() {
                   );
                 })}
               </div>
+              <Link
+                href="/purport"
+                onClick={() => setOpen(false)}
+                className="px-3 py-2 rounded-lg text-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary hover:opacity-70"
+                style={{ color: "var(--text-muted)" }}
+              >
+                Nội dung
+              </Link>
               <Link
                 href="/home/members"
                 className="px-3.5 py-2 rounded-lg text-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary"
@@ -312,6 +321,14 @@ export default function Header() {
                 </a>
               ))}
               <Link
+                href="/purport"
+                onClick={() => setOpen(false)}
+                className="px-3 py-2 rounded-lg text-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary hover:opacity-70"
+                style={{ color: "var(--text-muted)" }}
+              >
+                Nội dung
+              </Link>
+              <Link
                 href="/home/members"
                 onClick={() => setOpen(false)}
                 className="px-3 py-2 rounded-lg text-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary hover:opacity-70"
@@ -337,6 +354,7 @@ export default function Header() {
               >
                 Tin tức
               </Link>
+
               <div className="flex gap-3 pt-2">
                 {user ? (
                   <button
@@ -382,5 +400,3 @@ export default function Header() {
     </>
   );
 }
-
-

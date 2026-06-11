@@ -12,12 +12,12 @@ interface GalleryImage {
 }
 
 const GALLERY_IMAGES: GalleryImage[] = [
-  { id: "1", label: "Lễ Vinh danh Tinh Hoa Việt" },
-  { id: "2", label: "Hội thảo Hệ quy chiếu 5T" },
-  { id: "3", label: "Sàn Tài sản Trí tuệ" },
-  { id: "4", label: "Bản đồ Số 3D Tinh Hoa Việt" },
-  { id: "5", label: "Cộng đồng Tinh hoa Việt" },
-  { id: "6", label: "Trao truyền Di sản" },
+  { id: "1", label: "Đội hình đồng diễn Saravan TVU" },
+  { id: "2", label: "Đồng diễn múa Saravan" },
+  { id: "3", label: "Đồng diễn múa Saravan" },
+  { id: "4", label: "ĐẠI HỌC TRÀ VINH (TVU) ĐỀ CỬ VÀ XÁC LẬP TINH HOA VIỆT" },
+  { id: "5", label: "Thẩm định LVT" },
+  { id: "6", label: "Thẩm định LVT" },
 ];
 
 const spans = [
@@ -61,7 +61,7 @@ function GalleryItem({ label, index }: { label: string; index: number }) {
     >
       <TiltContainer className="size-full" limit={6}>
         <Image
-          src={`/images/gallery/gallery-${String(index + 1).padStart(2, "0")}.png`}
+          src={`/images/gallery/gallery-${String(index + 1).padStart(2, "")}.png`}
           alt={label}
           fill
           sizes="(max-width: 768px) 50vw, 25vw"
@@ -78,13 +78,19 @@ function GalleryItem({ label, index }: { label: string; index: number }) {
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 p-4 bg-linear-to-t from-[color-mix(in_srgb,var(--surface-elevated)_90%,transparent)] to-transparent">
-          <p className="text-sm font-semibold drop-shadow-sm" style={{ color: "var(--text-primary)" }}>
+          <p
+            className="text-sm font-semibold drop-shadow-sm"
+            style={{ color: "var(--text-primary)" }}
+          >
             {label}
           </p>
         </div>
       </TiltContainer>
 
-      <div className="absolute inset-0 rounded-2xl pointer-events-none" style={{ boxShadow: "inset 0 0 0 0.5px var(--glass-border)" }} />
+      <div
+        className="absolute inset-0 rounded-2xl pointer-events-none"
+        style={{ boxShadow: "inset 0 0 0 0.5px var(--glass-border)" }}
+      />
 
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.06)_0%,transparent_70%)] pointer-events-none" />
     </motion.div>
@@ -98,7 +104,10 @@ export default function GallerySection() {
   return (
     <section className="relative py-24 overflow-hidden">
       <div className="absolute inset-0 gradient-mesh" />
-      <SectionGlow position="center" color="color-mix(in srgb, var(--color-primary) 8%, transparent)" />
+      <SectionGlow
+        position="center"
+        color="color-mix(in srgb, var(--color-primary) 8%, transparent)"
+      />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6" ref={ref}>
         <motion.div
@@ -117,7 +126,10 @@ export default function GallerySection() {
             </span>
             <div className="gradient-line flex-1" />
           </div>
-          <h2 className="heading-lg font-bold text-center mb-16" style={{ color: "var(--text-primary)" }}>
+          <h2
+            className="heading-lg font-bold text-center mb-16"
+            style={{ color: "var(--text-primary)" }}
+          >
             Hình ảnh <span className="text-gradient">hoạt động</span>
           </h2>
         </motion.div>

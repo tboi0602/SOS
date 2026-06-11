@@ -21,12 +21,14 @@ interface VisionData {
 const VALUES_DATA: ValueItem[] = [
   {
     number: "01",
-    quote: "Trí tuệ là di sản bất tử — mỗi thành tựu hôm nay là nền móng cho thế hệ mai sau.",
+    quote:
+      "Trí tuệ là di sản bất tử — mỗi thành tựu hôm nay là nền móng cho thế hệ mai sau.",
     text: "Tinh Hoa Việt tôn vinh trí tuệ như giá trị cốt lõi và di sản trường tồn. Chúng tôi tin rằng mỗi cá nhân đều mang trong mình một tinh hoa riêng, xứng đáng được khai phá, vinh danh và lưu truyền.",
   },
   {
     number: "02",
-    quote: "Tính xác thực là nền tảng của mọi giá trị — chỉ sự thật mới đáng được trân quý.",
+    quote:
+      "Tính xác thực là nền tảng của mọi giá trị — chỉ sự thật mới đáng được trân quý.",
     text: "Với Hệ quy chiếu 5T khắt khe, chúng tôi đảm bảo mọi thành tựu được xác lập đều đáp ứng tiêu chuẩn học thuật và đạo đức cao nhất, mang lại sự tin cậy tuyệt đối cho cộng đồng và xã hội.",
   },
   {
@@ -51,11 +53,15 @@ function VisionPart() {
   return (
     <section className="relative py-24 md:py-32 overflow-hidden">
       <div className="absolute inset-0 gradient-mesh" />
-      <SectionGlow position="center" color="rgba(200,168,78,0.04)" size="ellipse_50%_40%" />
+      <SectionGlow
+        position="center"
+        color="rgba(200,168,78,0.04)"
+        size="ellipse_50%_40%"
+      />
 
       <div className="absolute inset-0">
         <Image
-          src="/images/vision-bg.png"
+          src="/images/vision-bg.jpg"
           alt=""
           fill
           sizes="100vw"
@@ -75,7 +81,10 @@ function VisionPart() {
             {VISION.badge}
           </span>
 
-          <blockquote className="mt-4 text-2xl sm:text-3xl md:text-4xl font-bold leading-tight" style={{ color: "var(--text-primary)" }}>
+          <blockquote
+            className="mt-4 text-2xl sm:text-3xl md:text-4xl font-bold leading-tight"
+            style={{ color: "var(--text-primary)" }}
+          >
             &ldquo;{VISION.quote}&rdquo;
           </blockquote>
 
@@ -110,7 +119,11 @@ function ValuesPart() {
   return (
     <section id="values" className="relative py-24 overflow-hidden">
       <div className="absolute inset-0 gradient-mesh" />
-      <SectionGlow position="center" color="color-mix(in srgb, var(--color-accent) 5%, transparent)" size="ellipse_60%_40%" />
+      <SectionGlow
+        position="center"
+        color="color-mix(in srgb, var(--color-accent) 5%, transparent)"
+        size="ellipse_60%_40%"
+      />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6" ref={ref}>
         <motion.div
@@ -120,10 +133,15 @@ function ValuesPart() {
         >
           <div className="flex items-center gap-4 mb-4">
             <div className="gradient-line flex-1" />
-            <span className="text-[11px] font-semibold text-accent tracking-[0.2em] uppercase">Triết lý</span>
+            <span className="text-[11px] font-semibold text-accent tracking-[0.2em] uppercase">
+              Triết lý
+            </span>
             <div className="gradient-line flex-1" />
           </div>
-          <h2 className="heading-lg font-bold text-center mt-2" style={{ color: "var(--text-primary)" }}>
+          <h2
+            className="heading-lg font-bold text-center mt-2"
+            style={{ color: "var(--text-primary)" }}
+          >
             Hệ <span className="text-gradient-gold">giá trị cốt lõi</span>
           </h2>
         </motion.div>
@@ -138,17 +156,42 @@ function ValuesPart() {
             >
               <ShineCard lightColor="color-mix(in srgb, var(--color-accent) 10%, transparent)">
                 <div className="tilt-card group relative">
-                  <div className="tilt-card-inner glass rounded-3xl p-8 h-full transition-all duration-300" style={{ borderTop: "0.5px solid var(--glass-border)" }}>
+                  <div
+                    className="tilt-card-inner glass rounded-3xl p-8 h-full transition-all duration-300"
+                    style={{ borderTop: "0.5px solid var(--glass-border)" }}
+                  >
                     <div className="tilt-card-content">
                       <div className="flex items-start justify-between mb-6">
-                        <span className="text-5xl font-bold select-none" style={{ color: "color-mix(in srgb, var(--color-accent) 15%, transparent)" }}>{v.number}</span>
-                        <Quote size={24} style={{ color: "color-mix(in srgb, var(--color-accent) 20%, transparent)" }} />
+                        <span
+                          className="text-5xl font-bold select-none"
+                          style={{
+                            color:
+                              "color-mix(in srgb, var(--color-accent) 15%, transparent)",
+                          }}
+                        >
+                          {v.number}
+                        </span>
+                        <Quote
+                          size={24}
+                          style={{
+                            color:
+                              "color-mix(in srgb, var(--color-accent) 20%, transparent)",
+                          }}
+                        />
                       </div>
-                      <p className="text-lg font-semibold leading-relaxed mb-4" style={{ color: "var(--text-primary)" }}>
+                      <p
+                        className="text-lg font-semibold leading-relaxed mb-4"
+                        style={{ color: "var(--text-primary)" }}
+                      >
                         &ldquo;{v.quote}&rdquo;
                       </p>
                       <div className="gradient-line mb-5 opacity-50" />
-                      <p className="text-sm leading-relaxed" style={{ color: "var(--text-tertiary)" }}>{v.text}</p>
+                      <p
+                        className="text-sm leading-relaxed"
+                        style={{ color: "var(--text-tertiary)" }}
+                      >
+                        {v.text}
+                      </p>
                     </div>
                     <div className="tilt-card-shine" />
                   </div>
