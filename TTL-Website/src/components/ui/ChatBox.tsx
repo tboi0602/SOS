@@ -66,17 +66,41 @@ function ChatMessage({ msg }: { msg: Message }) {
   );
 }
 
+const STORAGE_KEY = "ttl_chat_messages";
+
+function loadMessages(): Message[] {
+  if (typeof window === "undefined") return INITIAL_MESSAGES;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return INITIAL_MESSAGES;
+    const parsed = JSON.parse(raw) as Message[];
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : INITIAL_MESSAGES;
+  } catch {
+    return INITIAL_MESSAGES;
+  }
+}
+
+function saveMessages(messages: Message[]) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+  } catch { /* ignore */ }
+}
+
 const FALLBACK =
   "Cảm ơn bạn đã quan tâm! Đội ngũ tư vấn của **TRUNG TÂM ĐỀ CỬ TINH HOA VIỆT** sẽ liên hệ với bạn trong thời gian sớm nhất để giải đáp chi tiết.\n\nBạn cũng có thể gọi hotline **0904 373 123** để được hỗ trợ ngay nhé! 💙";
 
 export default function ChatBox() {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
+  const [messages, setMessages] = useState<Message[]>(() => loadMessages());
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    saveMessages(messages);
+  }, [messages]);
 
   useEffect(() => {
     if (!open) return;

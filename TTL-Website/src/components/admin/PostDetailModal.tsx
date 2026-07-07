@@ -116,7 +116,7 @@ export default function PostDetailModal({ post, onClose }: Props) {
               rel="noopener noreferrer"
               className="flex items-center gap-2 p-3 rounded-xl bg-accent/5 border border-accent/10 text-accent text-xs font-medium hover:bg-accent/10 transition-all"
             >
-              <ExternalLink size={12} /> Link sản phẩm
+              <ExternalLink size={12} /> Liên kết
             </a>
           )}
 

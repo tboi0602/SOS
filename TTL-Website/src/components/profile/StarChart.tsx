@@ -15,7 +15,7 @@ export default function StarChart({
   postScore: number;
   referredScore: number;
 }) {
-  const cx = 240, cy = 210, r = 200;
+  const cx = 240, cy = 240, r = 200;
   const sides = 5;
   const angleOffset = -90;
   const outerAngles = Array.from({ length: sides }, (_, i) =>
@@ -27,6 +27,7 @@ export default function StarChart({
   const innerR = r * 0.38;
 
   const scores = [kyLuat, daoDuc, truyenCamHung, postScore, referredScore];
+  const maxVal = Math.max(...scores, 100);
   const colors = ["#6366f1", "#10b981", "#a855f7", "#f59e0b", "#ec4899"];
   const icons = [Clock, Shield, Megaphone, PenSquare, UserPlus];
   const labels = ["KỶ LUẬT", "ĐẠO ĐỨC", "CẢM HỨNG", "BÀI VIẾT", "GIỚI THIỆU"];
@@ -45,8 +46,8 @@ export default function StarChart({
   ).flat();
 
   const dataPoints = scores.map((s, i) => ({
-    x: cx + (s / 100) * r * Math.cos(outerAngles[i]),
-    y: cy + (s / 100) * r * Math.sin(outerAngles[i]),
+    x: cx + (s / maxVal) * r * Math.cos(outerAngles[i]),
+    y: cy + (s / maxVal) * r * Math.sin(outerAngles[i]),
   }));
 
   const dataPath =
@@ -56,9 +57,9 @@ export default function StarChart({
     <svg
       width="100%"
       height="100%"
-      viewBox="0 0 480 440"
+      viewBox="0 -30 480 510"
       className="overflow-visible"
-      style={{ maxWidth: "520px", maxHeight: "480px" }}
+      style={{ maxWidth: "520px", maxHeight: "540px" }}
     >
       <defs>
         <filter id="starGlow">

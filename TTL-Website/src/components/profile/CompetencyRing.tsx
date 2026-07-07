@@ -2,11 +2,13 @@
 
 export default function CompetencyRing({
   score,
+  maxScore,
   topPercent,
   level,
   strength,
 }: {
   score: number;
+  maxScore: number;
   topPercent: string;
   level: string;
   strength: string;
@@ -36,7 +38,7 @@ export default function CompetencyRing({
               strokeWidth="6"
               strokeLinecap="round"
               strokeDasharray={`${2 * Math.PI * 42}`}
-              strokeDashoffset={`${2 * Math.PI * 42 * (1 - score / 100)}`}
+              strokeDashoffset={`${2 * Math.PI * 42 * (1 - Math.min(score / maxScore, 1))}`}
               style={{ filter: "drop-shadow(0 0 6px var(--clr-accent))" }}
             />
           </svg>
@@ -45,7 +47,7 @@ export default function CompetencyRing({
               {score}
             </span>
             <span className="text-[8px] text-[var(--text-tertiary)] uppercase tracking-widest font-bold">
-              /100
+              điểm
             </span>
           </div>
         </div>
@@ -61,7 +63,7 @@ export default function CompetencyRing({
           ].map((item, i) => (
             <div
               key={i}
-              className="flex justify-between items-center text-[10px] py-1 px-2.5 rounded-lg bg-[color-mix(in_srgb,var(--text-primary)_20%,transparent)] border border-[var(--border-base)]"
+              className="flex justify-between items-center text-[10px] py-1 px-2.5 rounded-lg bg-white/3 border border-[var(--border-base)]"
             >
               <span className="text-[var(--text-tertiary)]">{item.label}</span>
               <span className={item.cls}>{item.val}</span>

@@ -12,6 +12,7 @@ export interface User {
   tiktok: string | null;
   youtube: string | null;
   zalo: string | null;
+  hasGraduated?: boolean;
 
   kyLuat?: number;
   daoDuc?: number;
@@ -29,5 +30,5 @@ export interface RegisterData {
   password: string;
   job?: string;
   address?: string;
-
+  referralCode?: string | null;
 }

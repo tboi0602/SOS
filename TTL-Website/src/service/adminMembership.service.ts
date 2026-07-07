@@ -161,6 +161,12 @@ export const adminMembershipService = {
     })
   },
 
+  requestResubmission(userId: string, lessonDefId: string) {
+    return request(`/api/v1/admin/membership-flow/request-resubmission/${userId}/${lessonDefId}`, {
+      method: "POST",
+    })
+  },
+
   scoreSituation(userId: string, index: number, score: number, adminNote?: string) {
     return request(`/api/v1/admin/membership-flow/score-situation/${userId}/${index}`, {
       method: "PUT",
@@ -171,6 +177,12 @@ export const adminMembershipService = {
   completeFlow(userId: string) {
     return request(`/api/v1/admin/membership-flow/${userId}/complete`, {
       method: "PUT",
+    })
+  },
+
+  deleteMemberProfile(userId: string) {
+    return request(`/api/v1/admin/membership-flow/${userId}/profile`, {
+      method: "DELETE",
     })
   },
 

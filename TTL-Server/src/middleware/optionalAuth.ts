@@ -4,7 +4,7 @@ import { getDb } from "../db"
 
 export async function optionalAuth(req: Request, res: Response, next: NextFunction) {
   try {
-    const token = req.cookies?.token
+    const token = req.cookies?.token || (req.headers.authorization?.startsWith("Bearer ") ? req.headers.authorization.slice(7) : null)
     if (!token) return next()
 
     const payload = verifyToken(token)

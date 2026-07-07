@@ -10,6 +10,7 @@ import {
   Users,
   MapPin,
   ExternalLink,
+  Mail,
 } from "lucide-react";
 import type { User } from "@/service/api";
 
@@ -88,10 +89,13 @@ export default function ProfileHero({
               <Briefcase size={14} className="text-accent" />{" "}
               {user.job || "Chưa cập nhật"}
             </p>
+            <p className="text-[11px] font-mono flex items-center justify-center md:justify-start gap-1.5" style={{ color: "var(--text-tertiary)" }}>
+              <Mail size={13} className="text-accent" /> {user.email}
+            </p>
           </div>
 
           <p
-            className="text-xs max-w-xl italic font-light leading-relaxed"
+            className="text-xs max-w-xl italic font-light leading-relaxed break-words"
             style={{ color: "var(--text-tertiary)" }}
           >
             `&quot;`

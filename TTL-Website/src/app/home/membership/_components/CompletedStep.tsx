@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react"
 import { CheckCircle2, BookOpen, Brain, FileText, Star, Loader2 } from "lucide-react"
 import { membershipService, type UserFlow, type UserLesson } from "@/service/membership.service"
+import type { User } from "@/types/auth"
 
-export default function CompletedStep({ flow }: { flow: UserFlow }) {
+export default function CompletedStep({ flow, user }: { flow: UserFlow; user: User | null }) {
   const [lessons, setLessons] = useState<UserLesson[] | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -31,6 +32,14 @@ export default function CompletedStep({ flow }: { flow: UserFlow }) {
         <p className="text-sm mt-1" style={{ color: "var(--text-tertiary)" }}>
           Bạn đã hoàn thành toàn bộ luồng hội viên. Chào mừng bạn đến với cộng đồng!
         </p>
+        {user?.hasGraduated && (
+          <div className="mt-3 flex items-center justify-center gap-1.5">
+            <CheckCircle2 size={14} style={{ color: "var(--color-success)" }} />
+            <span className="text-[11px] font-semibold" style={{ color: "var(--color-success)" }}>
+              Đã tốt nghiệp
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Score history */}

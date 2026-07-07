@@ -8,9 +8,10 @@ import { AppError } from "../lib/errors";
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: true,
-  sameSite: `none` as const,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" as const : "lax" as const,
   maxAge: 2 * 60 * 60 * 1000,
+  path: "/",
 };
 
 function setTokenCookie(res: Response, token: string) {
@@ -21,28 +22,27 @@ export const authController = {
   register: asyncHandler(async (req: Request, res: Response) => {
     const result = await authService.register(req.body);
     setTokenCookie(res, result.token);
-    res.status(201).json({ user: result.user });
+    res.status(201).json({ user: result.user, token: result.token });
   }),
 
   login: asyncHandler(async (req: Request, res: Response) => {
     const { email, password } = req.body;
     const result = await authService.login(email, password);
     setTokenCookie(res, result.token);
-    res.json({ user: result.user });
+    res.json({ user: result.user, token: result.token });
   }),
 
   google: asyncHandler(async (req: Request, res: Response) => {
     const { credential } = req.body;
     const result = await authService.googleAuth(credential);
     setTokenCookie(res, result.token);
-    res.json({ user: result.user });
+    res.json({ user: result.user, token: result.token });
   }),
 
   logout(_req: Request, res: Response) {
     res.clearCookie("token", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      ...COOKIE_OPTIONS,
+      maxAge: undefined,
     });
     res.json({ message: "Đã đăng xuất" });
   },

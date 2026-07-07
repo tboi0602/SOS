@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   BookOpen,
   Brain,
@@ -9,6 +9,8 @@ import {
   AlertCircle,
   Loader2,
   Clock,
+  Upload,
+  ExternalLink,
 } from "lucide-react";
 import {
   membershipService,
@@ -19,6 +21,8 @@ import {
 } from "@/service/membership.service";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { useToast } from "@/components/ui/Toast";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"
 
 export default function LessonsQuizSituations({
   flow,
@@ -36,6 +40,8 @@ export default function LessonsQuizSituations({
   // Lesson submission
   const [submittingLesson, setSubmittingLesson] = useState<string | null>(null);
   const [lessonUrl, setLessonUrl] = useState("");
+  const [lessonFiles, setLessonFiles] = useState<Record<string, File>>({});
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
   // Quiz
   const [selectedAnswers, setSelectedAnswers] = useState<
     Record<string, string>
@@ -87,12 +93,23 @@ export default function LessonsQuizSituations({
     fetch();
   }, [flow.status]);
 
-  const handleSubmitLesson = async (lessonId: string) => {
-    if (!lessonUrl.trim()) return;
+  const handleSubmitLesson = async (lesson: UserLesson) => {
+    const lessonId = lesson.id;
     try {
       setSubmittingLesson(lessonId);
-      await membershipService.submitLesson(lessonId, lessonUrl.trim());
-      setLessonUrl("");
+      if (lesson.submissionType === "FILE") {
+        const file = lessonFiles[lessonId];
+        if (!file) return;
+        await membershipService.submitLessonFile(lessonId, file);
+        setLessonFiles((prev) => { const next = { ...prev }; delete next[lessonId]; return next });
+        if (fileInputRefs.current[lessonId]) {
+          fileInputRefs.current[lessonId]!.value = "";
+        }
+      } else {
+        if (!lessonUrl.trim()) return;
+        await membershipService.submitLessonUrl(lessonId, lessonUrl.trim());
+        setLessonUrl("");
+      }
       toast("Đã nộp bài báo cáo thành công", "success");
       onSuccess();
     } catch (err: unknown) {
@@ -238,9 +255,10 @@ export default function LessonsQuizSituations({
             </p>
           ) : (
             lessons.map((lesson) => {
+              const resubmissionRequested = lesson.userLesson?.status === "resubmission_requested";
               const submitted =
-                lesson.userLesson?.status === "submitted" ||
-                lesson.userLesson?.status === "scored";
+                (lesson.userLesson?.status === "submitted" ||
+                lesson.userLesson?.status === "scored") && !resubmissionRequested;
               const scored = lesson.userLesson?.status === "scored";
               return (
                 <div
@@ -278,27 +296,81 @@ export default function LessonsQuizSituations({
                     )}
                   </div>
 
+                  {submitted && lesson.userLesson?.productUrl && (
+                    <div className="mt-2">
+                      <a
+                        href={lesson.userLesson.productUrl.startsWith("http") ? lesson.userLesson.productUrl : `${API_URL}${lesson.userLesson.productUrl}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs font-medium hover:underline"
+                        style={{ color: "var(--clr-primary)" }}
+                      >
+                        <ExternalLink size={12} />
+                        {lesson.submissionType === "FILE" ? "Xem tệp đã nộp" : "Xem đường dẫn đã nộp"}
+                      </a>
+                    </div>
+                  )}
+
+                  {resubmissionRequested && (
+                    <p className="text-[10px] flex items-center gap-1" style={{ color: "var(--color-warning)" }}>
+                      <AlertCircle size={10} /> Admin yêu cầu nộp lại bài. Vui lòng gửi lại.
+                    </p>
+                  )}
+
                   {!submitted && (
                     <div className="flex items-center gap-2">
-                      <input
-                        type="url"
-                        value={lessonUrl}
-                        onChange={(e) => setLessonUrl(e.target.value)}
-                        placeholder="Đường dẫn sản phẩm (URL)..."
-                        className="flex-1 px-3 py-2 rounded-lg text-xs outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
-                        style={{
-                          background:
-                            "color-mix(in srgb, var(--text-primary) 5%, transparent)",
-                          color: "var(--text-primary)",
-                          border: "0.5px solid var(--border-base)",
-                        }}
-                      />
+                      {lesson.submissionType === "FILE" ? (
+                        <div className="flex-1 flex items-center gap-2">
+                          <input
+                            ref={(el) => { fileInputRefs.current[lesson.id] = el }}
+                            type="file"
+                            id={`file-${lesson.id}`}
+                            className="hidden"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) setLessonFiles((prev) => ({ ...prev, [lesson.id]: file }));
+                            }}
+                          />
+                          <label
+                            htmlFor={`file-${lesson.id}`}
+                            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer transition-all hover:opacity-90"
+                            style={{
+                              background: "color-mix(in srgb, var(--clr-primary) 12%, transparent)",
+                              color: "var(--clr-primary)",
+                              border: "0.5px solid color-mix(in srgb, var(--clr-primary) 20%, transparent)",
+                            }}
+                          >
+                            <Upload size={14} />
+                            Chọn tệp
+                          </label>
+                          <span className="text-xs truncate flex-1" style={{ color: "var(--text-tertiary)" }}>
+                            {lessonFiles[lesson.id]?.name || "Chưa có tệp nào được chọn"}
+                          </span>
+                        </div>
+                      ) : (
+                        <input
+                          type="url"
+                          value={lessonUrl}
+                          onChange={(e) => setLessonUrl(e.target.value)}
+                          placeholder="Đường dẫn (URL)..."
+                          className="flex-1 px-3 py-2 rounded-lg text-xs outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                          style={{
+                            background:
+                              "color-mix(in srgb, var(--text-primary) 5%, transparent)",
+                            color: "var(--text-primary)",
+                            border: "0.5px solid var(--border-base)",
+                          }}
+                        />
+                      )}
                       <button
-                        onClick={() => handleSubmitLesson(lesson.id)}
+                        onClick={() => handleSubmitLesson(lesson)}
                         disabled={
-                          submittingLesson === lesson.id || !lessonUrl.trim()
+                          submittingLesson === lesson.id ||
+                          (lesson.submissionType === "FILE"
+                            ? !lessonFiles[lesson.id]
+                            : !lessonUrl.trim())
                         }
-                        className="px-3 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer disabled:opacity-50"
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer disabled:opacity-50"
                         style={{
                           background: "var(--clr-primary)",
                           color: "#fff",
@@ -307,7 +379,7 @@ export default function LessonsQuizSituations({
                         {submittingLesson === lesson.id ? (
                           <Loader2 size={14} className="animate-spin" />
                         ) : (
-                          "Nộp"
+                          <>{lesson.submissionType === "FILE" ? <Upload size={14} /> : null} Nộp</>
                         )}
                       </button>
                     </div>

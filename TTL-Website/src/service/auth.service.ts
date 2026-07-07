@@ -3,21 +3,21 @@ import type { User, RegisterData } from "@/types/auth"
 
 export const authService = {
   login(email: string, password: string) {
-    return request<{ user: User }>("/api/v1/auth/login", {
+    return request<{ user: User; token: string }>("/api/v1/auth/login", {
       method: "POST",
       body: { email, password },
     })
   },
 
   register(data: RegisterData) {
-    return request<{ user: User }>("/api/v1/auth/register", {
+    return request<{ user: User; token: string }>("/api/v1/auth/register", {
       method: "POST",
       body: data,
     })
   },
 
   googleLogin(credential: string) {
-    return request<{ user: User }>("/api/v1/auth/google", {
+    return request<{ user: User; token: string }>("/api/v1/auth/google", {
       method: "POST",
       body: { credential },
     })

@@ -47,7 +47,8 @@ export function useAuthLogin() {
     setGoogleLoading(true);
     setError("");
     try {
-      await authService.googleLogin(credential);
+      const res = await authService.googleLogin(credential);
+      if (res.token) localStorage.setItem("auth_token", res.token);
       await refreshUser();
     } catch (err) {
       setError(

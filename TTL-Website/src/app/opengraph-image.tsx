@@ -7,7 +7,7 @@ export const size = { width: 1200, height: 630 }
 export const contentType = "image/png"
 
 export default async function Image() {
-  const logoUrl = new URL("/images/tbv-logo.png", "https://doitac.tinhhoaviet.org.vn/").toString()
+  const logoUrl = new URL("/images/tbv-logo.png", "https://vnsales.org/").toString()
 
   return new ImageResponse(
     (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthSettings as useSettings } from "@/hook/auth";
 import AnimatedBorder from "@/components/profile/AnimatedBorder";
@@ -9,7 +9,7 @@ import ProfileForm from "@/components/profile/ProfileForm";
 import PasswordForm from "@/components/profile/PasswordForm";
 import Loading from "@/components/ui/Loading";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
-import { Settings, Trash2 } from "lucide-react";
+import { Settings, Trash2, CheckCircle2 } from "lucide-react";
 import { authService } from "@/service/auth.service";
 
 const BG = "color-mix(in srgb, var(--surface-elevated) 18%, transparent)";
@@ -97,6 +97,14 @@ export default function SettingsPage() {
             uploading={uploading}
             onFileChange={handleAvatarUpload}
           />
+          {user?.hasGraduated && (
+            <div className="flex items-center justify-center gap-1.5 px-4 pb-4">
+              <CheckCircle2 size={14} style={{ color: "var(--color-success)" }} />
+              <span className="text-[11px] font-semibold" style={{ color: "var(--color-success)" }}>
+                Đã tốt nghiệp
+              </span>
+            </div>
+          )}
         </AnimatedBorder>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
@@ -178,3 +186,5 @@ export default function SettingsPage() {
     </div>
   );
 }
+
+

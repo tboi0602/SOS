@@ -11,9 +11,9 @@
     "url": "git+https://github.com/tboi0602/SOS.git"
   },
   "scripts": {
-    "deploy": "bash scripts/deploy.sh .env.docker",
-    "deploy:all": "bash scripts/deploy.sh .env.docker",
-    "deploy:vps-only": "bash scripts/deploy.sh .env.docker --vps-only",
-    "deploy:build-only": "bash scripts/deploy.sh .env.docker --no-deploy"
+    "deploy": "wsl sh scripts/deploy.sh .env.docker",
+    "deploy:all": "wsl sh scripts/deploy.sh .env.docker",
+    "deploy:vps-only": "wsl sh scripts/deploy.sh .env.docker --vps-only",
+    "deploy:build-only": "wsl sh scripts/deploy.sh .env.docker --no-deploy"
   }
 }

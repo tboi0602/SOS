@@ -14,6 +14,7 @@ gsap.registerPlugin(ScrollTrigger);
 const TABS = [
   { key: "journal", label: "Đạo đức", icon: BookOpen },
   { key: "videos", label: "Kỷ luật", icon: Video },
+  { key: "posts", label: "Bài đăng", icon: FileText },
   { key: "customer-visits", label: "Lan Toả", icon: Camera },
 ] as const;
 

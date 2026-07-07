@@ -14,7 +14,8 @@ function ActivateContent() {
   useEffect(() => {
     const token = searchParams.get("token");
     if (!token) { setStatus("error"); return; }
-    authService.activate(token).then(() => {
+    authService.activate(token).then((res) => {
+      if (res.token) localStorage.setItem("auth_token", res.token);
       setStatus("success");
     }).catch(() => {
       setStatus("error");

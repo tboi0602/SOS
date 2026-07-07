@@ -11,6 +11,8 @@ import ConfirmDialog from "@/components/ui/ConfirmDialog"
 import { useToast } from "@/components/ui/Toast"
 import type { UserLesson, UserFlow } from "@/service/membership.service"
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"
+
 const STATUS_LABELS: Record<string, string> = {
   in_lessons: "Đang học",
   pending_quiz: "Chờ kiểm tra",
@@ -32,6 +34,7 @@ export default function ActiveMembersTab() {
   const [loadingLessons, setLoadingLessons] = useState<Record<string, boolean>>({})
   const [confirmComplete, setConfirmComplete] = useState<string | null>(null)
   const [scoringLesson, setScoringLesson] = useState<string | null>(null)
+  const [resubmittingId, setResubmittingId] = useState<string | null>(null)
   const [scoringSituation, setScoringSituation] = useState<string | null>(null)
   const [actionLoading, setActionLoading] = useState<string | null>(null)
   const [scoreInputs, setScoreInputs] = useState<Record<string, { score: string; note: string }>>({})
@@ -76,6 +79,17 @@ export default function ActiveMembersTab() {
       fetchData()
     } catch (err) { toast(err instanceof Error ? err.message : "Lỗi", "error") }
     finally { setScoringLesson(null) }
+  }
+
+  const handleRequestResubmission = async (userId: string, lessonDefId: string) => {
+    if (!confirm("Yêu cầu học viên nộp lại bài này?")) return
+    try {
+      setResubmittingId(`${userId}-${lessonDefId}`)
+      await adminService.requestResubmission(userId, lessonDefId)
+      toast("Đã yêu cầu nộp lại", "success")
+      fetchData()
+    } catch (err) { toast(err instanceof Error ? err.message : "Lỗi", "error") }
+    finally { setResubmittingId(null) }
   }
 
   const handleScoreSituation = async (userId: string, index: number) => {
@@ -185,8 +199,8 @@ export default function ActiveMembersTab() {
                                     </div>
                                   </div>
                                   {lesson.userLesson?.productUrl && (
-                                    <a href={lesson.userLesson.productUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] mt-1 hover:underline" style={{ color: "var(--clr-primary)" }}>
-                                      <ExternalLink size={8} /> Xem sản phẩm
+                                    <a href={lesson.userLesson.productUrl.startsWith("http") ? lesson.userLesson.productUrl : `${API_URL}${lesson.userLesson.productUrl}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] mt-1 hover:underline" style={{ color: "var(--clr-primary)" }}>
+                                      <ExternalLink size={8} /> Xem liên kết
                                     </a>
                                   )}
                                   {lesson.userLesson?.adminNote && (
@@ -244,6 +258,17 @@ export default function ActiveMembersTab() {
                                       </button>
                                     )
                                   })()}
+                                  {isSubmitted && (
+                                    <button
+                                      onClick={() => handleRequestResubmission(flow.user.id, lesson.id)}
+                                      disabled={resubmittingId === `${flow.user.id}-${lesson.id}`}
+                                      className="mt-2 inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold transition-all cursor-pointer disabled:opacity-50"
+                                      style={{ background: "color-mix(in srgb, var(--color-warning) 15%, transparent)", color: "var(--color-warning)" }}
+                                    >
+                                      {resubmittingId === `${flow.user.id}-${lesson.id}` ? <Loader2 size={10} className="animate-spin" /> : null}
+                                      Yêu cầu nộp lại
+                                    </button>
+                                  )}
                                 </div>
                               )
                             })}
@@ -270,7 +295,7 @@ export default function ActiveMembersTab() {
                                     {flow.situation1?.description && (
                                       <p className="text-[10px] mt-0.5" style={{ color: "var(--text-tertiary)" }}>{flow.situation1.description}</p>
                                     )}
-                                    <a href={flow.situation1Link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] mt-1 hover:underline" style={{ color: "var(--clr-primary)" }}>
+                                    <a href={flow.situation1Link?.startsWith("http") ? flow.situation1Link : `${API_URL}${flow.situation1Link}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] mt-1 hover:underline" style={{ color: "var(--clr-primary)" }}>
                                       <ExternalLink size={8} /> Xem bài nộp
                                     </a>
                                   </div>
@@ -322,7 +347,7 @@ export default function ActiveMembersTab() {
                                     {flow.situation2?.description && (
                                       <p className="text-[10px] mt-0.5" style={{ color: "var(--text-tertiary)" }}>{flow.situation2.description}</p>
                                     )}
-                                    <a href={flow.situation2Link} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] mt-1 hover:underline" style={{ color: "var(--clr-primary)" }}>
+                                    <a href={flow.situation2Link?.startsWith("http") ? flow.situation2Link : `${API_URL}${flow.situation2Link}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] mt-1 hover:underline" style={{ color: "var(--clr-primary)" }}>
                                       <ExternalLink size={8} /> Xem bài nộp
                                     </a>
                                   </div>

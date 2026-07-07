@@ -39,7 +39,7 @@ export default function ProfileForm({
           <h2 className="text-[11px] font-bold tracking-[0.15em] text-[var(--clr-accent)] flex items-center gap-2">
             <User size={12} /> THÔNG TIN CÁ NHÂN
           </h2>
-          <p className="text-[10px] text-[var(--text-tertiary)] mt-1">Họ tên, công việc, địa chỉ</p>
+
         </div>
 
         <div className="space-y-3">

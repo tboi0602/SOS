@@ -28,6 +28,7 @@ model User {
   truyenCamHung         Int          @default(0) @map("truyen_cam_hung")
   postScore             Int          @default(0) @map("post_score")
   referredScore         Int          @default(0) @map("referred_score")
+  graduationId          String?      @unique @map("graduation_id")
   isActive              Boolean      @default(false) @map("is_active")
   permissions           Json         @default("[]")
   activationToken       String?      @map("activation_token")
@@ -203,8 +204,11 @@ enum VisitStatus {
   PENDING
   APPROVED
   REJECTED
+}
 
-  @@map("visit_status")
+enum LessonSubmissionType {
+  FILE
+  TEXT
 }
 
 model CustomerVisitImage {
@@ -243,6 +247,7 @@ model MembershipFlow {
 }
 
 model LessonDef {
+  submissionType LessonSubmissionType @default(TEXT)
   id               String              @id @default(uuid())
   membershipFlowId String              @map("membership_flow_id")
   title            String

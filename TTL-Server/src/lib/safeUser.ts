@@ -12,6 +12,7 @@ export interface SafeUser {
   tiktok: string | null;
   youtube: string | null;
   zalo: string | null;
+  hasGraduated: boolean;
 
   kyLuat: number;
   daoDuc: number;
@@ -37,6 +38,7 @@ export function toSafeUser(user: {
   tiktok?: string | null;
   youtube?: string | null;
   zalo?: string | null;
+  graduationId?: string | null;
 
   kyLuat?: number;
   daoDuc?: number;
@@ -61,6 +63,7 @@ export function toSafeUser(user: {
     tiktok: user.tiktok ?? null,
     youtube: user.youtube ?? null,
     zalo: user.zalo ?? null,
+    hasGraduated: user.graduationId != null,
 
     kyLuat: user.kyLuat ?? 0,
     daoDuc: user.daoDuc ?? 0,

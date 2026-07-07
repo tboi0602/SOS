@@ -1,17 +1,31 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/sh
+set -eu
 
 # =============================================================================
 # Tam Trí Lực — Deploy Script
 # Build local → Push DockerHub → VPS pull & run
 # =============================================================================
 # Usage:
-#   bash scripts/deploy.sh                     # build + push + VPS deploy
-#   bash scripts/deploy.sh production          # build + push + VPS deploy with .env.production
-#   bash scripts/deploy.sh --no-push           # build only, skip push + VPS
-#   bash scripts/deploy.sh --vps-only          # skip local build, only pull & up on VPS
-#   bash scripts/deploy.sh --no-deploy         # build + push, skip VPS deploy
+#   sh scripts/deploy.sh                        # build + push + VPS deploy
+#   sh scripts/deploy.sh production             # build + push + VPS deploy with .env.production
+#   sh scripts/deploy.sh --no-push              # build only, skip push + VPS
+#   sh scripts/deploy.sh --vps-only             # skip local build, only pull & up on VPS
+#   sh scripts/deploy.sh --no-deploy            # build + push, skip VPS deploy
 # =============================================================================
+
+# Auto-install sshpass and ssh if in WSL docker-desktop environment
+if command -v apk >/dev/null 2>&1; then
+  apk add --no-cache sshpass openssh-client-default >/dev/null 2>&1
+fi
+
+# ─── Detect Windows environment ──────────────────────────────────────────
+if command -v docker.exe >/dev/null 2>&1; then
+  DOCKER="docker.exe"
+  SSH="ssh.exe"
+else
+  DOCKER="docker"
+  SSH="ssh"
+fi
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
@@ -60,13 +74,13 @@ echo "════════════════════════�
 if [ "$VPS_ONLY" = false ]; then
   echo ""
   echo "▸ Building images..."
-  docker compose --env-file "$ENV_FILE" build
+  $DOCKER compose --env-file "$ENV_FILE" build
 
   # ─── Tag ──────────────────────────────────────────────────────────────────
   echo ""
   echo "▸ Tagging images..."
-  docker tag $DOCKER_USER/ttl-server:latest $DOCKER_USER/ttl-server:$IMAGE_TAG
-  docker tag $DOCKER_USER/ttl-website:latest $DOCKER_USER/ttl-website:$IMAGE_TAG
+  $DOCKER tag $DOCKER_USER/ttl-server:latest $DOCKER_USER/ttl-server:$IMAGE_TAG
+  $DOCKER tag $DOCKER_USER/ttl-website:latest $DOCKER_USER/ttl-website:$IMAGE_TAG
 
   # ─── Push ─────────────────────────────────────────────────────────────────
   if [ "$SKIP_PUSH" = false ]; then
@@ -74,8 +88,8 @@ if [ "$VPS_ONLY" = false ]; then
     echo "▸ Pushing to DockerHub..."
     echo "   (make sure you're logged in: docker login)"
     echo ""
-    docker push $DOCKER_USER/ttl-server:$IMAGE_TAG
-    docker push $DOCKER_USER/ttl-website:$IMAGE_TAG
+    $DOCKER push $DOCKER_USER/ttl-server:$IMAGE_TAG
+    $DOCKER push $DOCKER_USER/ttl-website:$IMAGE_TAG
   fi
 fi
 
@@ -83,19 +97,27 @@ fi
 SSH_HOST=$(grep -E '^SSH_HOST=' "$ENV_FILE" | cut -d= -f2-)
 SSH_USER=$(grep -E '^SSH_USER=' "$ENV_FILE" | cut -d= -f2-)
 SSH_KEY_PATH=$(grep -E '^SSH_KEY_PATH=' "$ENV_FILE" | cut -d= -f2-)
+SSH_PASSWORD=$(grep -E '^SSH_PASSWORD=' "$ENV_FILE" | cut -d= -f2-)
 VPS_PROJECT_DIR=$(grep -E '^VPS_PROJECT_DIR=' "$ENV_FILE" | cut -d= -f2-)
 
 if [ "$SKIP_VPS" = false ] && [ -n "$SSH_HOST" ]; then
   echo ""
   echo "▸ Deploying to VPS ($SSH_USER@$SSH_HOST)..."
-  SSH_CMD="ssh -o StrictHostKeyChecking=no"
   if [ -n "$SSH_KEY_PATH" ]; then
-    SSH_CMD="$SSH_CMD -i $SSH_KEY_PATH"
+    SSH_CMD="$SSH -o StrictHostKeyChecking=no -i $SSH_KEY_PATH"
+    $SSH_CMD "$SSH_USER@$SSH_HOST" \
+      "cd ${VPS_PROJECT_DIR:-/root/tamtriluc} && \
+       docker compose pull && \
+       docker compose up -d && \
+       docker system prune -a --volumes -f"
+  elif [ -n "$SSH_PASSWORD" ]; then
+    export SSHPASS="$SSH_PASSWORD"
+    sshpass -e ssh -o StrictHostKeyChecking=no "$SSH_USER@$SSH_HOST" \
+      "cd ${VPS_PROJECT_DIR:-/root/tamtriluc} && \
+       docker compose pull && \
+       docker compose up -d && \
+       docker system prune -a --volumes -f"
   fi
-  $SSH_CMD "$SSH_USER@$SSH_HOST" \
-    "cd ${VPS_PROJECT_DIR:-/root/tamtriluc} && \
-     docker compose pull && \
-     docker compose up -d"
   echo "  ✅  VPS updated"
 elif [ "$SKIP_VPS" = false ] && [ -z "$SSH_HOST" ]; then
   echo ""

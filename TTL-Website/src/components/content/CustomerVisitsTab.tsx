@@ -262,6 +262,13 @@ export default function CustomerVisitsTab() {
             >
               Tải lên ảnh gặp gỡ khách hàng để tích lũy điểm thưởng!
             </p>
+            <button
+              onClick={() => setShowModal(true)}
+              className="mt-5 inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-lg cursor-pointer outline-none focus-visible:ring-2"
+              style={{ background: "var(--clr-primary)", color: "#fff" }}
+            >
+              <Plus size={16} /> Gửi ngay
+            </button>
           </div>
         )}
       >

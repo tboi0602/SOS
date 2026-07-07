@@ -31,6 +31,7 @@ export interface LessonDef {
   type: string
   orderIndex: number
   content: string | null
+  submissionType: 'FILE' | 'TEXT'
 }
 
 export interface QuizQuestionDef {
@@ -82,6 +83,7 @@ export interface UserLesson {
   type: string
   orderIndex: number
   content: string | null
+  submissionType: 'FILE' | 'TEXT'
   userLesson: {
     id: string
     status: string
@@ -152,6 +154,23 @@ export const membershipService = {
     return request(`/api/v1/membership/lessons/${lessonId}/submit`, {
       method: "POST",
       body: { productUrl },
+    })
+  },
+
+  submitLessonFile(lessonId: string, file: File) {
+    const formData = new FormData()
+    formData.append("file", file)
+    return fetch(`${API_URL}/api/v1/membership/lessons/${lessonId}/submit-file`, {
+      method: "POST",
+      credentials: "include",
+      body: formData,
+    }).then(async (res) => { const d = await res.json(); if (!res.ok) throw new Error(d.error || "Upload thất bại"); return d })
+  },
+
+  submitLessonUrl(lessonId: string, url: string) {
+    return request(`/api/v1/membership/lessons/${lessonId}/submit-url`, {
+      method: "POST",
+      body: { url },
     })
   },
 

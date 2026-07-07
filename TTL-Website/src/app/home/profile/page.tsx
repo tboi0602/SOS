@@ -12,6 +12,7 @@ import AnalysisChart from "@/components/profile/AnalysisChart";
 import ReferredMembers from "@/components/profile/ReferredMembers";
 import QrCodeCard from "@/components/profile/QrCodeCard";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { CheckCircle2 } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -44,8 +45,10 @@ export default function ProfilePage() {
 
   if (!user) return null;
 
-  const profileUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/profile/${user.id}`;
+  const profileUrl = `${typeof window !== "undefined" ? window.location.origin : ""}/home/members/${user.id}`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(profileUrl)}&color=FFFFFF&bgcolor=1A1A1A`;
+
+  const maxScore = profile ? Math.max(profile.core.kyLuat, profile.core.daoDuc, profile.core.truyenCamHung, profile.core.postScore, profile.core.referredScore, 100) : 100;
 
   const activities =
     profile?.activities.map((a) => ({
@@ -65,77 +68,92 @@ export default function ProfilePage() {
     })) ?? [];
 
   return (
-    <div className="min-h-screen px-6 py-4 select-none flex items-center justify-center animate-fade-up" style={{ color: "var(--text-primary)" }}>
+    <div className="min-h-screen px-6 py-4 select-none flex items-start justify-center animate-fade-up" style={{ color: "var(--text-primary)" }}>
       <Skeleton name="home-profile" loading={loading}>
-        <div ref={profileRef} className="w-full grid grid-cols-1 lg:grid-cols-[1fr_2fr_1fr] items-center gap-5">
-          {/* LEFT */}
-
+        <div ref={profileRef} className="w-full max-w-6xl mx-auto space-y-5">
           {profile && (
             <>
-              <div className="flex flex-col justify-center gap-4 h-full">
-                <AnimatedBorder className="profile-section" style={{ background: BG, boxShadow: SHADOW }}>
-                  <ProfileHeader
-                    name={user.name}
-                    id={user.id}
-                    avatar={user.avatar}
-                    bio={user.bio}
-                    job={user.job}
-                    rank={profile.competency.rank}
-                    facebook={user.facebook}
-                    twitter={user.twitter}
-                    tiktok={user.tiktok}
-                    youtube={user.youtube}
-                    zalo={user.zalo}
-                  />
-                </AnimatedBorder>
-
-                <AnimatedBorder className="profile-section" style={{ background: BG, boxShadow: SHADOW }}>
-                  <CompetencyRing
-                    score={profile.competency.score}
-                    topPercent={profile.competency.topPercent}
-                    level={profile.competency.level}
-                    strength={profile.competency.strength}
-                  />
-                </AnimatedBorder>
-
-                <AnimatedBorder className="profile-section" style={{ background: BG, boxShadow: SHADOW }}>
-                  <ActivityTimeline activities={activities} />
-                </AnimatedBorder>
-              </div>
-
-              {/* CENTER */}
-              <div className="profile-section flex flex-col items-center justify-center h-full mt-25 max-lg:mt-15">
-                <StarChart
-                  kyLuat={profile.core.kyLuat}
-                  daoDuc={profile.core.daoDuc}
-                  truyenCamHung={profile.core.truyenCamHung}
-                  postScore={profile.core.postScore}
-                  referredScore={profile.core.referredScore}
+              {/* HEADER — full width */}
+              <AnimatedBorder className="profile-section" style={{ background: BG, boxShadow: SHADOW }}>
+                <ProfileHeader
+                  name={user.name}
+                  email={user.email}
+                  id={user.id}
+                  avatar={user.avatar}
+                  bio={user.bio}
+                  job={user.job}
+                  rank={profile.competency.rank}
+                  facebook={user.facebook}
+                  twitter={user.twitter}
+                  tiktok={user.tiktok}
+                  youtube={user.youtube}
+                  zalo={user.zalo}
                 />
-              </div>
+                {user.hasGraduated && (
+                  <div className="flex items-center justify-center gap-1.5 px-4 pb-4">
+                    <CheckCircle2 size={14} style={{ color: "var(--color-success)" }} />
+                    <span className="text-[11px] font-semibold" style={{ color: "var(--color-success)" }}>
+                      Đã tốt nghiệp
+                    </span>
+                  </div>
+                )}
+              </AnimatedBorder>
 
-              {/* RIGHT */}
-              <div className="flex flex-col gap-4 h-full">
-                <AnimatedBorder className="profile-section" style={{ background: BG, boxShadow: SHADOW }}>
-                  <AnalysisChart
-                    labels={profile.chartData.labels}
-                    datasets={[
-                      { values: profile.chartData.kyLuat, color: "#6366f1" },
-                      { values: profile.chartData.daoDuc, color: "#10b981" },
-                      { values: profile.chartData.truyenCamHung, color: "#a855f7" },
-                      { values: profile.chartData.postScore, color: "#f59e0b" },
-                      { values: profile.chartData.referredScore, color: "#ec4899" },
-                    ]}
-                  />
-                </AnimatedBorder>
+              {/* NĂNG LỰC TỔNG — full width, hero section */}
+              <AnimatedBorder className="profile-section" style={{ background: BG, boxShadow: SHADOW }}>
+                <CompetencyRing
+                  score={profile.competency.score}
+                  maxScore={maxScore}
+                  topPercent={profile.competency.topPercent}
+                  level={profile.competency.level}
+                  strength={profile.competency.strength}
+                />
+              </AnimatedBorder>
 
-                <AnimatedBorder className="profile-section" style={{ background: BG, boxShadow: SHADOW }}>
-                  <ReferredMembers members={referred} />
-                </AnimatedBorder>
+              {/* TWO-COLUMN CONTENT */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                {/* LEFT COL */}
+                <div className="flex flex-col gap-5 min-w-0">
+                  <AnimatedBorder className="profile-section" style={{ background: BG, boxShadow: SHADOW }}>
+                    <div className="flex items-center justify-center p-4">
+                      <StarChart
+                        kyLuat={profile.core.kyLuat}
+                        daoDuc={profile.core.daoDuc}
+                        truyenCamHung={profile.core.truyenCamHung}
+                        postScore={profile.core.postScore}
+                        referredScore={profile.core.referredScore}
+                      />
+                    </div>
+                  </AnimatedBorder>
 
-                <AnimatedBorder className="profile-section" style={{ background: BG, boxShadow: SHADOW }}>
-                  <QrCodeCard qrUrl={qrUrl} profileUrl={profileUrl} />
-                </AnimatedBorder>
+                  <AnimatedBorder className="profile-section" style={{ background: BG, boxShadow: SHADOW }}>
+                    <ActivityTimeline activities={activities} />
+                  </AnimatedBorder>
+
+                  <AnimatedBorder className="profile-section" style={{ background: BG, boxShadow: SHADOW }}>
+                    <ReferredMembers members={referred} />
+                  </AnimatedBorder>
+                </div>
+
+                {/* RIGHT COL */}
+                <div className="flex flex-col gap-5 min-w-0">
+                  <AnimatedBorder className="profile-section" style={{ background: BG, boxShadow: SHADOW }}>
+                    <AnalysisChart
+                      labels={profile.chartData.labels}
+                      datasets={[
+                        { values: profile.chartData.kyLuat, color: "#6366f1" },
+                        { values: profile.chartData.daoDuc, color: "#10b981" },
+                        { values: profile.chartData.truyenCamHung, color: "#a855f7" },
+                        { values: profile.chartData.postScore, color: "#f59e0b" },
+                        { values: profile.chartData.referredScore, color: "#ec4899" },
+                      ]}
+                    />
+                  </AnimatedBorder>
+
+                  <AnimatedBorder className="profile-section" style={{ background: BG, boxShadow: SHADOW }}>
+                    <QrCodeCard qrUrl={qrUrl} profileUrl={profileUrl} />
+                  </AnimatedBorder>
+                </div>
               </div>
             </>
           )}
@@ -152,3 +170,5 @@ export default function ProfilePage() {
     </div>
   );
 }
+
+

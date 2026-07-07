@@ -32,7 +32,14 @@ export const lessonService = {
   async submitLesson(userId: string, lessonDefId: string, productUrl: string) {
     const uf = await getDb().userMembershipFlow.findUnique({ where: { userId } });
     if (!uf) throw new NotFoundError("Không tìm thấy flow");
-    if (uf.status !== "in_lessons") throw new BadRequestError("Chưa trong giai đoạn học");
+    if (uf.status !== "in_lessons") {
+      const existing = await getDb().userLesson.findUnique({
+        where: { userId_lessonDefId: { userId, lessonDefId } },
+      });
+      if (existing?.status !== "resubmission_requested") {
+        throw new BadRequestError("Chưa trong giai đoạn học");
+      }
+    }
 
     const lesson = await getDb().lessonDef.findUnique({ where: { id: lessonDefId } });
     if (!lesson || lesson.membershipFlowId !== uf.membershipFlowId) {
@@ -45,18 +52,18 @@ export const lessonService = {
       create: { userId, lessonDefId, productUrl, status: "submitted", submittedAt: new Date() },
     });
 
-    const allLessons = await getDb().lessonDef.findMany({
-      where: { membershipFlowId: uf.membershipFlowId },
-    });
-    const submitted = await getDb().userLesson.count({
-      where: { userId, lessonDefId: { in: allLessons.map((l) => l.id) }, status: "submitted" },
-    });
-
-    if (submitted >= allLessons.length) {
-      await quizService.assignQuiz(userId);
-    }
-
     return ul;
+  },
+
+  async requestResubmission(userId: string, lessonDefId: string) {
+    const ul = await getDb().userLesson.findUnique({
+      where: { userId_lessonDefId: { userId, lessonDefId } },
+    });
+    if (!ul) throw new NotFoundError("Không tìm thấy bài nộp");
+    return getDb().userLesson.update({
+      where: { userId_lessonDefId: { userId, lessonDefId } },
+      data: { status: "resubmission_requested", score: null, adminNote: null },
+    });
   },
 
   async scoreLesson(lessonId: string, score: number, adminNote?: string) {
@@ -78,16 +85,31 @@ export const lessonService = {
       link: "/home/membership",
     });
 
+    const uf = await getDb().userMembershipFlow.findUnique({ where: { userId: ul.userId } });
+    if (uf) {
+      const allLessons = await getDb().lessonDef.findMany({
+        where: { membershipFlowId: uf.membershipFlowId },
+      });
+      const scored = await getDb().userLesson.count({
+        where: { userId: ul.userId, lessonDefId: { in: allLessons.map((l) => l.id) }, status: "scored" },
+      });
+      if (scored >= allLessons.length) {
+        try {
+          await quizService.assignQuiz(ul.userId);
+        } catch { /* ignore - no exam sets */ }
+      }
+    }
+
     return updated;
   },
 
-  async createLesson(data: { title: string; description?: string; type?: string; orderIndex?: number; content?: string }) {
+  async createLesson(data: { title: string; description?: string; type?: string; orderIndex?: number; content?: string; submissionType?: 'FILE' | 'TEXT' }) {
     const flow = await flowService.getDefaultFlow();
     const { id: _, ...clean } = data as any;
     return getDb().lessonDef.create({ data: { ...clean, membershipFlowId: flow.id } });
   },
 
-  async updateLesson(id: string, data: { title?: string; description?: string; type?: string; orderIndex?: number; content?: string }) {
+  async updateLesson(id: string, data: { title?: string; description?: string; type?: string; orderIndex?: number; content?: string; submissionType?: 'FILE' | 'TEXT' }) {
     return getDb().lessonDef.update({ where: { id }, data });
   },
 

@@ -15,4 +15,7 @@ docker builder prune -a -f	Xoá cache build
 
 
 2. Dọn toàn bộ rác Docker (image cũ, container stopped, volume ko dùng, cache build):
-docker system prune -a --volumes -f
+docker system prune -a --volumes -fo
+
+3. Truy cập db trực tiếp 
+docker compose exec -it postgres psql -U postgres -d ttl

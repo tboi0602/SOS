@@ -229,7 +229,7 @@ export default function EditPostModal({
 
           <div>
             <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <Link2 size={12} /> Link sản phẩm
+              <Link2 size={12} /> Liên kết
             </label>
             <input
               type="text"

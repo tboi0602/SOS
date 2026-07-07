@@ -75,6 +75,13 @@ export default function JournalPage() {
           <BookOpen size={32} className="mx-auto mb-3" style={{ color: "var(--text-tertiary)" }} />
           <p className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>Chưa có nhật ký nào</p>
           <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>Hãy ghi lại những việc tốt của bạn mỗi ngày!</p>
+          <button
+            onClick={() => setShowCreate(true)}
+            className="mt-5 inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-lg cursor-pointer outline-none focus-visible:ring-2"
+            style={{ background: "var(--clr-primary)", color: "#fff" }}
+          >
+            <Plus size={16} /> Gửi ngay
+          </button>
         </div>
       )}
     >

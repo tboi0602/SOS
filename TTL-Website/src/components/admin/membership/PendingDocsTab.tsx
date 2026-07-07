@@ -2,7 +2,7 @@
 
 import { getInitial } from "@/utils/cn";
 import { useEffect, useRef, useState, useCallback } from "react"
-import { Upload, CheckCircle2, X, Loader2, FileText, ExternalLink } from "lucide-react"
+import { Upload, CheckCircle2, X, Loader2, FileText, ExternalLink, Image as ImageIcon } from "lucide-react"
 import gsap from "gsap"
 import { adminService } from "@/service/admin.service"
 import { Skeleton } from "@/components/ui/Skeleton"
@@ -19,20 +19,21 @@ function splitUrls(val: string | null | undefined): string[] {
   return val ? val.split(",").filter(Boolean) : []
 }
 
-function FileLink({ url }: { url: string }) {
+function FileLink({ url, label }: { url: string; label?: string }) {
   const fileName = url.split("/").pop() || "file"
   const isImage = /\.(jpg|jpeg|png|webp)$/i.test(url)
 
   if (isImage) {
     return (
-      <a href={fileUrl(url)} target="_blank" className="block rounded-lg overflow-hidden border transition-opacity hover:opacity-85" style={{ borderColor: "color-mix(in srgb, var(--text-primary) 10%, transparent)" }}>
-        <img src={fileUrl(url)} alt={fileName} className="w-full h-40 object-cover" loading="lazy" />
+      <a href={fileUrl(url)} target="_blank" className="block rounded-lg overflow-hidden border shrink-0" style={{ borderColor: "color-mix(in srgb, var(--text-primary) 8%, transparent)", width: 180 }}>
+        <img src={fileUrl(url)} alt={fileName} className="w-full h-32 object-cover" loading="lazy" />
+        {label && <p className="text-[10px] px-2 py-1 text-center font-medium" style={{ color: "var(--text-tertiary)", background: "color-mix(in srgb, var(--text-primary) 3%, transparent)" }}>{label}</p>}
       </a>
     )
   }
 
   return (
-    <a href={fileUrl(url)} target="_blank" className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-colors hover:opacity-80" style={{ background: "color-mix(in srgb, var(--clr-primary) 6%, transparent)", color: "var(--clr-primary)" }}>
+    <a href={fileUrl(url)} target="_blank" className="inline-flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-colors hover:opacity-80 shrink-0" style={{ background: "color-mix(in srgb, var(--clr-primary) 6%, transparent)", color: "var(--clr-primary)" }}>
       <FileText size={14} />
       <span className="flex-1 truncate">{fileName}</span>
       <ExternalLink size={12} className="shrink-0" />
@@ -40,12 +41,14 @@ function FileLink({ url }: { url: string }) {
   )
 }
 
-function FileSection({ title, files }: { title: string; files: string[] }) {
+function FileSection({ title, files, labels, direction = "vertical" }: { title: string; files: string[]; labels?: string[]; direction?: "vertical" | "horizontal" }) {
   if (!files.length) return null
   return (
     <div className="space-y-1.5">
-      <p className="text-[10px] font-medium uppercase tracking-wider" style={{ color: "var(--text-dim)" }}>{title} ({files.length})</p>
-      {files.map((url, i) => <FileLink key={i} url={url} />)}
+      {title && <p className="text-[10px] font-medium uppercase tracking-wider" style={{ color: "var(--text-dim)" }}>{title}</p>}
+      <div className={direction === "horizontal" ? "flex flex-wrap gap-2" : "space-y-1.5"}>
+        {files.map((url, i) => <FileLink key={i} url={url} label={labels?.[i] ?? ""} />)}
+      </div>
     </div>
   )
 }
@@ -137,10 +140,9 @@ export default function PendingDocsTab() {
 
                   {(documents.length > 0 || entry.idCardFront || entry.idCardBack || achievements.length > 0) && (
                     <div className="mt-3 pt-3 border-t space-y-3" style={{ borderColor: "color-mix(in srgb, var(--text-primary) 8%, transparent)" }}>
-                      <FileSection title="Hồ sơ" files={documents} />
-                      <FileSection title="Căn cước - Mặt trước" files={entry.idCardFront ? [entry.idCardFront] : []} />
-                      <FileSection title="Căn cước - Mặt sau" files={entry.idCardBack ? [entry.idCardBack] : []} />
-                      <FileSection title="Ảnh thành tích" files={achievements} />
+                      <FileSection title="Hồ sơ" files={documents} direction="vertical" />
+                      <FileSection title="Căn cước" files={[entry.idCardFront, entry.idCardBack].filter(Boolean) as string[]} direction="horizontal" labels={["Mặt trước", "Mặt sau"]} />
+                      <FileSection title="Ảnh thành tích" files={achievements} direction="horizontal" />
                     </div>
                   )}
                 </div>

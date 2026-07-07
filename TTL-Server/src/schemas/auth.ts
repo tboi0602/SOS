@@ -46,7 +46,7 @@ export const updateProfileSchema = z.object({
   job: z.string().max(100).nullable().optional(),
   address: z.string().max(255).nullable().optional(),
   avatar: z.string().max(500).nullable().optional(),
-  bio: z.string().max(500).nullable().optional(),
+  bio: z.string().max(5000).nullable().optional(),
   facebook: z.string().max(300).nullable().optional(),
   twitter: z.string().max(300).nullable().optional(),
   tiktok: z.string().max(300).nullable().optional(),

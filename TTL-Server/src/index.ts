@@ -22,6 +22,7 @@ import customerVisitRoutes from "./router/v1/customerVisit"
 import membershipRoutes from "./router/v1/membership"
 import adminMembershipRoutes from "./router/v1/adminMembership"
 import contactRoutes from "./router/v1/contact"
+import publicRoutes from "./router/v1/public"
 
 async function main() {
   logger.info("Starting server", { nodeEnv: config.nodeEnv, port: config.port })
@@ -87,6 +88,7 @@ app.set('trust proxy', 1);
   app.use("/api/v1/membership", membershipRoutes)
   app.use("/api/v1/admin/membership-flow", adminMembershipRoutes)
   app.use("/api/v1/contact", contactRoutes)
+  app.use("/api/public", publicRoutes)
 
   app.use((req, res) => {
     logger.warn("404 not found", { method: req.method, url: req.url, path: req.path, originalUrl: req.originalUrl })

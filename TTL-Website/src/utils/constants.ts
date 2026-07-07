@@ -56,9 +56,9 @@ export const ECOSYSTEM = {
     },
 
     {
-      name: "BẢN ĐỒ TÀI SẢN TRÍ TUỆ & MXH",
+      name: "BẢN ĐỒ TÀI SẢN TRÍ TUỆ",
       desc: "Nền tảng lưu danh và trao truyền các giá trị nội dung, trí tuệ. Giao diện Bản đồ Số Tinh Hoa Việt 3D giúp tra cứu thông tin toàn cầu. Kết nối MXH để chủ sở hữu phát triển cộng đồng, truyền nghề và tương tác với thị trường.",
-      url: "santaisantritue.com",
+      url: "bando.tinhhoaviet.org.vn",
     },
     {
       name: "VIỆN NHỮNG VẤN ĐỀ PHÁT TRIỂN - VIDS",

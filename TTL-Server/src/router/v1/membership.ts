@@ -32,6 +32,7 @@ const upload = multer({
     const ext = path.extname(file.originalname).toLowerCase()
     if (file.fieldname === "documents" && DOC_EXTS.includes(ext)) return cb(null, true)
     if ((file.fieldname === "idCardFront" || file.fieldname === "idCardBack" || file.fieldname === "achievements") && IMAGE_EXTS.includes(ext)) return cb(null, true)
+    if (file.fieldname === "file") return cb(null, true)
     cb(new Error(`File không hợp lệ: ${file.originalname}`))
   },
 })
@@ -48,6 +49,8 @@ router.post("/upload-docs", upload.fields([
 router.post("/confirm-payment", membershipController.confirmPayment)
 router.get("/lessons", membershipController.getLessons)
 router.post("/lessons/:lessonId/submit", membershipController.submitLesson)
+router.post("/lessons/:lessonId/submit-file", upload.single('file'), membershipController.submitLessonFile)
+router.post("/lessons/:lessonId/submit-url", membershipController.submitLessonUrl)
 router.get("/quiz", membershipController.getQuiz)
 router.post("/quiz/submit", membershipController.submitQuiz)
 router.get("/situations", membershipController.getSituations)

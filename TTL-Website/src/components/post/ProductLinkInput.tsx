@@ -22,7 +22,7 @@ export function ProductLinkInput({ value, onChange }: ProductLinkInputProps) {
   return (
     <div className="glass-strong rounded-2xl p-5 space-y-3">
       <h3 className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5" style={{ color: "var(--text-tertiary)" }}>
-        <ExternalLink size={12} /> Liên kết sản phẩm
+        <ExternalLink size={12} /> Liên kết 
         <span className="font-normal normal-case tracking-normal" style={{ color: "var(--text-dim)" }}>
           (tùy chọn)
         </span>

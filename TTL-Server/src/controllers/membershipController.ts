@@ -3,6 +3,7 @@ import { flowService } from "../services/membership/flowService"
 import { lessonService } from "../services/membership/lessonService"
 import { quizService } from "../services/membership/quizService"
 import { situationService } from "../services/membership/situationService"
+import { BadRequestError } from "../lib/errors"
 
 function s(val: unknown, fallback = ""): string {
   return typeof val === "string" ? val : fallback
@@ -61,6 +62,27 @@ export const membershipController = {
     try {
       const { productUrl } = req.body
       const result = await lessonService.submitLesson(req.user!.userId, String(req.params.lessonId), productUrl)
+      res.json(result)
+    } catch (err) { next(err) }
+  },
+
+  async submitLessonFile(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user!.userId
+      const lessonId = String(req.params.lessonId)
+      const file = req.file
+      if (!file) throw new BadRequestError("Không có file tải lên")
+      const url = `/uploads/membership-docs/${userId}/${file.filename}`
+      const result = await lessonService.submitLesson(userId, lessonId, url)
+      res.json(result)
+    } catch (err) { next(err) }
+  },
+
+  async submitLessonUrl(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { url } = req.body
+      if (!url) throw new BadRequestError("Chưa nhập URL")
+      const result = await lessonService.submitLesson(req.user!.userId, String(req.params.lessonId), url)
       res.json(result)
     } catch (err) { next(err) }
   },

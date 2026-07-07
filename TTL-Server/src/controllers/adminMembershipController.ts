@@ -30,7 +30,7 @@ export const adminMembershipController = {
   },
 
   async createLesson(req: Request, res: Response, next: NextFunction) {
-    try { res.json(await lessonService.createLesson(req.body)) }
+    try { res.json(await lessonService.createLesson({ ...req.body, submissionType: req.body.submissionType || 'TEXT' })) }
     catch (err) { next(err) }
   },
 
@@ -146,6 +146,12 @@ export const adminMembershipController = {
     } catch (err) { next(err) }
   },
 
+  async requestResubmission(req: Request, res: Response, next: NextFunction) {
+    try {
+      res.json(await lessonService.requestResubmission(pid(req, "userId"), pid(req, "lessonDefId")))
+    } catch (err) { next(err) }
+  },
+
   async scoreSituation(req: Request, res: Response, next: NextFunction) {
     try {
       const { score, adminNote } = req.body
@@ -187,6 +193,11 @@ export const adminMembershipController = {
     try {
       res.json(await quizService.removeQuestionFromExamSet(pid(req, "id"), pid(req, "questionId")))
     } catch (err) { next(err) }
+  },
+
+  async deleteMemberProfile(req: Request, res: Response, next: NextFunction) {
+    try { res.json(await flowService.deleteMemberProfile(pid(req, "userId"))) }
+    catch (err) { next(err) }
   },
 
   async getExamSets(req: Request, res: Response, next: NextFunction) {

@@ -21,6 +21,7 @@ export function useAuthActivate() {
       .then(async (res) => {
         setStatus("success")
         setMessage(res.message)
+        if (res.token) localStorage.setItem("auth_token", res.token)
         await refreshUser()
         router.push("/home")
       })

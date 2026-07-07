@@ -4,7 +4,7 @@ FROM node:${NODE_VERSION} AS builder
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+RUN npm config set registry https://registry.npmmirror.com && npm ci
 
 COPY prisma ./prisma
 COPY tsconfig.json ./
@@ -37,4 +37,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
 
 EXPOSE 4000
 
-CMD ["sh", "-c", "npx prisma db push 2>/dev/null; node dist/index.js"]
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss 2>/dev/null; node dist/index.js"]

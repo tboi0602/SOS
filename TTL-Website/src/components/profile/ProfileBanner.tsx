@@ -134,7 +134,7 @@ export default function ProfileBanner({
           )}
         </button>
 
-        <p className="text-xs text-[var(--text-tertiary)] leading-relaxed max-w-lg">
+        <p className="text-xs text-[var(--text-tertiary)] leading-relaxed max-w-lg break-words">
           {bio || "Chưa có giới thiệu"}
         </p>
       </div>

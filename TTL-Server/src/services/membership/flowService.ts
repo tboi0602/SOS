@@ -1,3 +1,6 @@
+import path from "path";
+import fs from "fs";
+import crypto from "crypto";
 import { NotFoundError, BadRequestError } from "../../lib/errors";
 import { getDb } from "../../db";
 import { notificationService } from "../notificationService";
@@ -38,13 +41,11 @@ export const flowService = {
     const allowed = ["pending_docs", "docs_submitted"];
     if (!allowed.includes(uf.status)) throw new BadRequestError("Trạng thái không hợp lệ");
 
-    const mergedDocs = data.documentsUrl && uf.documentsUrl
-      ? `${uf.documentsUrl},${data.documentsUrl}`
-      : (data.documentsUrl || uf.documentsUrl)
+    const dedup = (...parts: (string | undefined | null)[]) =>
+      [...new Set(parts.filter(Boolean).flatMap((s) => s!.split(",").filter(Boolean)))].join(",")
 
-    const mergedAchievements = data.achievementImages && uf.achievementImages
-      ? `${uf.achievementImages},${data.achievementImages}`
-      : (data.achievementImages || uf.achievementImages)
+    const mergedDocs = dedup(uf.documentsUrl, data.documentsUrl)
+    const mergedAchievements = dedup(uf.achievementImages, data.achievementImages)
 
     const newStatus = uf.status === "pending_docs" ? "docs_submitted" : uf.status;
 
@@ -324,9 +325,11 @@ export const flowService = {
       data: { status: "completed", completedAt: new Date() },
     });
 
+    const graduationId = `THV-${crypto.randomBytes(12).toString("hex").toUpperCase()}`;
+
     await getDb().user.update({
       where: { id: userId },
-      data: { role: "member" },
+      data: { role: "member", graduationId },
     });
 
     await notificationService.create({
@@ -338,6 +341,45 @@ export const flowService = {
     });
 
     return { message: "Đã hoàn thành" };
+  },
+
+  async deleteMemberProfile(userId: string) {
+    const uf = await getDb().userMembershipFlow.findUnique({ where: { userId } });
+    if (!uf) throw new NotFoundError("Không tìm thấy hồ sơ thành viên");
+
+    const allUrls = [
+      ...(uf.documentsUrl?.split(",").filter(Boolean) ?? []),
+      ...(uf.idCardFront ? [uf.idCardFront] : []),
+      ...(uf.idCardBack ? [uf.idCardBack] : []),
+      ...(uf.achievementImages?.split(",").filter(Boolean) ?? []),
+    ];
+
+    const baseDir = path.join(process.cwd(), "public");
+    for (const url of allUrls) {
+      const relative = url.startsWith("/") ? url.slice(1) : url;
+      const filePath = path.join(baseDir, relative);
+      try {
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      } catch { }
+    }
+
+    const userDir = path.join(baseDir, "uploads", "membership-docs", userId);
+    try {
+      if (fs.existsSync(userDir)) fs.rmSync(userDir, { recursive: true, force: true });
+    } catch { }
+
+    await getDb().userMembershipFlow.update({
+      where: { userId },
+      data: {
+        documentsUrl: null,
+        idCardFront: null,
+        idCardBack: null,
+        achievementImages: null,
+        status: "pending_docs",
+      },
+    });
+
+    return { message: "Đã xoá file hồ sơ thành viên" };
   },
 
   async recalcTotalScore(userId: string) {

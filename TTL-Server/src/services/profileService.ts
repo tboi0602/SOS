@@ -272,7 +272,7 @@ export const profileService = {
   },
 
   async listMembers(page: number, limit: number) {
-    const where = { role: { not: "admin" } };
+    const where = { role: "member" };
     const [users, total] = await Promise.all([
       getDb().user.findMany({
         where,
@@ -292,6 +292,7 @@ export const profileService = {
           avatar: u.avatar,
           email: u.email,
           role: u.role,
+          hasGraduated: u.graduationId != null,
           job: u.job,
           address: u.address,
           isActive: u.isActive,

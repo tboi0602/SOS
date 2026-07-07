@@ -19,7 +19,7 @@ const jetbrains = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
-const siteUrl = "https://doitac.tinhhoaviet.org.vn/";
+const siteUrl = "https://vnsales.org/";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

@@ -6,13 +6,29 @@ interface ApiOptions {
   body?: unknown;
 }
 
+function getAuthHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {};
+  const token = localStorage.getItem("auth_token");
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
 export async function request<T>(
   path: string,
   { method = "GET", body }: ApiOptions = {},
 ): Promise<T> {
+  const headers: Record<string, string> = {
+    ...getAuthHeaders(),
+  };
+  if (body) {
+    headers["Content-Type"] = "application/json";
+  }
+
   const res = await fetch(`${API_URL}${path}`, {
     method,
-    headers: body ? { "Content-Type": "application/json" } : undefined,
+    headers,
     credentials: "include",
     body: body ? JSON.stringify(body) : undefined,
   });
@@ -43,6 +59,7 @@ export async function uploadFiles<T>(
   const res = await fetch(`${API_URL}${path}`, {
     method: "POST",
     credentials: "include",
+    headers: getAuthHeaders(),
     body: formData,
   });
   const data = await res.json();
@@ -60,6 +77,7 @@ export async function uploadSingleFile<T>(
   const res = await fetch(`${API_URL}${path}`, {
     method: "POST",
     credentials: "include",
+    headers: getAuthHeaders(),
     body: formData,
   });
   const data = await res.json();

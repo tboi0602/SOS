@@ -488,8 +488,8 @@ export default function FeedSidebar() {
           <Image
             src="/images/logo.png"
             alt={SITE_NAME}
-            width={36}
-            height={36}
+            width={130}
+            height={100}
             unoptimized
           />
         </span>

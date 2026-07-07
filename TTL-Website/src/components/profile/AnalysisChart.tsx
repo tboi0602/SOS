@@ -5,6 +5,14 @@ import LineChart from "./LineChart";
 
 type TimeFilter = "month" | "year" | "quarter";
 
+const LABEL_MAP: Record<string, string> = {
+  "#6366f1": "Kỷ luật",
+  "#10b981": "Đạo đức",
+  "#a855f7": "Truyền cảm hứng",
+  "#f59e0b": "Bài viết",
+  "#ec4899": "Giới thiệu",
+};
+
 export default function AnalysisChart({
   labels,
   datasets,
@@ -64,11 +72,7 @@ export default function AnalysisChart({
               }}
             />
             <span className="text-[10px] text-[var(--text-tertiary)] font-medium">
-              {ds.color === "var(--clr-accent)"
-                ? "Kỷ luật"
-                : ds.color === "var(--clr-success)"
-                  ? "Đạo đức"
-                  : "Truyền cảm hứng"}
+              {LABEL_MAP[ds.color] ?? "Truyền cảm hứng"}
             </span>
           </div>
         ))}

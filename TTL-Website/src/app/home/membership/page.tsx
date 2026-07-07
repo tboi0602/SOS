@@ -202,7 +202,7 @@ export default function MembershipPage() {
           {(flow.status === "in_lessons" || flow.status === "pending_quiz" || flow.status === "pending_situations" || flow.status === "pending_review") && (
             <LessonsQuizSituations flow={flow} onSuccess={fetchFlow} />
           )}
-          {flow.status === "completed" && <CompletedStep flow={flow} />}
+          {flow.status === "completed" && <CompletedStep flow={flow} user={user} />}
         </div>
       </div>
     </div>

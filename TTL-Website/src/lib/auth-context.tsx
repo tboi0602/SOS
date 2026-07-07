@@ -22,7 +22,7 @@ interface AuthContextType {
     password: string;
     job?: string;
     address?: string;
-
+    referralCode?: string;
   }) => Promise<User>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -88,6 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(
     async (email: string, password: string) => {
       const res = await authService.login(email, password);
+      if (res.token) localStorage.setItem("auth_token", res.token);
       setAndPersistUser(res.user);
     },
     [setAndPersistUser],
@@ -100,9 +101,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password: string;
       job?: string;
       address?: string;
-  
+      referralCode?: string | null;
     }) => {
       const res = await authService.register(data);
+      if (res.token) localStorage.setItem("auth_token", res.token);
       setUser(res.user);
       return res.user;
     },
@@ -111,6 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     await authService.logout();
+    localStorage.removeItem("auth_token");
     setAndPersistUser(null);
     router.push("/");
   }, [setAndPersistUser, router]);

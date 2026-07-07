@@ -10,6 +10,7 @@ export interface MemberInfo {
   job: string | null;
   address: string | null;
   avatar: string | null;
+  hasGraduated?: boolean;
   isActive: boolean;
   createdAt: string;
   kyLuat?: number;

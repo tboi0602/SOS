@@ -389,6 +389,7 @@ export function LessonCard({
   const [description, setDescription] = useState(lesson.description || "");
   const [type, setType] = useState(lesson.type);
   const [content, setContent] = useState(lesson.content || "");
+  const [submissionType, setSubmissionType] = useState<"FILE" | "TEXT">(lesson.submissionType || "TEXT");
 
   const handleSave = async () => {
     try {
@@ -398,6 +399,7 @@ export function LessonCard({
         description,
         type,
         content,
+        submissionType,
       });
       onSuccess();
       setEditing(false);
@@ -478,6 +480,25 @@ export function LessonCard({
             placeholder="URL nội dung"
           />
         </div>
+        <div>
+          <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
+            Loại nộp bài
+          </label>
+          <select
+            value={submissionType}
+            onChange={(e) => setSubmissionType(e.target.value as "FILE" | "TEXT")}
+            className="w-full px-3 py-2 rounded-lg text-sm outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+            style={{
+              background:
+                "color-mix(in srgb, var(--text-primary) 5%, transparent)",
+              color: "var(--text-primary)",
+              border: "0.5px solid var(--border-base)",
+            }}
+          >
+            <option value="FILE">File</option>
+            <option value="TEXT">Text (URL)</option>
+          </select>
+        </div>
         <div className="flex gap-2">
           <button
             onClick={handleSave}
@@ -521,6 +542,12 @@ export function LessonCard({
           </span>
           <span className="text-[11px]" style={{ color: "var(--text-dim)" }}>
             Thứ tự {lesson.orderIndex}
+          </span>
+          <span className="text-[11px] px-1.5 py-0.5 rounded-md" style={{
+            background: "color-mix(in srgb, var(--text-primary) 8%, transparent)",
+            color: "var(--text-tertiary)",
+          }}>
+            {lesson.submissionType === 'FILE' ? 'File' : 'URL'}
           </span>
         </div>
       </div>
@@ -595,6 +622,7 @@ export function AddLessonButton({ onSuccess }: { onSuccess: () => void }) {
   const [description, setDescription] = useState("");
   const [type, setType] = useState("video");
   const [content, setContent] = useState("");
+  const [submissionType, setSubmissionType] = useState<"FILE" | "TEXT">("TEXT");
   const [saving, setSaving] = useState(false);
 
   const handleSave = async () => {
@@ -607,6 +635,7 @@ export function AddLessonButton({ onSuccess }: { onSuccess: () => void }) {
         type,
         orderIndex: 0,
         content,
+        submissionType,
       } as any);
       onSuccess();
       setOpen(false);
@@ -685,6 +714,27 @@ export function AddLessonButton({ onSuccess }: { onSuccess: () => void }) {
               }}
               placeholder="URL nội dung"
             />
+          </div>
+          <div className="flex gap-3">
+            <div className="flex-1">
+              <label className="block text-xs font-medium mb-1" style={{ color: "var(--text-tertiary)" }}>
+                Loại nộp bài
+              </label>
+              <select
+                value={submissionType}
+                onChange={(e) => setSubmissionType(e.target.value as "FILE" | "TEXT")}
+                className="w-full px-3 py-2.5 rounded-lg text-sm outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+                style={{
+                  background:
+                    "color-mix(in srgb, var(--text-primary) 5%, transparent)",
+                  color: "var(--text-primary)",
+                  border: "0.5px solid var(--border-base)",
+                }}
+              >
+                <option value="FILE">File</option>
+                <option value="TEXT">Text (URL)</option>
+              </select>
+            </div>
           </div>
           <div className="flex gap-3 pt-2">
             <button

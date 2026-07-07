@@ -13,7 +13,7 @@ declare global {
 
 export async function requireAuth(req: Request, res: Response, next: NextFunction) {
   try {
-    const token = req.cookies?.token
+    const token = req.cookies?.token || (req.headers.authorization?.startsWith("Bearer ") ? req.headers.authorization.slice(7) : null)
     if (!token) {
       throw new UnauthorizedError("Vui lòng đăng nhập", "NO_TOKEN")
     }

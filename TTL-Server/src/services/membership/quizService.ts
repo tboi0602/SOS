@@ -14,8 +14,28 @@ export const quizService = {
     });
     if (!uf) throw new NotFoundError("Không tìm thấy flow");
 
-    const examSets = uf.membershipFlow.quizExamSets;
-    if (examSets.length === 0) throw new BadRequestError("Chưa có bộ đề trắc nghiệm");
+    const flowId = uf.membershipFlowId;
+    let examSets = uf.membershipFlow.quizExamSets;
+
+    if (examSets.length === 0) {
+      const questions = await getDb().quizQuestion.findMany({
+        where: { membershipFlowId: flowId },
+        orderBy: { orderIndex: "asc" },
+      });
+      if (questions.length === 0) throw new BadRequestError("Chưa có bộ đề trắc nghiệm");
+
+      const examSet = await getDb().quizExamSet.create({
+        data: {
+          membershipFlowId: flowId,
+          name: "Đề tự động",
+          passScore: Math.ceil(questions.length * 0.7),
+          questions: {
+            create: questions.map((q, i) => ({ questionId: q.id, orderIndex: i })),
+          },
+        },
+      });
+      examSets = [{ ...examSet, questions: questions.map((q) => ({ question: q })) } as any];
+    }
 
     const randomIdx = Math.floor(Math.random() * examSets.length);
     const examSet = examSets[randomIdx];
@@ -27,7 +47,7 @@ export const quizService = {
   },
 
   async getQuiz(userId: string) {
-    const uf = await getDb().userMembershipFlow.findUnique({
+    let uf = await getDb().userMembershipFlow.findUnique({
       where: { userId },
       include: {
         quizExamSet: {
@@ -40,6 +60,28 @@ export const quizService = {
         },
       },
     });
+
+    if (!uf) throw new NotFoundError("Không tìm thấy flow");
+
+    if (!uf.quizExamSet && uf.status === "pending_quiz") {
+      try {
+        await this.assignQuiz(userId);
+        uf = await getDb().userMembershipFlow.findUnique({
+          where: { userId },
+          include: {
+            quizExamSet: {
+              include: {
+                questions: {
+                  include: { question: { select: { id: true, question: true, options: true } } },
+                  orderBy: { orderIndex: "asc" },
+                },
+              },
+            },
+          },
+        });
+      } catch { /* ignore */ }
+    }
+
     if (!uf || !uf.quizExamSet) throw new NotFoundError("Chưa có bài trắc nghiệm");
     if (uf.status !== "pending_quiz" && uf.status !== "pending_situations") {
       throw new BadRequestError("Không trong giai đoạn làm bài");
@@ -63,7 +105,7 @@ export const quizService = {
   },
 
   async submitQuiz(userId: string, answers: Record<string, string>) {
-    const uf = await getDb().userMembershipFlow.findUnique({
+    let uf = await getDb().userMembershipFlow.findUnique({
       where: { userId },
       include: {
         quizExamSet: {
@@ -73,7 +115,22 @@ export const quizService = {
         },
       },
     });
-    if (!uf || !uf.quizExamSet) throw new NotFoundError("Chưa có bài trắc nghiệm");
+    if (!uf || !uf.quizExamSet) {
+      if (uf && (uf.status === "pending_quiz" || uf.status === "pending_situations")) {
+        try { await this.assignQuiz(userId); } catch { /* ignore */ }
+        uf = await getDb().userMembershipFlow.findUnique({
+          where: { userId },
+          include: {
+            quizExamSet: {
+              include: {
+                questions: { include: { question: true } },
+              },
+            },
+          },
+        });
+      }
+      if (!uf || !uf.quizExamSet) throw new NotFoundError("Chưa có bài trắc nghiệm");
+    }
     if (uf.status !== "pending_quiz") throw new BadRequestError("Không trong giai đoạn làm bài");
 
     const examSet = uf.quizExamSet;
@@ -116,7 +173,7 @@ export const quizService = {
   },
 
   async scoreQuiz(userId: string, answers: Record<string, string>) {
-    const uf = await getDb().userMembershipFlow.findUnique({
+    let uf = await getDb().userMembershipFlow.findUnique({
       where: { userId },
       include: {
         quizExamSet: {
@@ -124,7 +181,20 @@ export const quizService = {
         },
       },
     });
-    if (!uf || !uf.quizExamSet) throw new NotFoundError("Chưa có bài trắc nghiệm");
+    if (!uf || !uf.quizExamSet) {
+      if (uf && (uf.status === "pending_quiz" || uf.status === "pending_situations")) {
+        try { await this.assignQuiz(userId); } catch { /* ignore */ }
+        uf = await getDb().userMembershipFlow.findUnique({
+          where: { userId },
+          include: {
+            quizExamSet: {
+              include: { questions: { include: { question: true } } },
+            },
+          },
+        });
+      }
+      if (!uf || !uf.quizExamSet) throw new NotFoundError("Chưa có bài trắc nghiệm");
+    }
 
     const examSet = uf.quizExamSet;
     let correctCount = 0;

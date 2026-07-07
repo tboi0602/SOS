@@ -7,11 +7,26 @@ import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 import TbvLoginButton from "@/components/auth/TbvLoginButton";
 import Field from "@/components/auth/Field";
 
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import { useToast } from "@/components/ui/Toast";
-import { Eye, EyeOff, Loader2, UserPlus } from "lucide-react";
+import { Eye, EyeOff, Gift, CheckCircle, XCircle, Loader2, UserPlus } from "lucide-react";
 
 export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div className="relative min-h-screen flex overflow-hidden" style={{ background: "var(--surface-base)" }}>
+        <div className="absolute inset-0 gradient-mesh" />
+        <div className="relative z-10 flex w-full items-center justify-center p-6">
+          <Loader2 size={32} className="animate-spin mx-auto text-accent" />
+        </div>
+      </div>
+    }>
+      <RegisterContent />
+    </Suspense>
+  );
+}
+
+function RegisterContent() {
   const {
     form,
     showPassword,
@@ -19,8 +34,11 @@ export default function RegisterPage() {
     googleLoading,
     error,
     registered,
+    referralValid,
+    referralName,
     setShowPassword,
     updateField,
+    handleReferralChange,
     handleSubmit,
     handleGoogle,
   } = useRegister();
@@ -244,6 +262,69 @@ export default function RegisterPage() {
                         onChange={(v) => updateField("address", v)}
                         placeholder="Hồ Chí Minh"
                       />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label
+                        htmlFor="referralCode"
+                        className="text-sm font-medium"
+                        style={{ color: "var(--text-tertiary)" }}
+                      >
+                        Mã giới thiệu
+                      </label>
+                      <div className="relative">
+                        <input
+                          id="referralCode"
+                          type="text"
+                          value={form.referralCode}
+                          onChange={(e) => handleReferralChange(e.target.value)}
+                          placeholder="Nhập mã giới thiệu (nếu có)"
+                          className="w-full rounded-xl pl-10 pr-4 py-3 text-sm outline-none transition-all"
+                          style={{
+                            background:
+                              "color-mix(in srgb, var(--text-primary) 5%, transparent)",
+                            border: referralValid === true
+                              ? "0.5px solid #22c55e"
+                              : referralValid === false
+                                ? "0.5px solid #ef4444"
+                                : "0.5px solid var(--border-base)",
+                            color: "var(--text-primary)",
+                          }}
+                        />
+                        <Gift
+                          size={16}
+                          className="absolute left-3 top-1/2 -translate-y-1/2"
+                          style={{
+                            color: referralValid === true
+                              ? "#22c55e"
+                              : referralValid === false
+                                ? "#ef4444"
+                                : "var(--text-dim)",
+                          }}
+                        />
+                        {referralValid === true && (
+                          <CheckCircle
+                            size={16}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-500"
+                          />
+                        )}
+                        {referralValid === false && (
+                          <XCircle
+                            size={16}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500"
+                          />
+                        )}
+                      </div>
+                      {referralValid === true && referralName && (
+                        <p className="text-xs text-emerald-500 mt-1">
+                          Người giới thiệu: {referralName}
+                        </p>
+                      )}
+                      {referralValid === false && (
+                        <p className="text-xs text-red-500 mt-1">
+                          Mã giới thiệu không hợp lệ
+                        </p>
+                      )}
                     </div>
 
                     <button

@@ -33,8 +33,10 @@ router.put("/:userId/reject-docs", adminMembershipController.rejectDocs)
 router.put("/:userId/verify-payment", adminMembershipController.verifyPayment)
 router.put("/:userId/reject-payment", adminMembershipController.rejectPayment)
 router.put("/:userId/complete", adminMembershipController.completeFlow)
+router.delete("/:userId/profile", adminMembershipController.deleteMemberProfile)
 
 router.put("/score-lesson/:lessonId", adminMembershipController.scoreLesson)
+router.post("/request-resubmission/:userId/:lessonDefId", adminMembershipController.requestResubmission)
 router.put("/score-situation/:userId/:index", adminMembershipController.scoreSituation)
 
 /* ─── Exam Set CRUD ─── */
