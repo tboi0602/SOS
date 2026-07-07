@@ -16,7 +16,7 @@ export default function DocsSubmittedStep({ flow, onSuccess }: { flow: UserFlow;
     try {
       setUploading(true)
       setError(null)
-      await membershipService.uploadDocs(files)
+      await membershipService.uploadDocs({ documents: files.length > 0 ? files : undefined })
       setShowUpload(false)
       setFiles([])
       onSuccess()

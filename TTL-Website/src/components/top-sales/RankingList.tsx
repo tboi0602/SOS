@@ -8,6 +8,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { TopSalesResponse } from "@/service/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -81,7 +82,7 @@ export default function RankingList({
 
               {m.avatar ? (
                 <Image
-                  src={m.avatar.replace("http://", "https://")}
+                  src={m.avatar.startsWith("http") ? m.avatar : `${API_URL}${m.avatar}`}
                   alt={m.name}
                   width={40}
                   height={40}

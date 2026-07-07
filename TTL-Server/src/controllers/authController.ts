@@ -8,8 +8,8 @@ import { AppError } from "../lib/errors";
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax" as const,
+  secure: true,
+  sameSite: `none` as const,
   maxAge: 2 * 60 * 60 * 1000,
 };
 
@@ -113,15 +113,23 @@ export const authController = {
   }),
 
   oidcCallback: asyncHandler(async (req: Request, res: Response) => {
-    const { code, state, error } = req.query as { code?: string; state?: string; error?: string };
+    const { code, state, error } = req.query as {
+      code?: string;
+      state?: string;
+      error?: string;
+    };
     if (error) {
       logger.warn("TBV OIDC callback returned error", { error });
-      res.redirect(`${config.email.frontendUrl}/auth/login?error=${encodeURIComponent(error)}`);
+      res.redirect(
+        `${config.email.frontendUrl}/auth/login?error=${encodeURIComponent(error)}`,
+      );
       return;
     }
 
     if (!code || !state) {
-      res.redirect(`${config.email.frontendUrl}/auth/login?error=missing_params`);
+      res.redirect(
+        `${config.email.frontendUrl}/auth/login?error=missing_params`,
+      );
       return;
     }
     try {
@@ -131,9 +139,12 @@ export const authController = {
       res.redirect(`${config.email.frontendUrl}${url}`);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      const code = err instanceof AppError && err.code ? err.code : "auth_failed";
+      const code =
+        err instanceof AppError && err.code ? err.code : "auth_failed";
       logger.error("TBV OIDC callback failed", { code, error: message });
-      res.redirect(`${config.email.frontendUrl}/auth/login?error=${encodeURIComponent(code)}`);
+      res.redirect(
+        `${config.email.frontendUrl}/auth/login?error=${encodeURIComponent(code)}`,
+      );
     }
   }),
 

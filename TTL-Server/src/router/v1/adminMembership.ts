@@ -23,8 +23,10 @@ router.put("/situation-questions/:id", adminMembershipController.updateSituation
 router.delete("/situation-questions/:id", adminMembershipController.deleteSituationQuestion)
 
 router.get("/pending-docs", adminMembershipController.getPendingDocs)
+router.get("/all-flows", adminMembershipController.getAllFlows)
 router.get("/pending-payments", adminMembershipController.getPendingPayments)
 router.get("/active", adminMembershipController.getActiveMembers)
+router.get("/users/:userId/lessons", adminMembershipController.getUserLessons)
 
 router.put("/:userId/approve-docs", adminMembershipController.approveDocs)
 router.put("/:userId/reject-docs", adminMembershipController.rejectDocs)

@@ -13,18 +13,14 @@ const BRAND = {
   gold: "#d4a843",
   goldLight: "#e8c76a",
   goldDark: "#b8912e",
-  bg: "#0a0a1a",
-  bgCard: "#111128",
+  bg: "#0d0808",
+  bgCard: "#1a0c0c",
   text: "#e8e4f0",
-  textMuted: "#8880a0",
+  textMuted: "#a09090",
   border: "rgba(212,168,67,0.15)",
 };
 
-const LOGO_SVG = `<svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="22" cy="22" r="20" stroke="url(#lg)" stroke-width="2" fill="none"/>
-  <text x="22" y="22" text-anchor="middle" dominant-baseline="central" font-size="18" font-weight="bold" fill="url(#lg)">THV</text>
-  <defs><linearGradient id="lg" x1="0" y1="0" x2="44" y2="44"><stop stop-color="${BRAND.gold}"/><stop offset="1" stop-color="${BRAND.goldLight}"/></linearGradient></defs>
-</svg>`;
+const LOGO_URL = `${FRONTEND_URL}/images/tbv-logo.png`;
 
 function wrapLayout(body: string): string {
   return `<!DOCTYPE html>
@@ -47,7 +43,7 @@ function wrapLayout(body: string): string {
       border: 1px solid ${BRAND.border};
     }
     .header {
-      background: linear-gradient(135deg, #0d0d24, #1a1040);
+      background: linear-gradient(135deg, #1a0808, #2a0c0c);
       padding: 36px 28px 28px; text-align: center;
     }
     .logo { margin-bottom: 12px; display: inline-block; }
@@ -85,7 +81,7 @@ function wrapLayout(body: string): string {
 <body>
   <div class="container">
     <div class="header">
-      <div class="logo">${LOGO_SVG}</div>
+      <div class="logo"><img src="${LOGO_URL}" alt="${BRAND.short}" width="44" height="44" style="border-radius:50%;display:block;" /></div>
       <h1>${BRAND.short}</h1>
       <p class="tagline">Trung Tâm Đề Cử Tinh Hoa Việt</p>
     </div>
@@ -96,12 +92,13 @@ function wrapLayout(body: string): string {
     <div class="footer">
       <p>
         <span class="brand-name">${BRAND.short}</span><br />
-        Hotline: 0904 373 123
+        Hotline: 0904 373 123<br />
+        Email: tinhhoanoidung@gmail.com
       </p>
       <p style="margin-top:10px;">
-        <a href="${FRONTEND_URL}" style="color:${BRAND.gold}; text-decoration:none; font-size:12px;">vnsales.org</a>
+        <a href="${FRONTEND_URL}" style="color:${BRAND.gold}; text-decoration:none; font-size:12px;">doitac.tinhhoaviet.org.vn</a>
       </p>
-      <p style="margin-top:12px; font-size:11px; color:rgba(136,128,160,0.4);">
+      <p style="margin-top:12px; font-size:11px; color:rgba(160,144,144,0.4);">
         Email này được gửi tự động. Vui lòng không trả lời trực tiếp.
       </p>
     </div>
@@ -160,7 +157,7 @@ export async function sendWelcomeEmail(
   const body = `
     <p>Xin chào <strong>${name}</strong>,</p>
     <p>Tài khoản <strong>${BRAND.short}</strong> của bạn đã được kích hoạt thành công!</p>
-    <p style="margin-top:16px;">Bạn có thể bắt đầu ngay hành trình rèn luyện — đăng bài viết, viết nhật ký, nộp tác phẩm và theo dõi sự phát triển của bản thân.</p>
+    <p style="margin-top:16px;">Bạn có thể bắt đầu ngay hành trình rèn luyện — đăng bài viết, viết đạo đức, nộp kỷ luật và theo dõi sự phát triển của bản thân.</p>
     <div style="text-align:center;">
       <a href="${FRONTEND_URL}/home" class="btn">Vào hệ thống</a>
     </div>

@@ -2,23 +2,34 @@
 
 import { useState } from "react";
 import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
+import { useToast } from "@/components/ui/Toast";
+import { authService } from "@/service/auth.service";
 import { Eye, EyeOff, Loader2, Save } from "lucide-react";
 
 export default function SettingsPage() {
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [saved, setSaved] = useState(false);
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    setLoading(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    try {
+      if (name) await authService.updateProfile({ name });
+      if (currentPassword && newPassword) {
+        await authService.changePassword(currentPassword, newPassword);
+      }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err) {
+      toast(err instanceof Error ? err.message : "Lỗi cập nhật", "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,16 +47,17 @@ export default function SettingsPage() {
                 style={{ background: "color-mix(in srgb, var(--text-primary) 5%, transparent)", border: "0.5px solid var(--border-base)", color: "var(--text-primary)" }} />
             </div>
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium" style={{ color: "var(--text-tertiary)" }}>Email</label>
-              <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com"
+              <label htmlFor="currentPassword" className="text-sm font-medium" style={{ color: "var(--text-tertiary)" }}>Mật khẩu hiện tại</label>
+              <input id="currentPassword" type={showPassword ? "text" : "password"} value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)} placeholder="••••••••"
                 className="w-full rounded-xl px-4 py-3 text-sm outline-none transition-all"
                 style={{ background: "color-mix(in srgb, var(--text-primary) 5%, transparent)", border: "0.5px solid var(--border-base)", color: "var(--text-primary)" }} />
             </div>
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium" style={{ color: "var(--text-tertiary)" }}>Mật khẩu mới</label>
+              <label htmlFor="newPassword" className="text-sm font-medium" style={{ color: "var(--text-tertiary)" }}>Mật khẩu mới</label>
               <div className="relative">
-                <input id="password" type={showPassword ? "text" : "password"} value={password}
-                  onChange={(e) => setPassword(e.target.value)} placeholder="••••••••"
+                <input id="newPassword" type={showPassword ? "text" : "password"} value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)} placeholder="••••••••"
                   className="w-full rounded-xl pl-4 pr-11 py-3 text-sm outline-none transition-all"
                   style={{ background: "color-mix(in srgb, var(--text-primary) 5%, transparent)", border: "0.5px solid var(--border-base)", color: "var(--text-primary)" }} />
                 <button type="button" onClick={() => setShowPassword(!showPassword)}

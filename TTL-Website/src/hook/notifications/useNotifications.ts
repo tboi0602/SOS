@@ -34,11 +34,13 @@ export function useNotifications() {
     setNotifications((prev) =>
       prev.map((n) => (n.id === id ? { ...n, isRead: true } : n)),
     );
+    window.dispatchEvent(new CustomEvent("notifications-read"));
   };
 
   const markAllRead = async () => {
     await notificationService.markAllRead();
     setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    window.dispatchEvent(new CustomEvent("notifications-read"));
   };
 
   return {

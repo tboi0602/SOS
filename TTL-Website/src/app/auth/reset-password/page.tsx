@@ -2,24 +2,41 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { Suspense, useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
+import { useToast } from "@/components/ui/Toast";
+import { authService } from "@/service/auth.service";
 import { Eye, EyeOff, Loader2, Lock } from "lucide-react";
 
-export default function ResetPasswordPage() {
+function ResetForm() {
+  const searchParams = useSearchParams();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const [tokenError, setTokenError] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (!searchParams.get("token")) setTokenError(true);
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirm) return;
+    const token = searchParams.get("token");
+    if (!token) { setTokenError(true); return; }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    setLoading(false);
-    setDone(true);
+    try {
+      await authService.resetPassword(token, password);
+      setDone(true);
+    } catch (err) {
+      toast(err instanceof Error ? err.message : "Lỗi đặt lại mật khẩu", "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -48,7 +65,20 @@ export default function ResetPasswordPage() {
               <Image src="/images/logo.png" alt="logo" width={40} height={40} unoptimized />
             </Link>
             <div className="card p-8">
-              {done ? (
+              {tokenError ? (
+                <div className="text-center py-4 space-y-3">
+                  <div className="size-12 rounded-full bg-danger/20 flex items-center justify-center mx-auto">
+                    <Lock size={20} className="text-danger" />
+                  </div>
+                  <h2 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>Liên kết không hợp lệ</h2>
+                  <p className="text-sm leading-relaxed" style={{ color: "var(--text-tertiary)" }}>
+                    Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn.
+                  </p>
+                  <Link href="/auth/login" className="inline-block mt-3 text-sm text-accent hover:underline">
+                    Quay lại đăng nhập
+                  </Link>
+                </div>
+              ) : done ? (
                 <div className="text-center py-4 space-y-3">
                   <div className="size-12 rounded-full bg-accent/20 flex items-center justify-center mx-auto">
                     <Lock size={20} className="text-accent" />
@@ -116,5 +146,13 @@ export default function ResetPasswordPage() {
       </div>
       <ThemeToggleButton />
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense>
+      <ResetForm />
+    </Suspense>
   );
 }

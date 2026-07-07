@@ -31,7 +31,7 @@ const STATUS_LABELS: Record<string, { label: string; icon: typeof Upload; desc: 
 }
 
 export default function MembershipPage() {
-  const { loading: authLoading } = useAuth()
+  const { loading: authLoading, user } = useAuth()
   const [flow, setFlow] = useState<UserFlow | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -50,6 +50,13 @@ export default function MembershipPage() {
     } finally {
       setLoading(false)
     }
+  }, [])
+
+  const refreshFlow = useCallback(async () => {
+    try {
+      const data = await membershipService.getMyFlow()
+      setFlow(data)
+    } catch { /* ignore */ }
   }, [])
 
   useEffect(() => {
@@ -125,14 +132,18 @@ export default function MembershipPage() {
   const steps = [
     { key: "pending_docs", label: "Nộp hồ sơ", icon: Upload, done: flow.status !== "pending_docs" },
     { key: "docs_submitted", label: "Duyệt hồ sơ", icon: Clock, done: !["pending_docs", "docs_submitted"].includes(flow.status) },
-    { key: "pending_payment", label: "Thanh toán", icon: CreditCard, done: flow.status !== "pending_payment" && flow.status !== "payment_pending_verification" && flow.status !== "pending_docs" && flow.status !== "docs_submitted" },
+    { key: "pending_payment", label: "Thanh toán", icon: CreditCard, done: flow.status !== "pending_payment" && flow.status !== "pending_docs" && flow.status !== "docs_submitted" },
     { key: "in_lessons", label: "Bài học", icon: BookOpen, done: !["pending_docs", "docs_submitted", "pending_payment", "payment_pending_verification", "in_lessons"].includes(flow.status) },
     { key: "pending_quiz", label: "Kiểm tra", icon: Brain, done: !["pending_docs", "docs_submitted", "pending_payment", "payment_pending_verification", "in_lessons", "pending_quiz"].includes(flow.status) },
-    { key: "pending_situations", label: "Tình huống", icon: FileText, done: !["pending_docs", "docs_submitted", "pending_payment", "payment_pending_verification", "in_lessons", "pending_quiz", "pending_situations"].includes(flow.status) },
+    { key: "pending_situations", label: "Tình huống", icon: FileText, done: !["pending_docs", "docs_submitted", "pending_payment", "payment_pending_verification", "in_lessons", "pending_quiz", "pending_situations", "pending_review"].includes(flow.status) },
     { key: "completed", label: "Hoàn thành", icon: CheckCircle2, done: flow.status === "completed" },
   ]
 
-  const currentIndex = steps.findIndex((s) => s.key === flow.status)
+  const STATUS_MAP: Record<string, string> = {
+    payment_pending_verification: "pending_payment",
+    pending_review: "pending_situations",
+  }
+  const currentIndex = steps.findIndex((s) => s.key === (STATUS_MAP[flow.status] || flow.status))
 
   return (
     <div className="min-h-dvh px-4 sm:px-6 py-8 select-none animate-fade-up">
@@ -186,7 +197,7 @@ export default function MembershipPage() {
           {flow.status === "pending_docs" && <UploadDocsStep flow={flow} onSuccess={fetchFlow} />}
           {flow.status === "docs_submitted" && <DocsSubmittedStep flow={flow} onSuccess={fetchFlow} />}
           {(flow.status === "pending_payment" || flow.status === "payment_pending_verification") && (
-            <PaymentStep flow={flow} onSuccess={fetchFlow} />
+            <PaymentStep flow={flow} userEmail={user?.email || ""} onSuccess={refreshFlow} />
           )}
           {(flow.status === "in_lessons" || flow.status === "pending_quiz" || flow.status === "pending_situations" || flow.status === "pending_review") && (
             <LessonsQuizSituations flow={flow} onSuccess={fetchFlow} />

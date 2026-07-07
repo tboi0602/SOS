@@ -2,6 +2,7 @@
 import { getInitial } from "@/utils/cn";
 
 import { ClipboardList, ChevronDown, Trash2, Filter } from "lucide-react";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 import { useEffect, useState, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -213,7 +214,7 @@ export default function ActivityLogPage() {
                                 <>
                                   {entry.user.avatar ? (
                                     <img
-                                      src={entry.user.avatar}
+                                      src={entry.user.avatar.startsWith("http") ? entry.user.avatar : `${API_URL}${entry.user.avatar}`}
                                       alt=""
                                       className="size-5 rounded-full object-cover shrink-0"
                                     />

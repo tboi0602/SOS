@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 import { SITE_NAME } from "@/utils/constants";
 import { notificationService } from "@/service/notification.service";
+import { useTheme } from "@/components/ui/ThemeProvider";
 import {
   Plus,
   User,
@@ -20,6 +21,11 @@ import {
   ChevronLeft,
   ChevronRight,
   Bell,
+  Sun,
+  Moon,
+  LayoutGrid,
+  Newspaper,
+  Users,
 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import LoginRequiredModal from "@/components/ui/LoginRequiredModal";
@@ -29,9 +35,16 @@ import {
   PERSONAL_PATHS,
   PERSONAL_SUB_ITEMS,
 } from "./sidebarConfig";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export default function FeedSidebar() {
   const { user, logout } = useAuth();
+  const { theme, toggle: toggleTheme } = useTheme();
+  const avatarSrc = user?.avatar
+    ? user?.avatar.startsWith("http")
+      ? user?.avatar
+      : `${API_URL}${user?.avatar}`
+    : null;
   const pathname = usePathname();
   const router = useRouter();
   const isPersonalActive = PERSONAL_PATHS.includes(pathname);
@@ -55,8 +68,13 @@ export default function FeedSidebar() {
         .then((res) => setUnreadCount(res.unreadCount))
         .catch(() => {});
     fetch();
+    const handler = () => fetch();
+    window.addEventListener("notifications-read", handler);
     const id = setInterval(fetch, 30000);
-    return () => clearInterval(id);
+    return () => {
+      clearInterval(id);
+      window.removeEventListener("notifications-read", handler);
+    };
   }, [user]);
 
   useEffect(() => {
@@ -289,6 +307,28 @@ export default function FeedSidebar() {
           </button>
         )}
 
+        {/* Theme toggle */}
+        <button
+          onClick={toggleTheme}
+          className={`w-full flex items-center gap-3 ${isCollapsed ? "justify-center px-0 py-3" : "px-3.5 py-2.5"} rounded-xl text-sm transition-all cursor-pointer text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--glass-hover)]`}
+          title={
+            isCollapsed
+              ? theme === "dark"
+                ? "Chế độ sáng"
+                : "Chế độ tối"
+              : undefined
+          }
+        >
+          {theme === "dark" ? (
+            <Sun size={18} className="shrink-0" />
+          ) : (
+            <Moon size={18} className="shrink-0" />
+          )}
+          {!isCollapsed && (
+            <span>{theme === "dark" ? "Chế độ sáng" : "Chế độ tối"}</span>
+          )}
+        </button>
+
         {/* Collapse toggle - prominent button */}
         <button
           onClick={() => setCollapsed(!collapsed)}
@@ -345,11 +385,11 @@ export default function FeedSidebar() {
             className={`flex items-center ${isCollapsed ? "justify-center" : "gap-3"}`}
           >
             {mounted && user.avatar ? (
-              <Image
-                src={user.avatar}
+              <img
+                src={avatarSrc as string}
                 alt={user.name || "User Avatar"}
-                width={isCollapsed ? 32 : 36}
-                height={isCollapsed ? 32 : 36}
+                width={isCollapsed ? 32 : 38}
+                height={isCollapsed ? 32 : 38}
                 className="rounded-full object-cover shrink-0"
               />
             ) : (
@@ -442,19 +482,16 @@ export default function FeedSidebar() {
           <Menu size={22} />
         </button>
         <span
-          className="flex items-center gap-2 cursor-pointer"
+          className="flex items-center cursor-pointer"
           onClick={() => router.push("/")}
         >
           <Image
             src="/images/logo.png"
             alt={SITE_NAME}
-            width={24}
-            height={24}
+            width={36}
+            height={36}
             unoptimized
           />
-          <span className="text-xs font-bold tracking-tight bg-linear-to-r from-[var(--text-primary)] via-accent to-primary bg-clip-text text-transparent">
-            {SITE_NAME}
-          </span>
         </span>
         <button
           onClick={() => router.push("/home/notifications")}
@@ -492,26 +529,35 @@ export default function FeedSidebar() {
       {/* Mobile bottom nav */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 glass-ios-thick border-t-0 px-2 pb-2 rounded-t-2xl">
         <div className="flex items-center justify-around py-1.5">
-          {NAV_ITEMS.slice(0, 2).map((item) => {
-            const Icon = item.icon;
-            const active = isActive(item.href);
-            return (
-              <button
-                key={item.href}
-                onClick={() => router.push(item.href)}
-                className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${active ? "text-primary bg-primary/15" : "text-[var(--text-tertiary)] hover:bg-[var(--glass-hover)]"}`}
-              >
-                <Icon size={20} />
-                <span className="text-[10px]">{item.label}</span>
-              </button>
-            );
-          })}
+          <button
+            onClick={() => router.push("/home")}
+            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${isActive("/home") ? "text-primary bg-primary/15" : "text-[var(--text-tertiary)] hover:bg-[var(--glass-hover)]"}`}
+          >
+            <LayoutGrid size={20} />
+            <span className="text-[10px]">Bảng tin</span>
+          </button>
+
+          <button
+            onClick={() => router.push("/home/news")}
+            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${isActive("/home/news") ? "text-primary bg-primary/15" : "text-[var(--text-tertiary)] hover:bg-[var(--glass-hover)]"}`}
+          >
+            <Newspaper size={20} />
+            <span className="text-[10px]">BQT</span>
+          </button>
 
           <button
             onClick={() => router.push("/home/create")}
             className="flex items-center justify-center size-11 rounded-full bg-primary text-[var(--text-primary)] shadow-lg shadow-primary/30 transition-transform hover:scale-105 active:scale-95 cursor-pointer -mt-3"
           >
             <Plus size={22} />
+          </button>
+
+          <button
+            onClick={() => router.push("/home/members")}
+            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${isActive("/home/members") ? "text-primary bg-primary/15" : "text-[var(--text-tertiary)] hover:bg-[var(--glass-hover)]"}`}
+          >
+            <Users size={20} />
+            <span className="text-[10px]">Thành viên</span>
           </button>
 
           <button
@@ -533,5 +579,3 @@ export default function FeedSidebar() {
     </>
   );
 }
-
-

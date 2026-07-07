@@ -215,6 +215,7 @@ export const authService = {
       where: { id: user.id },
       data: {
         isActive: true,
+        role: "user",
         activationToken: null,
         activationTokenExpires: null,
       },

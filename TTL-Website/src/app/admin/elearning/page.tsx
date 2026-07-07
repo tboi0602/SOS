@@ -60,8 +60,8 @@ export default function AdminELearningPage() {
           {lessons.length === 0 ? (
             <div className="text-center py-16 rounded-3xl" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", border: "0.5px solid var(--border-base)" }}>
               <GraduationCap size={40} className="mx-auto mb-4" style={{ color: "var(--text-tertiary)" }} />
-              <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Chưa có bài học</h3>
-              <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>Chưa có bài học nào.</p>
+              <h3 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Chưa có buổi học</h3>
+              <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>Chưa có buổi học nào.</p>
             </div>
           ) : (
             <div ref={listRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

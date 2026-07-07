@@ -70,7 +70,7 @@ export function useDashboard() {
     return { total, active, totalScore, totalPosts }
   }, [members])
 
-  const pointChartData = useMemo(() => {
+  const chartData = useMemo(() => {
     const top = [...members]
       .sort((a, b) => b.totalScore - a.totalScore)
       .slice(0, 10)
@@ -79,22 +79,8 @@ export function useDashboard() {
       "Kỷ luật": m.kyLuat,
       "Đạo đức": m.daoDuc,
       "Cảm hứng": m.truyenCamHung,
-    }))
-  }, [members])
-
-  const activityChartData = useMemo(() => {
-    const top = [...members]
-      .sort(
-        (a, b) =>
-          b.postCount + b.submissionCount + b.journalCount -
-          (a.postCount + a.submissionCount + a.journalCount),
-      )
-      .slice(0, 10)
-    return top.map((m) => ({
-      name: m.name.split(" ").pop() || m.name,
-      "Bài viết": m.postCount,
-      "Tác phẩm": m.submissionCount,
-      "Nhật ký": m.journalCount,
+      "Bài viết": m.postScore,
+      "Giới thiệu": m.referredScore,
     }))
   }, [members])
 
@@ -133,8 +119,7 @@ export function useDashboard() {
     handleBlock,
     handleUnblock,
     stats,
-    pointChartData,
-    activityChartData,
+    chartData,
     paged,
     totalPages,
     sortedLength: sorted.length,

@@ -26,6 +26,8 @@ export interface DashboardMember {
   kyLuat: number;
   daoDuc: number;
   truyenCamHung: number;
+  postScore: number;
+  referredScore: number;
   totalScore: number;
   postCount: number;
   submissionCount: number;

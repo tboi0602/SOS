@@ -1,7 +1,6 @@
 "use client";
 
 import FeedSidebar from "@/components/feed/FeedSidebar";
-import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
 
 export default function HomeLayout({
   children,
@@ -18,7 +17,6 @@ export default function HomeLayout({
       <main className="lg:pl-[var(--sidebar-width,15rem)] pt-14 lg:pt-0 pb-22 lg:pb-0 transition-all duration-300">
         {children}
       </main>
-      <ThemeToggleButton />
     </div>
   );
 }

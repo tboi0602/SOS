@@ -10,7 +10,7 @@ services:
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -38,8 +38,8 @@ services:
       postgres:
         condition: service_healthy
     env_file: .env.docker
-    ports:
-      - "4000:4000"
+    expose:
+      - "4000"
     environment:
       NODE_ENV: ${NODE_ENV}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
@@ -67,8 +67,8 @@ services:
         NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID}
     image: ${DOCKER_USER}/ttl-website:${IMAGE_TAG:-latest}
     profiles: []
-    ports:
-      - "3000:3000"
+    expose:
+      - "3000"
     depends_on:
       - server
     env_file: .env.docker
@@ -94,7 +94,7 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - certbot_www:/var/www/certbot
-      - certbot_conf:/etc/letsencrypt
+      - ./data/certbot/conf:/etc/letsencrypt:ro
     depends_on:
       - website
       - server
@@ -120,6 +120,8 @@ services:
         certbot renew --webroot -w /var/www/certbot --quiet;
         sleep 12h & wait $$!;
       done'
+    networks:
+      - app_network
 
   # ─── Database Backup (Production only) ─────────────────
   db-backup:

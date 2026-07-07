@@ -49,7 +49,7 @@ export default function PostDetailModal({ post, onClose }: Props) {
           <div className="flex items-center gap-2.5">
             <div className="size-8 rounded-full overflow-hidden shrink-0" style={{ background: "color-mix(in srgb, var(--text-primary) 10%, transparent)" }}>
               {post.user.avatar ? (
-                <img src={post.user.avatar} alt="" className="size-full object-cover" />
+                <img src={resolveUrl(post.user.avatar)} alt="" className="size-full object-cover" />
               ) : (
                 <div className="size-full flex items-center justify-center text-xs font-bold" style={{ color: "var(--text-tertiary)" }}>
                   {getInitial(post.user.name)}

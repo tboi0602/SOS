@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAuthLogin as useLogin } from "@/hook/auth";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
-import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
+
 import TbvLoginButton from "@/components/auth/TbvLoginButton";
 import { useEffect } from "react";
 import { useToast } from "@/components/ui/Toast";
@@ -89,7 +89,8 @@ export default function LoginPage() {
               className="leading-relaxed"
               style={{ color: "var(--text-tertiary)" }}
             >
-              Cổng đăng ký trở thành đối tác thuộc hệ sinh thái tổ chức Tinh Hoa Việt
+              Cổng đăng ký trở thành đối tác thuộc hệ sinh thái tổ chức Tinh Hoa
+              Việt
             </p>
             <div className="mt-10 flex gap-4 justify-center">
               <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
@@ -287,7 +288,6 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <ThemeToggleButton />
     </div>
   );
 }

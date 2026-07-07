@@ -2,15 +2,57 @@
 
 import { getInitial } from "@/utils/cn";
 import { useEffect, useRef, useState, useCallback } from "react"
-import { Upload, CheckCircle2, X, Loader2 } from "lucide-react"
+import { Upload, CheckCircle2, X, Loader2, FileText, ExternalLink } from "lucide-react"
 import gsap from "gsap"
 import { adminService } from "@/service/admin.service"
 import { Skeleton } from "@/components/ui/Skeleton"
 import Pagination from "@/components/admin/Pagination"
+import type { UserFlow } from "@/service/membership.service"
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"
+
+function fileUrl(url: string) {
+  return url.startsWith("http") ? url : `${API_URL}${url}`
+}
+
+function splitUrls(val: string | null | undefined): string[] {
+  return val ? val.split(",").filter(Boolean) : []
+}
+
+function FileLink({ url }: { url: string }) {
+  const fileName = url.split("/").pop() || "file"
+  const isImage = /\.(jpg|jpeg|png|webp)$/i.test(url)
+
+  if (isImage) {
+    return (
+      <a href={fileUrl(url)} target="_blank" className="block rounded-lg overflow-hidden border transition-opacity hover:opacity-85" style={{ borderColor: "color-mix(in srgb, var(--text-primary) 10%, transparent)" }}>
+        <img src={fileUrl(url)} alt={fileName} className="w-full h-40 object-cover" loading="lazy" />
+      </a>
+    )
+  }
+
+  return (
+    <a href={fileUrl(url)} target="_blank" className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs transition-colors hover:opacity-80" style={{ background: "color-mix(in srgb, var(--clr-primary) 6%, transparent)", color: "var(--clr-primary)" }}>
+      <FileText size={14} />
+      <span className="flex-1 truncate">{fileName}</span>
+      <ExternalLink size={12} className="shrink-0" />
+    </a>
+  )
+}
+
+function FileSection({ title, files }: { title: string; files: string[] }) {
+  if (!files.length) return null
+  return (
+    <div className="space-y-1.5">
+      <p className="text-[10px] font-medium uppercase tracking-wider" style={{ color: "var(--text-dim)" }}>{title} ({files.length})</p>
+      {files.map((url, i) => <FileLink key={i} url={url} />)}
+    </div>
+  )
+}
 
 export default function PendingDocsTab() {
   const [data, setData] = useState<{
-    users: { user: { id: string; name: string; email: string }; flow: import("@/service/membership.service").UserFlow }[]
+    users: (UserFlow & { user: { id: string; name: string; email: string } })[]
     total: number; page: number; totalPages: number
   } | null>(null)
   const [loading, setLoading] = useState(true)
@@ -19,7 +61,7 @@ export default function PendingDocsTab() {
   const listRef = useRef<HTMLDivElement>(null)
 
   const fetchData = useCallback(async () => {
-    try { setLoading(true); const d = await adminService.getPendingDocs(page); setData(d) }
+    try { setLoading(true); const d = await adminService.getPendingDocs(page) as unknown as typeof data; setData(d) }
     catch {} finally { setLoading(false) }
   }, [page])
 
@@ -52,44 +94,58 @@ export default function PendingDocsTab() {
       ) : (
         <>
           <div ref={listRef} className="grid gap-3">
-            {data.users.map((entry) => (
-              <div key={entry.user.id} className="mf-item rounded-2xl p-4 border card-hover transition-all" style={{
-                background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)",
-                boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)",
-                border: "0.5px solid var(--border-base)",
-              }}>
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="size-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0" style={{ background: "color-mix(in srgb, var(--clr-primary) 15%, transparent)", color: "var(--clr-primary)" }}>
-                      {getInitial(entry.user.name)}
+            {data.users.map((entry) => {
+              const documents = splitUrls(entry.documentsUrl)
+              const achievements = splitUrls(entry.achievementImages)
+
+              return (
+                <div key={entry.user.id} className="mf-item rounded-2xl p-4 border card-hover transition-all" style={{
+                  background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)",
+                  boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)",
+                  border: "0.5px solid var(--border-base)",
+                }}>
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="size-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0" style={{ background: "color-mix(in srgb, var(--clr-primary) 15%, transparent)", color: "var(--clr-primary)" }}>
+                        {getInitial(entry.user.name)}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold truncate">{entry.user.name}</p>
+                        <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>{entry.user.email}</p>
+                      </div>
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold truncate">{entry.user.name}</p>
-                      <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>{entry.user.email}</p>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => handleApprove(entry.user.id)}
+                        disabled={actionLoading === entry.user.id}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer disabled:opacity-50"
+                        style={{ background: "color-mix(in srgb, var(--color-success) 15%, transparent)", color: "var(--color-success)" }}
+                      >
+                        {actionLoading === entry.user.id ? <Loader2 size={12} className="animate-spin" /> : <CheckCircle2 size={12} />}
+                        Duyệt
+                      </button>
+                      <button
+                        onClick={() => handleReject(entry.user.id)}
+                        disabled={actionLoading === entry.user.id}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer disabled:opacity-50"
+                        style={{ background: "color-mix(in srgb, var(--danger) 15%, transparent)", color: "var(--danger)" }}
+                      >
+                        <X size={12} /> Từ chối
+                      </button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      onClick={() => handleApprove(entry.user.id)}
-                      disabled={actionLoading === entry.user.id}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer disabled:opacity-50"
-                      style={{ background: "color-mix(in srgb, var(--color-success) 15%, transparent)", color: "var(--color-success)" }}
-                    >
-                      {actionLoading === entry.user.id ? <Loader2 size={12} className="animate-spin" /> : <CheckCircle2 size={12} />}
-                      Duyệt
-                    </button>
-                    <button
-                      onClick={() => handleReject(entry.user.id)}
-                      disabled={actionLoading === entry.user.id}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer disabled:opacity-50"
-                      style={{ background: "color-mix(in srgb, var(--danger) 15%, transparent)", color: "var(--danger)" }}
-                    >
-                      <X size={12} /> Từ chối
-                    </button>
-                  </div>
+
+                  {(documents.length > 0 || entry.idCardFront || entry.idCardBack || achievements.length > 0) && (
+                    <div className="mt-3 pt-3 border-t space-y-3" style={{ borderColor: "color-mix(in srgb, var(--text-primary) 8%, transparent)" }}>
+                      <FileSection title="Hồ sơ" files={documents} />
+                      <FileSection title="Căn cước - Mặt trước" files={entry.idCardFront ? [entry.idCardFront] : []} />
+                      <FileSection title="Căn cước - Mặt sau" files={entry.idCardBack ? [entry.idCardBack] : []} />
+                      <FileSection title="Ảnh thành tích" files={achievements} />
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
           <Pagination page={data.page} totalPages={data.totalPages} onPageChange={setPage} variant="simple" />
         </>
@@ -97,6 +153,3 @@ export default function PendingDocsTab() {
     </Skeleton>
   )
 }
-
-
-

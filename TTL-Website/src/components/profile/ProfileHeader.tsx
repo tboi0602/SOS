@@ -2,7 +2,7 @@
 import { getInitial } from "@/utils/cn";
 
 import { MessageCircle, ExternalLink } from "lucide-react";
-import Image from "next/image";
+
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
@@ -85,7 +85,7 @@ export default function ProfileHeader({
       ? avatar
       : `${API_URL}${avatar}`
     : null;
-  console.log(avatarSrc);
+
 
   const socialValues: Record<string, string | null> = {
     facebook,
@@ -108,12 +108,14 @@ export default function ProfileHeader({
           <div
             className="size-14 rounded-full p-0.5"
             style={{
-              background: "linear-gradient(135deg, var(--clr-accent), var(--clr-accent-dark))",
-              boxShadow: "0 0 15px color-mix(in srgb, var(--clr-accent) 40%, transparent)",
+              background:
+                "linear-gradient(135deg, var(--clr-accent), var(--clr-accent-dark))",
+              boxShadow:
+                "0 0 15px color-mix(in srgb, var(--clr-accent) 40%, transparent)",
             }}
           >
             {avatarSrc ? (
-              <Image
+              <img
                 src={avatarSrc}
                 alt="avatar"
                 className="w-full h-full rounded-full object-cover"
@@ -133,7 +135,12 @@ export default function ProfileHeader({
           </div>
         </div>
         <div className="min-w-0">
-          <h2 className="text-base font-bold truncate" style={{ color: "var(--text-primary)" }}>{name}</h2>
+          <h2
+            className="text-base font-bold truncate"
+            style={{ color: "var(--text-primary)" }}
+          >
+            {name}
+          </h2>
           <p className="text-[10px] text-[var(--text-tertiary)] font-mono">
             ID: {id}
           </p>
@@ -144,7 +151,11 @@ export default function ProfileHeader({
       <div className="flex gap-2">
         <span
           title="Công việc "
-          className="flex-1 flex items-center justify-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border" style={{ borderColor: "color-mix(in srgb, var(--color-success) 20%, transparent)" }}
+          className="flex-1 flex items-center justify-center gap-1 px-2 py-1 rounded-lg text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border"
+          style={{
+            borderColor:
+              "color-mix(in srgb, var(--color-success) 20%, transparent)",
+          }}
         >
           <svg viewBox="0 0 24 24" fill="currentColor" className="size-2.5">
             <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -166,7 +177,16 @@ export default function ProfileHeader({
       </div>
 
       {/* Bio */}
-      <div className="rounded-xl border p-3" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", borderColor: "var(--border-base)" }}>
+      <div
+        className="rounded-xl border p-3"
+        style={{
+          background:
+            "color-mix(in srgb, var(--surface-elevated) 18%, transparent)",
+          boxShadow:
+            "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)",
+          borderColor: "var(--border-base)",
+        }}
+      >
         <p className="text-[10px] font-semibold tracking-wider text-[var(--text-tertiary)] mb-1.5 flex items-center gap-1.5">
           <svg
             viewBox="0 0 24 24"
@@ -185,7 +205,9 @@ export default function ProfileHeader({
             {bio}
           </p>
         ) : (
-          <p className="text-[11px] text-[var(--text-dim)] italic">Chưa có giới thiệu</p>
+          <p className="text-[11px] text-[var(--text-dim)] italic">
+            Chưa có giới thiệu
+          </p>
         )}
       </div>
 
@@ -271,11 +293,9 @@ export default function ProfileHeader({
                 </span>
               </a>
             );
-          }) }
+          })}
         </div>
       </div>
     </div>
   );
 }
-
-

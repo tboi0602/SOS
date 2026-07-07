@@ -9,15 +9,15 @@ function generateMemberId(): string {
 }
 
 async function main() {
-  const email = "admin@vnsales.org";
+  const email = "admin@tinhhoaviet.org.vn";
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
     console.log("Admin account already exists:", email);
-    await prisma.user.update({ where: { email }, data: { role: "admin" } });
-    console.log("Updated role to admin");
+    await prisma.user.update({ where: { email }, data: { role: "admin", isActive: true, password: await bcrypt.hash("123", 12) } });
+    console.log("Updated role & password");
   } else {
     const id = generateMemberId();
-    const hashedPassword = await bcrypt.hash("Admin@123", 12);
+    const hashedPassword = await bcrypt.hash("123", 12);
     await prisma.user.create({
       data: {
         id,
@@ -29,7 +29,7 @@ async function main() {
       },
     });
     console.log("Created admin account:", email);
-    console.log("Password: Admin@123");
+    console.log("Password: 123");
     console.log("Admin ID:", id);
   }
 }

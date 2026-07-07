@@ -12,7 +12,7 @@ export const contactController = {
 
   list: asyncHandler(async (req: Request, res: Response) => {
     const page = Math.max(1, parseInt(s(req.query.page, "1")) || 1)
-    const limit = Math.min(100, Math.max(1, parseInt(s(req.query.limit, "20")) || 20))
+    const limit = Math.min(100, Math.max(1, parseInt(s(req.query.limit ?? "", "20")) || 20))
     const result = await contactService.list(page, limit)
     res.json(result)
   }),

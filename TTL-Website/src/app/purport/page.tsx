@@ -92,7 +92,7 @@ export default function ThongTinSuGiaPage() {
         className={`
     fixed right-4 top-1/2 z-40 w-16 hover:w-72
     -translate-y-1/2  max-h-[85vh] p-3
-
+    max-md:hidden
     backdrop-blur-xl border border-[var(--border-strong)] 
     rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.3)]
     flex flex-col justify-between items-center hover:items-stretch
@@ -155,11 +155,11 @@ export default function ThongTinSuGiaPage() {
           className="relative min-h-screen flex justify-center items-center overflow-hidden gradient-mesh border-b border-[var(--border-base)]"
         >
           <div className="absolute inset-0 bg-gradient-to-b from-[var(--hero-gradient-from)] to-[var(--surface-base)]" />
-          <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+          <div className="relative z-10 max-w-4xl px-6 text-center max-md:-mt-30">
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="font-bold tracking-tight text-gradient-gold heading-xl uppercase py-10"
+              className="font-bold tracking-tight text-gradient-gold heading-xl uppercase py-5"
             >
               Trở Thành Sứ Giả Tinh Hoa Việt
             </motion.h1>
@@ -292,11 +292,11 @@ export default function ThongTinSuGiaPage() {
               Định nghĩa TINH HOA VIỆT
             </h2>
             <p className="text-sm md:text-base font-medium leading-relaxed text-[var(--text-primary)] text-justify">
-             &quot;Tinh Hoa Việt là hệ thống thẩm định và bảo chứng các giá trị đặc
-              biệt của con người, tổ chức, sản phẩm, di sản và sáng kiến Việt
-              Nam; dựa trên giá trị thật, tác động tích cực, bản sắc dân tộc,
-              tinh thần sáng tạo và cống hiến cho cộng đồng, nhằm lan tỏa những
-              hình mẫu tốt đẹp cho xã hội&quot;
+              &quot;Tinh Hoa Việt là hệ thống thẩm định và bảo chứng các giá trị
+              đặc biệt của con người, tổ chức, sản phẩm, di sản và sáng kiến
+              Việt Nam; dựa trên giá trị thật, tác động tích cực, bản sắc dân
+              tộc, tinh thần sáng tạo và cống hiến cho cộng đồng, nhằm lan tỏa
+              những hình mẫu tốt đẹp cho xã hội&quot;
             </p>
           </div>
         </section>
@@ -508,8 +508,9 @@ export default function ThongTinSuGiaPage() {
               Nguyên lý cốt tủy
             </span>
             <p className="text-xs font-semibold text-[var(--text-primary)] italic">
-              &quot;Before spreading value to others, live by that value <br /> Trước khi
-              lan tỏa giá trị cho người khác, hãy sống theo giá trị đó&quot;
+              &quot;Before spreading value to others, live by that value <br />{" "}
+              Trước khi lan tỏa giá trị cho người khác, hãy sống theo giá trị
+              đó&quot;
             </p>
           </div>
         </section>

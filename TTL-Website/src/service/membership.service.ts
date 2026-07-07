@@ -1,4 +1,6 @@
-import { request, uploadFiles } from "./client"
+import { request } from "./client"
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"
 
 export interface QuizExamSetQuestion {
   id: string
@@ -50,11 +52,15 @@ export interface UserFlow {
   membershipFlowId: string
   status: string
   documentsUrl: string | null
+  idCardFront: string | null
+  idCardBack: string | null
+  achievementImages: string | null
   adminNote: string | null
   paymentConfirmedAt: string | null
   paymentVerifiedAt: string | null
   quizId: string | null
   quizScore: number | null
+  quizCorrectCount: number | null
   quizAttempts: number
   quizPassed: boolean | null
   situation1Id: string | null
@@ -116,8 +122,22 @@ export const membershipService = {
     return request<UserFlow>("/api/v1/membership/my-flow")
   },
 
-  uploadDocs(files: File[]) {
-    return uploadFiles("/api/v1/membership/upload-docs", files, "files")
+  uploadDocs(data: {
+    documents?: File[]
+    idCardFront?: File
+    idCardBack?: File
+    achievements?: File[]
+  }) {
+    const formData = new FormData()
+    data.documents?.forEach((f) => formData.append("documents", f))
+    if (data.idCardFront) formData.append("idCardFront", data.idCardFront)
+    if (data.idCardBack) formData.append("idCardBack", data.idCardBack)
+    data.achievements?.forEach((f) => formData.append("achievements", f))
+    return fetch(`${API_URL}/api/v1/membership/upload-docs`, {
+      method: "POST",
+      credentials: "include",
+      body: formData,
+    }).then(async (res) => { const d = await res.json(); if (!res.ok) throw new Error(d.error || "Upload thất bại"); return d as UserFlow })
   },
 
   confirmPayment() {

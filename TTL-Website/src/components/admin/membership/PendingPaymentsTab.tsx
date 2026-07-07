@@ -10,7 +10,7 @@ import Pagination from "@/components/admin/Pagination"
 
 export default function PendingPaymentsTab() {
   const [data, setData] = useState<{
-    users: { user: { id: string; name: string; email: string }; flow: import("@/service/membership.service").UserFlow }[]
+    users: (import("@/service/membership.service").UserFlow & { user: { id: string; name: string; email: string } })[]
     total: number; page: number; totalPages: number
   } | null>(null)
   const [loading, setLoading] = useState(true)
@@ -66,9 +66,9 @@ export default function PendingPaymentsTab() {
                     <div className="min-w-0">
                       <p className="text-sm font-semibold truncate">{entry.user.name}</p>
                       <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>{entry.user.email}</p>
-                      {entry.flow.paymentConfirmedAt && (
+                      {entry.paymentConfirmedAt && (
                         <p className="text-[10px] mt-0.5" style={{ color: "var(--text-dim)" }}>
-                          Xác nhận: {new Date(entry.flow.paymentConfirmedAt).toLocaleString("vi-VN")}
+                          Xác nhận: {new Date(entry.paymentConfirmedAt).toLocaleString("vi-VN")}
                         </p>
                       )}
                     </div>

@@ -12,5 +12,7 @@ docker container prune -f	Xoá container đã dừng
 docker volume prune -f	Xoá volume không container nào gắn
 docker builder prune -a -f	Xoá cache build
 
+
+
 2. Dọn toàn bộ rác Docker (image cũ, container stopped, volume ko dùng, cache build):
 docker system prune -a --volumes -f

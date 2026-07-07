@@ -6,6 +6,7 @@ import type {
   SituationQuestionDef,
   UserFlow,
   QuizExamSetDef,
+  UserLesson,
 } from "./membership.service"
 
 export const adminMembershipService = {
@@ -94,73 +95,82 @@ export const adminMembershipService = {
     }>(`/api/v1/admin/membership-flow/pending-docs?page=${page}&limit=${limit}`)
   },
 
+  getAllFlows(page = 1, limit = 20, search?: string) {
+    const params = new URLSearchParams({ page: String(page), limit: String(limit) })
+    if (search) params.set("search", search)
+    return request<{
+      users: (UserFlow & { user: { id: string; name: string; email: string; avatar: string | null }; membershipFlow: { name: string; price: number } })[]
+      total: number; page: number; totalPages: number
+    }>(`/api/v1/admin/membership-flow/all-flows?${params}`)
+  },
+
   getPendingPayments(page = 1, limit = 20) {
     return request<{
-      users: {
-        user: { id: string; name: string; email: string }
-        flow: UserFlow
-      }[]
+      users: (UserFlow & { user: { id: string; name: string; email: string } })[]
       total: number
       page: number
       totalPages: number
     }>(`/api/v1/admin/membership-flow/pending-payments?page=${page}&limit=${limit}`)
   },
 
-  getActiveMembers(page = 1, limit = 20) {
+  getActiveMembers(page = 1, limit = 20, search?: string) {
+    const params = new URLSearchParams({ page: String(page), limit: String(limit) })
+    if (search) params.set("search", search)
     return request<{
-      users: {
-        user: { id: string; name: string; email: string }
-        flow: UserFlow
-      }[]
+      users: (UserFlow & { user: { id: string; name: string; email: string } })[]
       total: number
       page: number
       totalPages: number
-    }>(`/api/v1/admin/membership-flow/active-members?page=${page}&limit=${limit}`)
+    }>(`/api/v1/admin/membership-flow/active?${params}`)
+  },
+
+  getUserLessons(userId: string) {
+    return request<{ lessons: UserLesson[] }>(`/api/v1/admin/membership-flow/users/${userId}/lessons`)
   },
 
   approveDocs(userId: string) {
-    return request(`/api/v1/admin/membership-flow/docs/${userId}/approve`, {
-      method: "POST",
+    return request(`/api/v1/admin/membership-flow/${userId}/approve-docs`, {
+      method: "PUT",
     })
   },
 
   rejectDocs(userId: string, adminNote: string) {
-    return request(`/api/v1/admin/membership-flow/docs/${userId}/reject`, {
-      method: "POST",
+    return request(`/api/v1/admin/membership-flow/${userId}/reject-docs`, {
+      method: "PUT",
       body: { adminNote },
     })
   },
 
   verifyPayment(userId: string) {
-    return request(`/api/v1/admin/membership-flow/payment/${userId}/verify`, {
-      method: "POST",
+    return request(`/api/v1/admin/membership-flow/${userId}/verify-payment`, {
+      method: "PUT",
     })
   },
 
   rejectPayment(userId: string, adminNote: string) {
-    return request(`/api/v1/admin/membership-flow/payment/${userId}/reject`, {
-      method: "POST",
+    return request(`/api/v1/admin/membership-flow/${userId}/reject-payment`, {
+      method: "PUT",
       body: { adminNote },
     })
   },
 
   scoreLesson(lessonId: string, score: number, adminNote?: string) {
-    return request(`/api/v1/admin/membership-flow/lessons/${lessonId}/score`, {
-      method: "POST",
+    return request(`/api/v1/admin/membership-flow/score-lesson/${lessonId}`, {
+      method: "PUT",
       body: { score, adminNote },
     })
   },
 
   scoreSituation(userId: string, index: number, score: number, adminNote?: string) {
-    return request(`/api/v1/admin/membership-flow/situations/${userId}/score`, {
-      method: "POST",
-      body: { index, score, adminNote },
+    return request(`/api/v1/admin/membership-flow/score-situation/${userId}/${index}`, {
+      method: "PUT",
+      body: { score, adminNote },
     })
   },
 
   completeFlow(userId: string) {
     return request(`/api/v1/admin/membership-flow/${userId}/complete`, {
-      method: "POST",
+      method: "PUT",
     })
   },
 

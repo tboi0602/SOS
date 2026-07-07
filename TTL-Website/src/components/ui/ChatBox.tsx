@@ -129,7 +129,7 @@ export default function ChatBox() {
   };
 
   return (
-    <div className="fixed bottom-26 right-6 z-60 flex flex-col items-end gap-3">
+    <div className="fixed bottom-36 lg:bottom-26 right-6 z-60 flex flex-col items-end gap-3">
       <AnimatePresence>
         {open && (
           <motion.div

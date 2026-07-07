@@ -28,8 +28,7 @@ export default function AdminDashboard() {
     handleBlock,
     handleUnblock,
     stats,
-    pointChartData,
-    activityChartData,
+    chartData,
     paged,
     totalPages,
     sortedLength,
@@ -217,10 +216,7 @@ export default function AdminDashboard() {
             />
           </div>
 
-          <ChartSection
-            pointChartData={pointChartData}
-            activityChartData={activityChartData}
-          />
+          <ChartSection chartData={chartData} />
 
           <MemberTable
             search={search}

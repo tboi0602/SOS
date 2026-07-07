@@ -50,14 +50,16 @@ export default function ProfileBanner({
         <div
           className="size-24 sm:size-28 rounded-full p-1 overflow-hidden transition-shadow duration-300 group-hover:shadow-[0_0_40px_var(--clr-accent)]"
           style={{
-            background: "linear-gradient(135deg, var(--clr-accent), var(--clr-accent-dark))",
-            boxShadow: "0 0 25px color-mix(in srgb, var(--clr-accent) 35%, transparent)",
+            background:
+              "linear-gradient(135deg, var(--clr-accent), var(--clr-accent-dark))",
+            boxShadow:
+              "0 0 25px color-mix(in srgb, var(--clr-accent) 35%, transparent)",
           }}
         >
           <div className="relative w-full h-full rounded-full overflow-hidden">
             {avatarSrc ? (
               <Image
-                src={avatarSrc.replace("http://", "https://")}
+                src={avatarSrc}
                 alt="avatar"
                 fill
                 priority
@@ -65,7 +67,10 @@ export default function ProfileBanner({
                 unoptimized
               />
             ) : (
-              <div className="w-full h-full rounded-full bg-[var(--surface-elevated)] flex items-center justify-center text-3xl sm:text-4xl font-bold" style={{ color: "var(--text-primary)" }}>
+              <div
+                className="w-full h-full rounded-full bg-[var(--surface-elevated)] flex items-center justify-center text-3xl sm:text-4xl font-bold"
+                style={{ color: "var(--text-primary)" }}
+              >
                 {getInitial(name)}
               </div>
             )}
@@ -79,7 +84,11 @@ export default function ProfileBanner({
           style={{ background: "rgba(0,0,0,0.5)" }}
         >
           {uploading ? (
-            <Loader2 size={20} style={{ color: "#fff" }} className="animate-spin" />
+            <Loader2
+              size={20}
+              style={{ color: "#fff" }}
+              className="animate-spin"
+            />
           ) : (
             <Camera size={20} style={{ color: "#fff" }} />
           )}
@@ -95,10 +104,15 @@ export default function ProfileBanner({
 
       <div className="flex-1 text-center sm:text-left space-y-2">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
+          <h1
+            className="text-xl sm:text-2xl font-bold"
+            style={{ color: "var(--text-primary)" }}
+          >
             {name || "Người dùng"}
           </h1>
-          <p className="text-xs text-[var(--text-tertiary)] font-mono mt-0.5">{email}</p>
+          <p className="text-xs text-[var(--text-tertiary)] font-mono mt-0.5">
+            {email}
+          </p>
         </div>
 
         <button
@@ -107,9 +121,16 @@ export default function ProfileBanner({
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--surface-elevated)] border border-[var(--border-base)] text-[11px] text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-elevated)] transition-all cursor-pointer"
         >
           {copied ? (
-            <><Check size={12} className="text-green-400" /> Đã sao chép</>
+            <>
+              <Check size={12} className="text-green-400" /> Đã sao chép
+            </>
           ) : (
-            <><Copy size={12} /> Mã giới thiệu: <span className="text-[var(--clr-accent)] font-mono font-bold">{id}</span></>
+            <>
+              <Copy size={12} /> Mã giới thiệu:{" "}
+              <span className="text-[var(--clr-accent)] font-mono font-bold">
+                {id}
+              </span>
+            </>
           )}
         </button>
 
@@ -124,5 +145,3 @@ export default function ProfileBanner({
     </div>
   );
 }
-
-

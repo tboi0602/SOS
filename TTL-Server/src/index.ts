@@ -31,6 +31,8 @@ async function main() {
 
   const app = express()
 
+app.set('trust proxy', 1);
+
   app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" },
     contentSecurityPolicy: false,
@@ -40,6 +42,8 @@ async function main() {
     origin: config.cors.origin,
     credentials: true,
   }))
+
+  
 
   app.use(cookieParser())
   app.use(express.json({ limit: "5mb" }))

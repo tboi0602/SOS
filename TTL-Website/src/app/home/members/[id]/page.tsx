@@ -32,32 +32,50 @@ export default function PublicProfilePage() {
 
   const isMember = user?.role === "member" || user?.role === "admin";
 
+  if (!data)
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center font-medium"
+        style={{ color: "var(--text-tertiary)" }}
+      >
+        Không tìm thấy hồ sơ người dùng này
+      </div>
+    );
+
   if (!isMember)
     return (
-      <div className="min-h-screen px-4 sm:px-6 py-10 select-none animate-fade-up flex items-center justify-center" style={{ color: "var(--text-primary)" }}>
+      <div
+        className="min-h-screen px-4 sm:px-6 py-10 select-none animate-fade-up flex items-center justify-center"
+        style={{ color: "var(--text-primary)" }}
+      >
         <div className="text-center max-w-sm space-y-4">
-          <div className="size-16 mx-auto rounded-full flex items-center justify-center" style={{ background: "color-mix(in srgb, var(--text-tertiary) 10%, transparent)" }}>
+          <div
+            className="size-16 mx-auto rounded-full flex items-center justify-center"
+            style={{
+              background:
+                "color-mix(in srgb, var(--text-tertiary) 10%, transparent)",
+            }}
+          >
             <ShieldBan size={28} style={{ color: "var(--text-tertiary)" }} />
           </div>
           <h2 className="text-base font-bold">Chưa phải hội viên</h2>
-          <p className="text-sm leading-relaxed" style={{ color: "var(--text-tertiary)" }}>
+          <p
+            className="text-sm leading-relaxed"
+            style={{ color: "var(--text-tertiary)" }}
+          >
             Người dùng này chưa là thành viên chính thức không thể xem
           </p>
         </div>
       </div>
     );
 
-  if (!data)
-    return (
-      <div className="min-h-screen flex items-center justify-center font-medium" style={{ color: "var(--text-tertiary)" }}>
-        Không tìm thấy hồ sơ người dùng này
-      </div>
-    );
-
   const { user: u, stats, score, rank, posts, journals } = data;
 
   return (
-    <div className="min-h-screen px-4 sm:px-6 py-10 select-none relative overflow-hidden animate-fade-up" style={{ color: "var(--text-primary)" }}>
+    <div
+      className="min-h-screen px-4 sm:px-6 py-10 select-none relative overflow-hidden animate-fade-up"
+      style={{ color: "var(--text-primary)" }}
+    >
       <div className="max-w-5xl mx-auto space-y-8 relative z-10 animate-[fadeIn_0.6s_ease-out]">
         <ProfileHero
           user={u}
@@ -86,11 +104,7 @@ export default function PublicProfilePage() {
                   memberDays={memberDays}
                 />
               </div>
-              <QrCodeSection
-                qrUrl={qrUrl}
-                userName={u.name}
-                id={u.id}
-              />
+              <QrCodeSection qrUrl={qrUrl} userName={u.name} id={u.id} />
             </div>
           )}
 
@@ -115,11 +129,33 @@ export default function PublicProfilePage() {
                 ))}
 
                 {posts.length === 0 && journals.length === 0 && (
-                  <div className="text-center py-20 rounded-3xl" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", border: "0.5px solid var(--border-base)" }}>
-                    <div className="size-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: "color-mix(in srgb, var(--surface-elevated) 18%, transparent)", boxShadow: "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)", border: "0.5px solid var(--border-base)", color: "var(--text-tertiary)" }}>
+                  <div
+                    className="text-center py-20 rounded-3xl"
+                    style={{
+                      background:
+                        "color-mix(in srgb, var(--surface-elevated) 18%, transparent)",
+                      boxShadow:
+                        "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)",
+                      border: "0.5px solid var(--border-base)",
+                    }}
+                  >
+                    <div
+                      className="size-16 rounded-full flex items-center justify-center mx-auto mb-4"
+                      style={{
+                        background:
+                          "color-mix(in srgb, var(--surface-elevated) 18%, transparent)",
+                        boxShadow:
+                          "0 4px 24px color-mix(in srgb, var(--clr-primary) 10%, transparent)",
+                        border: "0.5px solid var(--border-base)",
+                        color: "var(--text-tertiary)",
+                      }}
+                    >
                       <FileText size={28} />
                     </div>
-                    <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)" }}>
+                    <p
+                      className="text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: "var(--text-tertiary)" }}
+                    >
                       Chưa có thông tin dòng thời gian
                     </p>
                   </div>

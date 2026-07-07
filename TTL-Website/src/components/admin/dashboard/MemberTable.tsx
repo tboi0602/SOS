@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { SortHeader } from "@/components/admin/SortHeader";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 const PERMISSION_LABELS: Record<string, string> = {
   manage_content: "Quản lý nội dung",
@@ -32,6 +33,8 @@ interface Member {
   kyLuat: number;
   daoDuc: number;
   truyenCamHung: number;
+  postScore: number;
+  referredScore: number;
   totalScore: number;
   postCount: number;
   submissionCount: number;
@@ -134,6 +137,20 @@ export default function MemberTable({
                 onSort={onSort}
               />
               <SortHeader
+                column="postScore"
+                label="Điểm bài"
+                sortKey={sortKey}
+                sortDir={sortDir}
+                onSort={onSort}
+              />
+              <SortHeader
+                column="referredScore"
+                label="Điểm GT"
+                sortKey={sortKey}
+                sortDir={sortDir}
+                onSort={onSort}
+              />
+              <SortHeader
                 column="totalScore"
                 label="Tổng"
                 sortKey={sortKey}
@@ -190,7 +207,7 @@ export default function MemberTable({
                     <div className="size-9 rounded-full bg-linear-to-br from-primary/30 to-accent/30 flex items-center justify-center overflow-hidden shrink-0">
                       {m.avatar ? (
                         <Image
-                          src={m.avatar}
+                          src={m.avatar.startsWith("http") ? m.avatar : `${API_URL}${m.avatar}`}
                           alt=""
                           width={36}
                           height={36}
@@ -224,6 +241,8 @@ export default function MemberTable({
                 <td className="px-3 py-3" style={{ color: "var(--text-primary)" }}>{m.kyLuat}</td>
                 <td className="px-3 py-3" style={{ color: "var(--text-primary)" }}>{m.daoDuc}</td>
                 <td className="px-3 py-3" style={{ color: "var(--text-primary)" }}>{m.truyenCamHung}</td>
+                <td className="px-3 py-3" style={{ color: "var(--text-primary)" }}>{m.postScore}</td>
+                <td className="px-3 py-3" style={{ color: "var(--text-primary)" }}>{m.referredScore}</td>
                 <td className="px-3 py-3">
                   <span
                      className="font-semibold"

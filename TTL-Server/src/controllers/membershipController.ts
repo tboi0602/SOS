@@ -23,9 +23,22 @@ export const membershipController = {
 
   async uploadDocuments(req: Request, res: Response, next: NextFunction) {
     try {
-      const files = req.files as Express.Multer.File[]
-      const urls = files.map((f) => `/uploads/membership-docs/${f.filename}`)
-      const result = await flowService.uploadDocuments(req.user!.userId, urls.join(","))
+      const files = req.files as { [fieldname: string]: Express.Multer.File[] }
+      const userId = req.user!.userId
+
+      const toUrl = (f: Express.Multer.File) => `/uploads/membership-docs/${userId}/${f.filename}`
+
+      const documents = (files.documents || []).map(toUrl).join(",")
+      const idCardFront = files.idCardFront?.[0] ? toUrl(files.idCardFront[0]) : undefined
+      const idCardBack = files.idCardBack?.[0] ? toUrl(files.idCardBack[0]) : undefined
+      const achievements = (files.achievements || []).map(toUrl).join(",")
+
+      const result = await flowService.uploadDocuments(userId, {
+        documentsUrl: documents || undefined,
+        idCardFront,
+        idCardBack,
+        achievementImages: achievements || undefined,
+      })
       res.json(result)
     } catch (err) { next(err) }
   },

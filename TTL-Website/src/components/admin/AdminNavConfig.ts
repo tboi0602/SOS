@@ -36,6 +36,18 @@ export const NAV_GROUPS: NavGroup[] = [
         icon: LayoutDashboard,
         permission: null,
       },
+      {
+        href: "/admin/membership-flow",
+        label: "Thành viên đăng ký",
+        icon: GraduationCap,
+        permission: "manage_users",
+      },
+      {
+        href: "/admin/membership-documents",
+        label: "Hồ sơ thành viên",
+        icon: FileText,
+        permission: "manage_users",
+      },
     ],
   },
   {
@@ -87,12 +99,6 @@ export const NAV_GROUPS: NavGroup[] = [
         label: "Gặp khách hàng",
         icon: Camera,
         permission: "manage_content",
-      },
-      {
-        href: "/admin/membership-flow",
-        label: "Đăng ký thành viên",
-        icon: GraduationCap,
-        permission: "manage_users",
       },
     ],
   },

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { QrCode } from "lucide-react";
 import type { ReferredMember } from "@/service/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 interface ReferredMemberCardProps {
   member: ReferredMember;
@@ -32,7 +33,7 @@ export default function ReferredMemberCard({
         <div className="absolute -inset-0.5 rounded-xl bg-linear-to-br from-emerald-500 to-accent opacity-0 group-hover:opacity-30 blur-sm transition duration-300" />
         {member.avatar ? (
           <Image
-            src={member.avatar}
+            src={member.avatar.startsWith("http") ? member.avatar : `${API_URL}${member.avatar}`}
             alt={member.name}
             width={44}
             height={44}

@@ -1,4 +1,0 @@
--- AlterTable
-ALTER TABLE "users" ADD COLUMN     "dao_duc" INTEGER NOT NULL DEFAULT 0,
-ADD COLUMN     "ky_luat" INTEGER NOT NULL DEFAULT 0,
-ADD COLUMN     "truyen_cam_hung" INTEGER NOT NULL DEFAULT 0;

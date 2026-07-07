@@ -154,7 +154,7 @@ export default function AdminLayout({
           />
           <span className="sr-only">{SITE_NAME}</span>
         </span>
-        <ThemeToggleButton variant="header" />
+        <ThemeToggleButton hideText />
       </header>
 
       {/* Mobile overlay */}
@@ -194,8 +194,6 @@ export default function AdminLayout({
       >
         {children}
       </main>
-
-      <ThemeToggleButton />
     </div>
   );
 }

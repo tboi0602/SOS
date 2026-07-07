@@ -43,8 +43,10 @@ export default function Header() {
         .then((res) => setUnreadCount(res.unreadCount))
         .catch(() => {});
     fetch();
+    const handler = () => fetch();
+    window.addEventListener("notifications-read", handler);
     const id = setInterval(fetch, 30000);
-    return () => clearInterval(id);
+    return () => { clearInterval(id); window.removeEventListener("notifications-read", handler) };
   }, [user]);
 
   useEffect(() => {

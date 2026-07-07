@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
+import { useToast } from "@/components/ui/Toast";
+import { authService } from "@/service/auth.service";
 import { Loader2, Mail } from "lucide-react";
 
 export default function ForgotPasswordPage() {
@@ -11,13 +13,19 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
 
+  const { toast } = useToast();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate API call
-    await new Promise((r) => setTimeout(r, 1500));
-    setLoading(false);
-    setSent(true);
+    try {
+      await authService.forgotPassword(email);
+      setSent(true);
+    } catch (err) {
+      toast(err instanceof Error ? err.message : "Lỗi gửi yêu cầu", "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

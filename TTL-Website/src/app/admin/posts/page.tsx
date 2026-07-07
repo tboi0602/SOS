@@ -242,7 +242,7 @@ export default function PostPage() {
                           >
                             {post.user.avatar ? (
                               <img
-                                src={post.user.avatar}
+                                src={imgUrl(post.user.avatar)}
                                 alt=""
                                 className="size-full object-cover"
                               />

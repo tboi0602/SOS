@@ -1,4 +1,4 @@
-export function s(value: unknown, fallback?: string): string | undefined {
-  if (value === undefined || value === null) return fallback ?? undefined
-  return String(value)
+export function s(value: unknown, fallback: string = ""): string {
+  if (value === undefined || value === null) return fallback;
+  return String(value);
 }

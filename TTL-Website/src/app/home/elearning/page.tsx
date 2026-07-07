@@ -40,7 +40,7 @@ export default function ELearningPage() {
                 border: "0.5px solid var(--border-base)",
               }}>
               <BookOpen size={32} className="mx-auto mb-3" style={{ color: "var(--text-tertiary)" }} />
-              <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>Chưa có bài học nào</p>
+              <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>Chưa có buổi học nào</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -5,6 +5,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
+import { authService } from "@/service/auth.service";
 
 function ActivateContent() {
   const searchParams = useSearchParams();
@@ -13,8 +14,11 @@ function ActivateContent() {
   useEffect(() => {
     const token = searchParams.get("token");
     if (!token) { setStatus("error"); return; }
-    // Simulate activation
-    setTimeout(() => setStatus("success"), 1500);
+    authService.activate(token).then(() => {
+      setStatus("success");
+    }).catch(() => {
+      setStatus("error");
+    });
   }, [searchParams]);
 
   return (

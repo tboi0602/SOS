@@ -8,6 +8,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 import type { TopSalesResponse } from "@/service/api";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 gsap.registerPlugin(ScrollTrigger);
 
 type Member = TopSalesResponse["members"][number];
@@ -73,7 +74,7 @@ function PodiumCard({
         <div className="avatar-glow absolute -inset-1.5 rounded-full" style={{ background: glowColor }} />
         {member.avatar ? (
           <Image
-            src={member.avatar.replace("http://", "https://")}
+            src={member.avatar.startsWith("http") ? member.avatar : `${API_URL}${member.avatar}`}
             alt={member.name}
             width={isFirst ? 64 : 56}
             height={isFirst ? 64 : 56}

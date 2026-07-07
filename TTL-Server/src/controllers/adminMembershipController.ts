@@ -4,13 +4,14 @@ import { lessonService } from "../services/membership/lessonService"
 import { quizService } from "../services/membership/quizService"
 import { situationService } from "../services/membership/situationService"
 
-function s(val: unknown, fallback = ""): string {
-  return typeof val === "string" ? val : fallback
+function n(val: unknown, fallback = 0): number {
+  if (typeof val === "number") return val
+  const parsed = parseInt(typeof val === "string" ? val : "", 10)
+  return isNaN(parsed) ? fallback : parsed
 }
 
-function n(val: unknown, fallback = 0): number {
-  const parsed = parseInt(s(val), 10)
-  return isNaN(parsed) ? fallback : parsed
+function s(val: unknown, fallback = ""): string {
+  return typeof val === "string" ? val : fallback
 }
 
 function pid(req: Request, name: string): string {
@@ -81,6 +82,15 @@ export const adminMembershipController = {
     } catch (err) { next(err) }
   },
 
+  async getAllFlows(req: Request, res: Response, next: NextFunction) {
+    try {
+      const page = Math.max(1, n(req.query.page, 1))
+      const limit = Math.min(50, Math.max(1, n(req.query.limit, 20)))
+      const search = s(req.query.search) || undefined
+      res.json(await flowService.getAllFlows(page, limit, search))
+    } catch (err) { next(err) }
+  },
+
   async getPendingPayments(req: Request, res: Response, next: NextFunction) {
     try {
       const page = Math.max(1, n(req.query.page, 1))
@@ -93,7 +103,15 @@ export const adminMembershipController = {
     try {
       const page = Math.max(1, n(req.query.page, 1))
       const limit = Math.min(50, Math.max(1, n(req.query.limit, 20)))
-      res.json(await flowService.getActiveMembers(page, limit))
+      const search = s(req.query.search) || undefined
+      res.json(await flowService.getActiveMembers(page, limit, search))
+    } catch (err) { next(err) }
+  },
+
+  async getUserLessons(req: Request, res: Response, next: NextFunction) {
+    try {
+      const lessons = await lessonService.getLessons(pid(req, "userId"))
+      res.json({ lessons })
     } catch (err) { next(err) }
   },
 

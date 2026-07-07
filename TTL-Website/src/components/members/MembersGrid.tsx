@@ -99,6 +99,13 @@ export default function MembersGrid({ filtered }: MembersGridProps) {
     >
       <div className="divide-y divide-[var(--border-base)]">
         {filtered.map((m, index) => {
+          const API_URL =
+            process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+          const avatarSrc = m.avatar
+            ? m.avatar.startsWith("http")
+              ? m.avatar
+              : `${API_URL}${m.avatar}`
+            : null;
           const score =
             m.kyLuat != null
               ? Math.round(
@@ -133,8 +140,8 @@ export default function MembersGrid({ filtered }: MembersGridProps) {
             >
               <div className="shrink-0">
                 {m.avatar ? (
-                  <Image
-                    src={m.avatar}
+                  <img
+                    src={avatarSrc as string}
                     alt={m.name}
                     width={40}
                     height={40}
@@ -165,7 +172,7 @@ export default function MembersGrid({ filtered }: MembersGridProps) {
                       className="shrink-0"
                       style={{ color: "var(--text-tertiary)" }}
                     />{" "}
-                    {m.role === "user" ? "Chưa chính thức" : "Thành viên"}
+                    {m.role === "member" ? "Thành viên" : "Chưa chính thức"}
                   </p>
                 </div>
 
@@ -281,5 +288,3 @@ export default function MembersGrid({ filtered }: MembersGridProps) {
     </div>
   );
 }
-
-

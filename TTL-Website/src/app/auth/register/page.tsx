@@ -6,7 +6,7 @@ import { useAuthRegister as useRegister } from "@/hook/auth";
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton";
 import TbvLoginButton from "@/components/auth/TbvLoginButton";
 import Field from "@/components/auth/Field";
-import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
+
 import { useEffect } from "react";
 import { useToast } from "@/components/ui/Toast";
 import { Eye, EyeOff, Loader2, UserPlus } from "lucide-react";
@@ -307,7 +307,6 @@ export default function RegisterPage() {
           </div>
         </div>
       </div>
-      <ThemeToggleButton />
     </div>
   );
 }

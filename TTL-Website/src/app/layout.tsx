@@ -19,22 +19,31 @@ const jetbrains = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
-const siteUrl = "https://vnsales.org";
+const siteUrl = "https://doitac.tinhhoaviet.org.vn/";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "TRUNG TÂM ĐỀ CỬ TINH HOA VIỆT",
+  title: {
+    default: "TRUNG TÂM ĐỀ CỬ TINH HOA VIỆT",
+    template: "%s | Tinh Hoa Việt",
+  },
   description:
-    "Tìm kiếm đề cử Tinh Hoa VIệt - Kiến tạo Di sản Việt - Chia sẻ - Truyền cảm hứng - Phát triển.",
+    "Tìm kiếm đề cử Tinh Hoa Việt - Kiến tạo Di sản Việt - Chia sẻ - Truyền cảm hứng - Phát triển.",
+  keywords: [
+    "Tinh Hoa Việt",
+    "đề cử",
+    "di sản Việt",
+    "văn hóa Việt",
+    "truyền cảm hứng",
+    "phát triển bản thân",
+  ],
+  authors: [{ name: "Tinh Hoa Việt" }],
   openGraph: {
     title: "TRUNG TÂM ĐỀ CỬ TINH HOA VIỆT",
     description:
-      "Tìm kiếm đề cử Tinh Hoa VIệt - Kiến tạo Di sản Việt - Chia sẻ - Truyền cảm hứng - Phát triển.",
+      "Tìm kiếm đề cử Tinh Hoa Việt - Kiến tạo Di sản Việt - Chia sẻ - Truyền cảm hứng - Phát triển.",
     url: siteUrl,
     siteName: "Tinh Hoa Việt",
-    images: [
-      { url: `${siteUrl}/images/tbv-logo.png`, width: 630, height: 630 },
-    ],
     locale: "vi_VN",
     type: "website",
   },
@@ -42,8 +51,15 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "TRUNG TÂM ĐỀ CỬ TINH HOA VIỆT",
     description:
-      "Tìm kiếm đề cử Tinh Hoa VIệt - Kiến tạo Di sản Việt - Chia sẻ - Truyền cảm hứng - Phát triển.",
-    images: [`${siteUrl}/images/tbv-logo.png`],
+      "Tìm kiếm đề cử Tinh Hoa Việt - Kiến tạo Di sản Việt - Chia sẻ - Truyền cảm hứng - Phát triển.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  icons: {
+    icon: "/images/tbv-logo.png",
+    apple: "/images/tbv-logo.png",
   },
 };
 

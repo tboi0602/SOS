@@ -27,20 +27,36 @@ export const flowService = {
     return uf;
   },
 
-  async uploadDocuments(userId: string, documentsUrl: string) {
+  async uploadDocuments(userId: string, data: {
+    documentsUrl?: string
+    idCardFront?: string
+    idCardBack?: string
+    achievementImages?: string
+  }) {
     const uf = await getDb().userMembershipFlow.findUnique({ where: { userId } });
     if (!uf) throw new NotFoundError("Không tìm thấy flow");
     const allowed = ["pending_docs", "docs_submitted"];
     if (!allowed.includes(uf.status)) throw new BadRequestError("Trạng thái không hợp lệ");
 
-    const mergedUrl = uf.documentsUrl
-      ? `${uf.documentsUrl},${documentsUrl}`
-      : documentsUrl;
+    const mergedDocs = data.documentsUrl && uf.documentsUrl
+      ? `${uf.documentsUrl},${data.documentsUrl}`
+      : (data.documentsUrl || uf.documentsUrl)
+
+    const mergedAchievements = data.achievementImages && uf.achievementImages
+      ? `${uf.achievementImages},${data.achievementImages}`
+      : (data.achievementImages || uf.achievementImages)
+
     const newStatus = uf.status === "pending_docs" ? "docs_submitted" : uf.status;
 
     const updated = await getDb().userMembershipFlow.update({
       where: { userId },
-      data: { documentsUrl: mergedUrl, status: newStatus },
+      data: {
+        documentsUrl: mergedDocs,
+        idCardFront: data.idCardFront || uf.idCardFront,
+        idCardBack: data.idCardBack || uf.idCardBack,
+        achievementImages: mergedAchievements,
+        status: newStatus,
+      },
     });
 
     const admins = await getDb().user.findMany({
@@ -119,6 +135,40 @@ export const flowService = {
     return { users: flows, total, page, totalPages: Math.ceil(total / limit) };
   },
 
+  async getAllFlows(page = 1, limit = 20, search?: string) {
+    const skip = (page - 1) * limit;
+    const where: Record<string, unknown> = {
+      OR: [
+        { documentsUrl: { not: null } },
+        { idCardFront: { not: null } },
+        { idCardBack: { not: null } },
+        { achievementImages: { not: null } },
+      ],
+    };
+    if (search) {
+      where.user = {
+        OR: [
+          { name: { contains: search, mode: "insensitive" } },
+          { email: { contains: search, mode: "insensitive" } },
+        ],
+      };
+    }
+    const [flows, total] = await Promise.all([
+      getDb().userMembershipFlow.findMany({
+        where,
+        include: {
+          user: { select: { id: true, name: true, email: true, avatar: true } },
+          membershipFlow: { select: { name: true, price: true } },
+        },
+        orderBy: { updatedAt: "desc" },
+        skip,
+        take: limit,
+      }),
+      getDb().userMembershipFlow.count({ where }),
+    ]);
+    return { users: flows, total, page, totalPages: Math.ceil(total / limit) };
+  },
+
   async getPendingPayments(page = 1, limit = 20) {
     const skip = (page - 1) * limit;
     const where = { status: "payment_pending_verification" as const };
@@ -135,14 +185,26 @@ export const flowService = {
     return { users: flows, total, page, totalPages: Math.ceil(total / limit) };
   },
 
-  async getActiveMembers(page = 1, limit = 20) {
+  async getActiveMembers(page = 1, limit = 20, search?: string) {
     const skip = (page - 1) * limit;
     const statuses = ["in_lessons", "pending_quiz", "pending_situations", "pending_review", "completed"];
-    const where = { status: { in: statuses } };
+    const where: Record<string, unknown> = { status: { in: statuses } };
+    if (search) {
+      where.user = {
+        OR: [
+          { name: { contains: search, mode: "insensitive" } },
+          { email: { contains: search, mode: "insensitive" } },
+        ],
+      };
+    }
     const [flows, total] = await Promise.all([
       getDb().userMembershipFlow.findMany({
         where,
-        include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
+        include: {
+          user: { select: { id: true, name: true, email: true, avatar: true } },
+          situation1: { select: { title: true, description: true } },
+          situation2: { select: { title: true, description: true } },
+        },
         orderBy: { updatedAt: "desc" },
         skip,
         take: limit,
@@ -264,7 +326,7 @@ export const flowService = {
 
     await getDb().user.update({
       where: { id: userId },
-      data: { role: "user" },
+      data: { role: "member" },
     });
 
     await notificationService.create({
