@@ -1,0 +1,9 @@
+# Run from SOS: docker compose -f docker-compose.yml -f docker-compose.local.yml up -d --build
+services:
+  server:
+    ports:
+      - "127.0.0.1:4000:4000"
+    command: ["sh", "-c", "npx prisma db push --skip-generate && node dist/index.js"]
+  website:
+    ports:
+      - "127.0.0.1:3000:3000"

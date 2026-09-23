@@ -6,11 +6,11 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
-    "db:up": "docker compose -f ../docker-compose.yml up -d postgres",
+    "db:up": "docker compose --env-file ../.env -f ../docker-compose.yml -f ../docker-compose.dev.yml up -d --wait postgres",
     "db:push": "prisma db push",
     "db:gen": "prisma generate",
     "db:setup": "prisma db push && prisma generate",
-    "dev:full": "docker compose -f ../docker-compose.yml up -d postgres && sleep 3 && prisma db push && prisma generate && tsx watch src/index.ts"
+    "dev:full": "npm run db:up && npm run db:setup && npm run dev"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

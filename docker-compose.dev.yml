@@ -1,0 +1,6 @@
+# Local backend runs on the host and connects through localhost:5432.
+# Use together with docker-compose.yml; production ports stay unchanged.
+services:
+  postgres:
+    ports:
+      - "127.0.0.1:5432:5432"
